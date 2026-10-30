@@ -1,0 +1,81 @@
+---
+// CTA band (case page, spec §3.2-9). Orange panel, short M-18 (panel scale only).
+---
+
+<section class="cta-band">
+	<div class="container">
+		<div class="panel" data-m="door">
+			<h2>Want this for your launch?</h2>
+			<a href="/?role=brand#contact" data-role="brand" class="cta">Come on in →</a>
+		</div>
+	</div>
+</section>
+
+<script>
+	import { gsap, onEnter } from '../../scripts/motion/core';
+
+	const panel = document.querySelector<HTMLElement>('.cta-band .panel');
+	if (panel) {
+		onEnter(panel, () => {
+			gsap.fromTo(panel, { scale: 0.92 }, { scale: 1, duration: 0.8, ease: 'ch-smooth', clearProps: 'transform' });
+		});
+	}
+</script>
+
+<style>
+	.cta-band {
+		padding: 0 32px var(--s-26);
+	}
+
+	.panel {
+		max-width: 1320px;
+		margin-inline: auto;
+		background: var(--c-orange);
+		color: var(--c-ink);
+		border-radius: var(--r-band);
+		padding: 64px;
+		text-align: center;
+	}
+
+	h2 {
+		margin: 0 0 var(--s-8);
+		font-family: var(--f-display);
+		font-weight: 800;
+		font-size: var(--fs-h2);
+		letter-spacing: -1.5px;
+	}
+
+	.cta {
+		display: inline-block;
+		text-decoration: none;
+		background: var(--c-ink);
+		color: var(--c-white);
+		font-weight: 700;
+		font-size: 18px;
+		padding: var(--s-5) var(--s-8);
+		border-radius: var(--r-pill);
+		transition: translate var(--t-s) var(--e-spring), box-shadow var(--t-s) var(--e-spring);
+	}
+	@media (hover: hover) and (pointer: fine) {
+		.cta:hover {
+			translate: 0 -3px;
+			box-shadow: 0 9px 0 var(--c-ink);
+		}
+	}
+
+	@media (max-width: 767.98px) {
+		.cta-band {
+			padding: 0 16px var(--s-14);
+		}
+		.panel {
+			padding: 32px;
+			border-radius: var(--r-band-phone);
+		}
+	}
+
+	/* Hidden-state contract (BUILD §4): written only under html.js-motion, matched to the
+	   onEnter `data-m` + `.is-in` swap in scripts/motion/core.ts. */
+	:global(html.js-motion) .panel[data-m='door']:not(.is-in) {
+		scale: 0.92;
+	}
+</style>

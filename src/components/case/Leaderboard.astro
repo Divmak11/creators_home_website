@@ -1,0 +1,151 @@
+---
+// Pages that carried it (case page, spec §3.2-6 + §5.4 M-20). Horizontal bar race: bar width =
+// value / max stored in `--w`, drawn with the native `scale` property so it matches the
+// codebase's "tilt/scale/rotate live in those CSS properties" convention (BUILD §3).
+import { formatNum } from '../../data/format.ts';
+import type { Campaign } from '../../data/types.ts';
+
+interface Props {
+  campaign: Campaign;
+}
+
+const { campaign } = Astro.props;
+const max = Math.max(...campaign.leaderboard.map((r) => r.num.value));
+---
+
+<section class="leaderboard">
+	<div class="container">
+		<h2>Pages that carried it</h2>
+
+		<div class="rows" data-m="race">
+			{campaign.leaderboard.map((row) => (
+				<div class="row" style={`--w: ${row.num.value / max}`}>
+					<span class="name">{row.name}</span>
+					<span class="bar">
+						<span class="bar-fill"></span>
+					</span>
+					<span class="cu-wrap" aria-label={`${row.num.spoken} views`}>
+						<span class="cu" data-to={row.num.value} data-dec={row.num.decimals} aria-hidden="true">
+							{formatNum(row.num.value, row.num.decimals)}
+						</span>
+						<span class="sfx" aria-hidden="true">{row.num.suffix}</span>
+					</span>
+				</div>
+			))}
+		</div>
+	</div>
+</section>
+
+<script>
+	import { gsap, onEnter } from '../../scripts/motion/core';
+	import { countUp } from '../../scripts/motion/countup';
+
+	const rows = document.querySelector<HTMLElement>('.leaderboard .rows');
+	const items = rows ? Array.from(rows.querySelectorAll<HTMLElement>('.row')) : [];
+
+	if (rows && items.length) {
+		onEnter(rows, () => {
+			const fills = items.map((row) => row.querySelector<HTMLElement>('.bar-fill')!);
+			fills.forEach((fill, i) => {
+				const w = Number(items[i].style.getPropertyValue('--w')) || 0;
+				gsap.fromTo(fill, { scaleX: 0 }, { scaleX: w, duration: 1.2, ease: 'ch-smooth', delay: i * 0.08, clearProps: 'scale' });
+				const cu = items[i].querySelector<HTMLElement>('.cu');
+				if (cu) countUp(cu, { duration: 1.2, delay: i * 0.08 });
+			});
+		});
+	}
+</script>
+
+<style>
+	.leaderboard {
+		background: var(--c-lavender);
+		color: var(--c-ink);
+		padding-block: var(--s-20);
+	}
+
+	h2 {
+		margin: 0 0 var(--s-12);
+		text-align: center;
+		font-family: var(--f-display);
+		font-weight: 800;
+		font-size: var(--fs-h2);
+		letter-spacing: -1.5px;
+	}
+
+	.rows {
+		max-width: 820px;
+		margin-inline: auto;
+		display: flex;
+		flex-direction: column;
+		gap: var(--s-5);
+	}
+
+	.row {
+		display: grid;
+		grid-template-columns: 180px 1fr auto;
+		align-items: center;
+		gap: var(--s-4);
+	}
+
+	.name {
+		font-weight: 700;
+		font-size: 16px;
+	}
+
+	.bar {
+		position: relative;
+		height: 20px;
+		border-radius: var(--r-pill);
+		background: var(--c-white);
+		overflow: hidden;
+	}
+	.bar-fill {
+		display: block;
+		height: 100%;
+		width: 100%;
+		border-radius: var(--r-pill);
+		background: var(--c-violet);
+		transform-origin: left;
+		scale: var(--w) 1;
+	}
+
+	.cu-wrap {
+		display: inline-flex;
+		align-items: baseline;
+		white-space: nowrap;
+		font-variant-numeric: tabular-nums;
+		font-weight: 700;
+	}
+	.cu,
+	.sfx {
+		font-family: var(--f-display);
+		font-weight: 800;
+		font-size: 18px;
+	}
+
+	@media (max-width: 767.98px) {
+		.leaderboard {
+			padding-block: var(--s-14);
+		}
+		.row {
+			grid-template-columns: 1fr;
+			gap: var(--s-2);
+		}
+		.name {
+			order: 1;
+		}
+		.bar {
+			order: 2;
+		}
+		.cu-wrap {
+			order: 3;
+			justify-self: end;
+		}
+	}
+
+	/* Hidden-state contract (BUILD §4): written only under html.js-motion, matched to the
+	   onEnter `data-m` + `.is-in` swap in scripts/motion/core.ts. */
+	:global(html.js-motion) .rows[data-m='race']:not(.is-in) .bar-fill {
+		scale: 0 1;
+	}
+</style>

@@ -1,0 +1,102 @@
+---
+// Next room (case page, spec §3.2-8). Big card for the next campaign in campaigns.ts order
+// (wraps to the first), reusing WorkCard inside a max-420px wrapper, plus a link back to #work.
+import WorkCard from '../WorkCard.astro';
+import { nextCampaign } from '../../data/campaigns.ts';
+
+interface Props {
+  slug: string;
+}
+
+const { slug } = Astro.props;
+const next = nextCampaign(slug);
+---
+
+<section class="next-room">
+	<div class="container">
+		<div class="head">
+			<h2>Next campaign <span class="arrow">→</span></h2>
+		</div>
+
+		<div class="wrap" data-m="fade">
+			<WorkCard campaign={next} />
+		</div>
+
+		<a href="/#work" class="back">Back to all work</a>
+	</div>
+</section>
+
+<script>
+	import { gsap, onEnter } from '../../scripts/motion/core';
+	import { countUp } from '../../scripts/motion/countup';
+
+	const wrap = document.querySelector<HTMLElement>('.next-room .wrap');
+	if (wrap) {
+		onEnter(wrap, () => {
+			gsap.fromTo(wrap, { opacity: 0, rotation: -4 }, { opacity: 1, rotation: 0, duration: 0.6, ease: 'ch-smooth', clearProps: 'transform,opacity' });
+			// WorkCard is reused standalone here, without the home work-band script that normally
+			// drives its count-up on entry — without this call a card figure stays at the "0" value
+			// countup.ts's prepCountUps() wrote in for any .cu that was off-screen at load.
+			const cu = wrap.querySelector<HTMLElement>('.cu');
+			if (cu) countUp(cu, { duration: 1.2, delay: 0.2 });
+		});
+	}
+</script>
+
+<style>
+	.next-room {
+		background: var(--c-white);
+		color: var(--c-ink);
+		padding-block: var(--s-20);
+		text-align: center;
+	}
+
+	.head {
+		display: flex;
+		justify-content: center;
+	}
+	h2 {
+		margin: 0 0 var(--s-12);
+		display: inline-flex;
+		align-items: center;
+		gap: var(--s-3);
+		font-family: var(--f-display);
+		font-weight: 800;
+		font-size: var(--fs-h2);
+		letter-spacing: -1.5px;
+	}
+	.arrow {
+		display: inline-block;
+		translate: 0 0;
+		transition: translate var(--t-s) var(--e-smooth);
+	}
+	@media (hover: hover) and (pointer: fine) {
+		.head:hover .arrow {
+			translate: 6px 0;
+		}
+	}
+
+	.wrap {
+		max-width: 420px;
+		margin-inline: auto;
+	}
+
+	.back {
+		display: inline-block;
+		margin-top: var(--s-10);
+		font-weight: 700;
+		text-decoration: underline;
+	}
+
+	@media (max-width: 767.98px) {
+		.next-room {
+			padding-block: var(--s-14);
+		}
+	}
+
+	/* Hidden-state contract (BUILD §4): written only under html.js-motion, matched to the
+	   onEnter `data-m` + `.is-in` swap in scripts/motion/core.ts. */
+	:global(html.js-motion) .wrap[data-m='fade']:not(.is-in) {
+		opacity: 0;
+	}
+</style>

@@ -1,0 +1,144 @@
+---
+// The numbers (case page, spec §3.2-3 + §5.5). White strip, ink text, lavender stat stickers
+// (campaigns with stats.length > 0 — CaseMove.astro handles the rest). M-06 pop-in + M-07
+// count-up run together, same pattern as home/Numbers.astro.
+import { formatNum } from '../../data/format.ts';
+import type { Campaign } from '../../data/types.ts';
+
+interface Props {
+  campaign: Campaign;
+}
+
+const { campaign } = Astro.props;
+const tilts = [-2, 2, -2, 2];
+const centre = campaign.stats.length < 4;
+---
+
+<section class="case-numbers" style={centre ? `--count: ${campaign.stats.length}` : undefined}>
+	<div class="container">
+		<div class="grid" data-m="pop" data-centre={centre ? 'true' : undefined}>
+			{campaign.stats.map((stat, i) => (
+				<div class="stat tilt" style={`--r: ${tilts[i % tilts.length]}deg`}>
+					<span class="cu-wrap" aria-label={`${stat.num.spoken} ${stat.label}`}>
+						<span class="cu" data-to={stat.num.value} data-dec={stat.num.decimals} aria-hidden="true">
+							{formatNum(stat.num.value, stat.num.decimals)}
+						</span>
+						<span class="sfx" aria-hidden="true">{stat.num.suffix}</span>
+					</span>
+					<span class="label">{stat.label}</span>
+				</div>
+			))}
+		</div>
+	</div>
+</section>
+
+<script>
+	import { gsap, onEnter } from '../../scripts/motion/core';
+	import { countUp } from '../../scripts/motion/countup';
+
+	const grid = document.querySelector<HTMLElement>('.case-numbers .grid');
+	const cards = grid ? Array.from(grid.querySelectorAll<HTMLElement>('.stat')) : [];
+
+	if (grid && cards.length) {
+		onEnter(grid, () => {
+			cards.forEach((card, i) => {
+				const delay = i * 0.07;
+				gsap.fromTo(
+					card,
+					{ scale: 0.6, rotation: -6, opacity: 0 },
+					{ scale: 1, rotation: 0, opacity: 1, duration: 0.7, ease: 'ch-spring', delay, clearProps: 'transform,opacity' }
+				);
+				const cu = card.querySelector<HTMLElement>('.cu');
+				if (cu) countUp(cu, { duration: 1.6, delay: delay + 0.15 });
+			});
+		});
+	}
+</script>
+
+<style>
+	.case-numbers {
+		background: var(--c-white);
+		color: var(--c-ink);
+		padding-block: var(--s-20);
+		text-align: center;
+	}
+
+	.grid {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 20px;
+	}
+
+	.stat {
+		position: relative;
+		overflow: hidden;
+		background: var(--c-lavender);
+		color: var(--c-ink);
+		border-radius: var(--r-sticker);
+		padding: 24px;
+	}
+
+	.cu-wrap {
+		display: inline-flex;
+		white-space: nowrap;
+		align-items: baseline;
+		justify-content: center;
+		max-width: 100%;
+		font-variant-numeric: tabular-nums;
+	}
+	.cu,
+	.sfx {
+		font-family: var(--f-display);
+		font-weight: 800;
+		font-size: 44px;
+		line-height: 1;
+	}
+
+	.label {
+		display: block;
+		margin-top: var(--s-3);
+		font-weight: 700;
+		font-size: 16px;
+		overflow-wrap: anywhere;
+	}
+
+	@media (min-width: 1200px) {
+		.grid {
+			grid-template-columns: repeat(4, minmax(0, 1fr));
+		}
+		.grid[data-centre='true'] {
+			grid-template-columns: repeat(var(--count), minmax(0, 260px));
+			justify-content: center;
+		}
+		.cu,
+		.sfx {
+			font-size: 56px;
+		}
+	}
+
+	@media (max-width: 1199.98px) {
+		.cu,
+		.sfx {
+			font-size: 44px;
+		}
+	}
+
+	@media (max-width: 767.98px) {
+		.case-numbers {
+			padding-block: var(--s-14);
+		}
+		.cu,
+		.sfx {
+			font-size: 36px;
+		}
+		.stat {
+			padding: 18px;
+		}
+	}
+
+	/* Hidden-state contract (BUILD §4): written only under html.js-motion, matched to the
+	   onEnter `data-m` + `.is-in` swap in scripts/motion/core.ts. */
+	:global(html.js-motion) .case-numbers [data-m='pop']:not(.is-in) .stat {
+		opacity: 0;
+	}
+</style>

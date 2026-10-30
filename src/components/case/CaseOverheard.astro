@@ -1,0 +1,108 @@
+---
+// Overheard (case page, spec §3.2-7). Only rendered by the caller when SHOW_OVERHEARD &&
+// campaign.quotes.length (config.ts ruling — no client testimonials at launch). Reuses
+// QuoteCard and the home Overheard section's M-15 speech-pop motion.
+import QuoteCard from '../QuoteCard.astro';
+import type { Campaign } from '../../data/types.ts';
+
+interface Props {
+  campaign: Campaign;
+}
+
+const { campaign } = Astro.props;
+const tilts = [-2, 2, -1];
+---
+
+<section class="case-overheard" aria-labelledby="case-overheard-h">
+	<div class="container">
+		<h2 id="case-overheard-h">Overheard</h2>
+		<div class="grid" data-m="speech">
+			{campaign.quotes.map((q, i) => (
+				<QuoteCard quote={q} tilt={tilts[i % tilts.length]} colourIndex={(i % 3) as 0 | 1 | 2} />
+			))}
+		</div>
+	</div>
+</section>
+
+<script>
+	import { gsap, onEnter } from '../../scripts/motion/core';
+
+	const grid = document.querySelector<HTMLElement>('.case-overheard .grid');
+	const cards = grid ? Array.from(grid.querySelectorAll<HTMLElement>('.qcard')) : [];
+
+	if (grid && cards.length) {
+		onEnter(grid, () => {
+			const fromX = [-80, 80, -80];
+			const fromRot = [8, -8, 8];
+			cards.forEach((card, i) => {
+				gsap.fromTo(
+					card,
+					{ x: fromX[i % fromX.length], rotation: fromRot[i % fromRot.length], opacity: 0 },
+					{
+						x: 0,
+						rotation: 0,
+						opacity: 1,
+						duration: 0.7,
+						ease: 'ch-spring',
+						delay: i * 0.1,
+						clearProps: 'transform,opacity',
+						onComplete: () => {
+							const tail = card.querySelector<HTMLElement>('[data-part="tail"]');
+							const words = Array.from(card.querySelectorAll<HTMLElement>('.w'));
+							if (tail) {
+								gsap.fromTo(tail, { scale: 0 }, {
+									scale: 1,
+									duration: 0.3,
+									ease: 'ch-spring',
+									clearProps: 'transform',
+									onComplete: () => {
+										gsap.fromTo(words, { opacity: 0.2 }, { opacity: 1, duration: 0.2, stagger: 0.03, clearProps: 'opacity' });
+									},
+								});
+							}
+						},
+					}
+				);
+			});
+		});
+	}
+</script>
+
+<style>
+	.case-overheard {
+		background: var(--c-violet);
+		padding-block: var(--s-20);
+	}
+
+	h2 {
+		margin: 0 0 var(--s-12);
+		text-align: center;
+		font-family: var(--f-display);
+		font-weight: 800;
+		font-size: var(--fs-h2);
+		letter-spacing: -1.5px;
+	}
+
+	.grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+		gap: var(--s-6);
+		max-width: 1000px;
+		margin-inline: auto;
+	}
+
+	@media (max-width: 767.98px) {
+		.case-overheard {
+			padding-block: var(--s-14);
+		}
+		.grid {
+			grid-template-columns: 1fr;
+		}
+	}
+
+	/* Hidden-state contract (BUILD §4): written only under html.js-motion, matched to the
+	   onEnter `data-m` + `.is-in` swap in scripts/motion/core.ts. */
+	:global(html.js-motion) .grid[data-m='speech']:not(.is-in) :global(.qcard) {
+		opacity: 0;
+	}
+</style>

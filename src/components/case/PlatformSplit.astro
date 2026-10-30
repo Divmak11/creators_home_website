@@ -1,0 +1,236 @@
+---
+// Platform split (case page, spec §3.2-6 / §4.7, District only). Three platform cards (pop
+// like CaseNumbers) + an animated Reddit-audience bar split into labelled percentage segments.
+import Icon from '../Icon.astro';
+import { formatNum } from '../../data/format.ts';
+import type { Campaign, Platform } from '../../data/types.ts';
+
+interface Props {
+  campaign: Campaign;
+}
+
+const { campaign } = Astro.props;
+const split = campaign.platformSplit!;
+const cap = (p: string) => p.charAt(0).toUpperCase() + p.slice(1);
+const SEGMENT_COLOUR = ['var(--c-violet)', 'var(--c-orange)', 'var(--c-ink)', 'var(--c-lavender)'];
+const tilts = [-2, 2, -2];
+---
+
+<section class="platform-split">
+	<div class="container">
+		<h2>How it broke down</h2>
+
+		<div class="cards" data-m="pop">
+			{split.cards.map((card, i) => (
+				<div class="card tilt" style={`--r: ${tilts[i % tilts.length]}deg`}>
+					<span class="head">
+						<Icon name={card.platform as Platform} size={20} />
+						{cap(card.platform)}
+					</span>
+					<span class="cu-wrap" aria-label={`${card.headline.num.spoken} ${card.headline.label}`}>
+						<span class="cu" data-to={card.headline.num.value} data-dec={card.headline.num.decimals} aria-hidden="true">
+							{formatNum(card.headline.num.value, card.headline.num.decimals)}
+						</span>
+						<span class="sfx" aria-hidden="true">{card.headline.num.suffix}</span>
+					</span>
+					<span class="headline-label">{card.headline.label}</span>
+					{card.rows.length > 0 && (
+						<ul class="rows">
+							{card.rows.map((row) => (
+								<li>
+									<span class="cu-wrap small" aria-label={`${row.num.spoken} ${row.label}`}>
+										<span class="cu" data-to={row.num.value} data-dec={row.num.decimals} aria-hidden="true">
+											{formatNum(row.num.value, row.num.decimals)}
+										</span>
+										<span class="sfx" aria-hidden="true">{row.num.suffix}</span>
+									</span>
+									<span class="row-label">{row.label}</span>
+								</li>
+							))}
+						</ul>
+					)}
+				</div>
+			))}
+		</div>
+
+		<h3>Reddit audience</h3>
+		<div class="audience-bar" data-m="audience" role="img" aria-label={`Reddit audience: ${split.audience.map((a) => `${a.label} ${a.pct}%`).join(', ')}`}>
+			{split.audience.map((a, i) => (
+				<span class="segment" style={`flex-basis: ${a.pct}%; background: ${SEGMENT_COLOUR[i % SEGMENT_COLOUR.length]}; color: ${i === 2 ? 'var(--c-white)' : 'var(--c-ink)'};`}></span>
+			))}
+		</div>
+		<ul class="legend">
+			{split.audience.map((a, i) => (
+				<li><span class="dot" style={`background: ${SEGMENT_COLOUR[i % SEGMENT_COLOUR.length]}`}></span>{a.label} — {a.pct}%</li>
+			))}
+		</ul>
+	</div>
+</section>
+
+<script>
+	import { gsap, onEnter } from '../../scripts/motion/core';
+	import { countUp } from '../../scripts/motion/countup';
+
+	const cards = document.querySelector<HTMLElement>('.platform-split .cards');
+	const cardEls = cards ? Array.from(cards.querySelectorAll<HTMLElement>('.card')) : [];
+	if (cards && cardEls.length) {
+		onEnter(cards, () => {
+			cardEls.forEach((card, i) => {
+				const delay = i * 0.07;
+				gsap.fromTo(
+					card,
+					{ scale: 0.6, rotation: -6, opacity: 0 },
+					{ scale: 1, rotation: 0, opacity: 1, duration: 0.7, ease: 'ch-spring', delay, clearProps: 'transform,opacity' }
+				);
+				card.querySelectorAll<HTMLElement>('.cu').forEach((cu) => countUp(cu, { duration: 1.6, delay: delay + 0.15 }));
+			});
+		});
+	}
+
+	const audience = document.querySelector<HTMLElement>('.platform-split .audience-bar');
+	const segments = audience ? Array.from(audience.querySelectorAll<HTMLElement>('.segment')) : [];
+	if (audience && segments.length) {
+		onEnter(audience, () => {
+			gsap.fromTo(
+				segments,
+				{ scaleX: 0 },
+				{ scaleX: 1, transformOrigin: 'left', duration: 0.8, stagger: 0.12, ease: 'ch-smooth', clearProps: 'scale,transformOrigin' }
+			);
+		});
+	}
+</script>
+
+<style>
+	.platform-split {
+		background: var(--c-white);
+		color: var(--c-ink);
+		padding-block: var(--s-20);
+		text-align: center;
+	}
+
+	h2 {
+		margin: 0 0 var(--s-12);
+		font-family: var(--f-display);
+		font-weight: 800;
+		font-size: var(--fs-h2);
+		letter-spacing: -1.5px;
+	}
+
+	.cards {
+		display: grid;
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		gap: 20px;
+		text-align: left;
+	}
+
+	.card {
+		background: var(--c-lavender);
+		border-radius: var(--r-card-l);
+		padding: var(--s-6);
+	}
+
+	.head {
+		display: flex;
+		align-items: center;
+		gap: var(--s-2);
+		font-weight: 700;
+		font-size: 15px;
+		text-transform: uppercase;
+		letter-spacing: 1px;
+	}
+
+	.cu-wrap {
+		display: block;
+		margin-top: var(--s-3);
+		font-variant-numeric: tabular-nums;
+	}
+	.cu-wrap .cu,
+	.cu-wrap .sfx {
+		font-family: var(--f-display);
+		font-weight: 800;
+		font-size: 36px;
+	}
+	.cu-wrap.small .cu,
+	.cu-wrap.small .sfx {
+		font-size: 18px;
+	}
+	.headline-label {
+		display: block;
+		font-weight: 700;
+		font-size: 14px;
+	}
+
+	.rows {
+		margin-top: var(--s-5);
+		padding-top: var(--s-4);
+		border-top: 2px solid var(--c-muted-ink);
+		display: flex;
+		flex-direction: column;
+		gap: var(--s-2);
+	}
+	.rows li {
+		display: flex;
+		align-items: baseline;
+		gap: var(--s-2);
+	}
+	.row-label {
+		font-size: 14px;
+	}
+
+	h3 {
+		margin: var(--s-14) 0 var(--s-6);
+		font-family: var(--f-display);
+		font-weight: 700;
+		font-size: 22px;
+	}
+
+	.audience-bar {
+		display: flex;
+		height: 32px;
+		border-radius: var(--r-pill);
+		overflow: hidden;
+	}
+	.segment {
+		display: block;
+		height: 100%;
+	}
+
+	.legend {
+		margin: var(--s-5) 0 0;
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
+		gap: var(--s-5);
+		font-weight: 700;
+		font-size: var(--fs-small);
+	}
+	.legend li {
+		display: inline-flex;
+		align-items: center;
+		gap: var(--s-2);
+	}
+	.dot {
+		width: 12px;
+		height: 12px;
+		border-radius: var(--r-round);
+		display: inline-block;
+	}
+
+	@media (max-width: 767.98px) {
+		.platform-split {
+			padding-block: var(--s-14);
+		}
+		.cards {
+			grid-template-columns: 1fr;
+		}
+	}
+
+	/* Hidden-state contract (BUILD §4): written only under html.js-motion, matched to the
+	   onEnter `data-m` + `.is-in` swap in scripts/motion/core.ts. */
+	:global(html.js-motion) .cards[data-m='pop']:not(.is-in) .card {
+		opacity: 0;
+	}
+	:global(html.js-motion) .audience-bar[data-m='audience']:not(.is-in) .segment {
+		scale: 0 1;
+	}
+</style>

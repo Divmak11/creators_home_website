@@ -1,0 +1,39 @@
+---
+// Case-study page (one Astro template, 8 static pages — spec §3.2, BUILD.md §2).
+import Base from '../../layouts/Base.astro';
+import { campaigns } from '../../data/campaigns.ts';
+import { SHOW_OVERHEARD } from '../../config.ts';
+import type { Campaign } from '../../data/types.ts';
+import CaseHero from '../../components/case/CaseHero.astro';
+import CaseNumbers from '../../components/case/CaseNumbers.astro';
+import CaseMove from '../../components/case/CaseMove.astro';
+import CaseBrief from '../../components/case/CaseBrief.astro';
+import ProofWall from '../../components/case/ProofWall.astro';
+import Leaderboard from '../../components/case/Leaderboard.astro';
+import PlatformSplit from '../../components/case/PlatformSplit.astro';
+import CaseOverheard from '../../components/case/CaseOverheard.astro';
+import NextRoom from '../../components/case/NextRoom.astro';
+import CtaBand from '../../components/case/CtaBand.astro';
+
+export function getStaticPaths() {
+  return campaigns.map((c) => ({ params: { slug: c.slug }, props: { campaign: c } }));
+}
+
+interface Props {
+  campaign: Campaign;
+}
+
+const { campaign: c } = Astro.props;
+---
+
+<Base title={c.seo.title} description={c.seo.description} canonicalPath={`/work/${c.slug}/`} ogType="article" headerCompact>
+	<CaseHero campaign={c} />
+	{c.stats.length > 0 ? <CaseNumbers campaign={c} /> : <CaseMove campaign={c} />}
+	<CaseBrief campaign={c} />
+	{c.wall.length > 0 && <ProofWall campaign={c} />}
+	{c.leaderboard.length > 0 && <Leaderboard campaign={c} />}
+	{c.platformSplit && <PlatformSplit campaign={c} />}
+	{SHOW_OVERHEARD && c.quotes.length > 0 && <CaseOverheard campaign={c} />}
+	<NextRoom slug={c.slug} />
+	<CtaBand />
+</Base>

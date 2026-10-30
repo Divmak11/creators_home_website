@@ -1,0 +1,112 @@
+---
+// The move (case page, spec §3.2-3 fallback for campaigns.stats.length === 0). Three tilted
+// cards from campaign.move. Entry M-13 chip-tumble style, seeded so reloads match.
+import type { Campaign } from '../../data/types.ts';
+
+interface Props {
+  campaign: Campaign;
+}
+
+const { campaign } = Astro.props;
+const tilts = [-2, 1.5, -1];
+---
+
+<section class="case-move">
+	<div class="container">
+		<h2>The move</h2>
+		<div class="grid" data-m="tumble">
+			{campaign.move.map((card, i) => (
+				<div class="card tilt" style={`--r: ${tilts[i % tilts.length]}deg`} data-index={i}>
+					<h3>{card.title}</h3>
+					<p>{card.text}</p>
+				</div>
+			))}
+		</div>
+	</div>
+</section>
+
+<script>
+	import { gsap, onEnter } from '../../scripts/motion/core';
+	import { makeRand } from '../../scripts/seeded.ts';
+
+	const grid = document.querySelector<HTMLElement>('.case-move .grid');
+	const cards = grid ? Array.from(grid.querySelectorAll<HTMLElement>('.card')) : [];
+
+	if (grid && cards.length) {
+		onEnter(grid, () => {
+			const rand = makeRand(7331);
+			cards.forEach((card) => {
+				gsap.fromTo(
+					card,
+					{ y: -100, rotation: rand(-20, 20), opacity: 0 },
+					{ y: 0, rotation: 0, opacity: 1, duration: 0.9, ease: 'bounce.out', delay: rand(0, 0.3), clearProps: 'transform,opacity' }
+				);
+			});
+		});
+	}
+</script>
+
+<style>
+	.case-move {
+		background: var(--c-white);
+		color: var(--c-ink);
+		padding-block: var(--s-20);
+		text-align: center;
+	}
+
+	h2 {
+		margin: 0 0 var(--s-12);
+		font-family: var(--f-display);
+		font-weight: 800;
+		font-size: var(--fs-h2);
+		letter-spacing: -1.5px;
+	}
+
+	.grid {
+		display: grid;
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		gap: 20px;
+		text-align: left;
+	}
+
+	.card {
+		background: var(--c-white);
+		color: var(--c-ink);
+		border: 2px solid var(--c-ink);
+		border-radius: var(--r-card-l);
+		padding: var(--s-6);
+	}
+
+	h3 {
+		margin: 0;
+		font-family: var(--f-display);
+		font-weight: 700;
+		font-size: 22px;
+	}
+
+	p {
+		margin: var(--s-3) 0 0;
+		font-size: var(--fs-body);
+	}
+
+	@media (max-width: 1199.98px) {
+		.case-move {
+			padding-block: var(--s-16);
+		}
+	}
+
+	@media (max-width: 767.98px) {
+		.case-move {
+			padding-block: var(--s-14);
+		}
+		.grid {
+			grid-template-columns: 1fr;
+		}
+	}
+
+	/* Hidden-state contract (BUILD §4): written only under html.js-motion, matched to the
+	   onEnter `data-m` + `.is-in` swap in scripts/motion/core.ts. */
+	:global(html.js-motion) .case-move [data-m='tumble']:not(.is-in) .card {
+		opacity: 0;
+	}
+</style>

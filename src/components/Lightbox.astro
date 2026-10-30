@@ -1,0 +1,205 @@
+---
+// Proof-wall lightbox (spec §4.5 / §4.6). Mounted once by ProofWall.astro. Native <dialog>,
+// content cloned at open time from whichever `.wall-item` button was clicked (its <picture> or
+// placeholder) so the image markup is never duplicated in the page source. Keys: Esc closes
+// (native dialog behaviour), ←/→ navigate; touch swipe via pointer events. Open motion is a
+// FLIP read of the opener's rect into the dialog figure's final rect (reduced motion: instant).
+---
+
+<dialog class="lb" aria-label="Proof wall image">
+	<button type="button" class="lb-close" aria-label="Close">×</button>
+	<figure class="lb-figure"></figure>
+	<p class="lb-caption"></p>
+	<div class="lb-nav">
+		<button type="button" class="lb-prev" aria-label="Previous image">‹</button>
+		<span class="lb-counter"></span>
+		<button type="button" class="lb-next" aria-label="Next image">›</button>
+	</div>
+</dialog>
+
+<script>
+	import { gsap, motionOn } from '../scripts/motion/core';
+
+	const dialog = document.querySelector<HTMLDialogElement>('dialog.lb');
+	if (dialog) {
+		const figureEl = dialog.querySelector<HTMLElement>('.lb-figure')!;
+		const captionEl = dialog.querySelector<HTMLElement>('.lb-caption')!;
+		const counterEl = dialog.querySelector<HTMLElement>('.lb-counter')!;
+		const closeBtn = dialog.querySelector<HTMLButtonElement>('.lb-close')!;
+		const prevBtn = dialog.querySelector<HTMLButtonElement>('.lb-prev')!;
+		const nextBtn = dialog.querySelector<HTMLButtonElement>('.lb-next')!;
+
+		let items: HTMLButtonElement[] = [];
+		let index = 0;
+		let opener: HTMLElement | null = null;
+
+		function collect(): void {
+			items = Array.from(document.querySelectorAll<HTMLButtonElement>('.wall-item'));
+		}
+
+		function render(i: number): void {
+			index = (i + items.length) % items.length;
+			const btn = items[index];
+			const media = btn.querySelector('picture, .slot-ph');
+			figureEl.innerHTML = '';
+			if (media) {
+				const clone = media.cloneNode(true) as HTMLElement;
+				const img = clone.querySelector<HTMLImageElement>('img');
+				if (img) {
+					img.setAttribute('sizes', '90vw');
+					img.loading = 'eager';
+				}
+				figureEl.appendChild(clone);
+			}
+			const caption = btn.dataset.caption ?? '';
+			captionEl.textContent = caption;
+			counterEl.textContent = `${index + 1} / ${items.length}`;
+			dialog!.setAttribute('aria-label', caption);
+		}
+
+		function openAt(i: number, triggerEl: HTMLButtonElement): void {
+			collect();
+			opener = triggerEl;
+			render(i);
+			dialog!.showModal();
+
+			if (motionOn()) {
+				const openerRect = triggerEl.getBoundingClientRect();
+				requestAnimationFrame(() => {
+					const finalRect = figureEl.getBoundingClientRect();
+					if (finalRect.width === 0 || finalRect.height === 0) return;
+					const scaleX = openerRect.width / finalRect.width;
+					const scaleY = openerRect.height / finalRect.height;
+					const x = openerRect.left + openerRect.width / 2 - (finalRect.left + finalRect.width / 2);
+					const y = openerRect.top + openerRect.height / 2 - (finalRect.top + finalRect.height / 2);
+					gsap.fromTo(figureEl, { x, y, scaleX, scaleY }, { x: 0, y: 0, scale: 1, duration: 0.45, ease: 'ch-out', clearProps: 'transform' });
+				});
+			}
+		}
+
+		document.addEventListener('click', (e) => {
+			const btn = (e.target as HTMLElement).closest<HTMLButtonElement>('.wall-item');
+			if (btn) openAt(Number(btn.dataset.index ?? '0'), btn);
+		});
+
+		closeBtn.addEventListener('click', () => dialog!.close());
+		dialog.addEventListener('close', () => opener?.focus());
+		prevBtn.addEventListener('click', () => render(index - 1));
+		nextBtn.addEventListener('click', () => render(index + 1));
+
+		dialog.addEventListener('keydown', (e) => {
+			if (e.key === 'ArrowLeft') render(index - 1);
+			if (e.key === 'ArrowRight') render(index + 1);
+		});
+
+		let startX = 0;
+		let startY = 0;
+		dialog.addEventListener('pointerdown', (e) => {
+			startX = e.clientX;
+			startY = e.clientY;
+		});
+		dialog.addEventListener('pointerup', (e) => {
+			const dx = e.clientX - startX;
+			const dy = e.clientY - startY;
+			if (Math.abs(dx) >= 40 && Math.abs(dx) > Math.abs(dy)) render(dx < 0 ? index + 1 : index - 1);
+		});
+	}
+</script>
+
+<style>
+	.lb {
+		position: fixed;
+		inset: 0;
+		margin: auto;
+		max-width: min(92vw, 900px);
+		max-height: 92vh;
+		border: 0;
+		border-radius: var(--r-card-l);
+		background: var(--c-white);
+		color: var(--c-ink);
+		padding: var(--s-6);
+	}
+	.lb:not([open]) {
+		display: none;
+	}
+
+	.lb::backdrop {
+		background: rgb(22 10 51 / 0.85);
+		opacity: 1;
+		transition: opacity 0.3s var(--e-smooth);
+	}
+	@starting-style {
+		.lb::backdrop {
+			opacity: 0;
+		}
+	}
+
+	.lb-close {
+		position: absolute;
+		top: var(--s-4);
+		right: var(--s-4);
+		width: 40px;
+		height: 40px;
+		border-radius: var(--r-round);
+		background: var(--c-ink);
+		color: var(--c-white);
+		font-size: 22px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.lb-figure {
+		margin: 0;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		max-height: 72vh;
+	}
+	.lb-figure :global(picture),
+	.lb-figure :global(img),
+	.lb-figure :global(.slot-ph) {
+		max-width: 100%;
+		max-height: 72vh;
+		width: auto;
+		object-fit: contain;
+	}
+
+	.lb-caption {
+		margin: var(--s-4) 0 0;
+		font-weight: 700;
+		font-size: var(--fs-small);
+		text-align: center;
+	}
+
+	.lb-nav {
+		margin-top: var(--s-3);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: var(--s-5);
+	}
+	.lb-prev,
+	.lb-next {
+		width: 40px;
+		height: 40px;
+		border-radius: var(--r-round);
+		background: var(--c-ink);
+		color: var(--c-white);
+		font-size: 20px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+	.lb-counter {
+		font-weight: 700;
+		font-variant-numeric: tabular-nums;
+	}
+
+	@media (max-width: 767.98px) {
+		.lb {
+			max-width: 94vw;
+			padding: var(--s-4);
+		}
+	}
+</style>

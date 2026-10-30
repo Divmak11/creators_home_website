@@ -1,0 +1,98 @@
+---
+// The brief / What we did (case page, spec §3.2-4). Lavender card, two columns ≥768, stacked
+// on phone. Entry M-17 slide-stack (same style as home/Faq.astro's list).
+import type { Campaign } from '../../data/types.ts';
+
+interface Props {
+  campaign: Campaign;
+}
+
+const { campaign } = Astro.props;
+---
+
+<section class="case-brief">
+	<div class="container">
+		<div class="panel" data-m="stack">
+			<div class="col">
+				<h2>The brief</h2>
+				<p>{campaign.lead}</p>
+			</div>
+			<div class="col">
+				<h2>What we did</h2>
+				<p>{campaign.body}</p>
+			</div>
+		</div>
+	</div>
+</section>
+
+<script>
+	import { gsap, onEnter } from '../../scripts/motion/core';
+
+	const panel = document.querySelector<HTMLElement>('.case-brief .panel');
+	const cols = panel ? Array.from(panel.querySelectorAll<HTMLElement>('.col')) : [];
+
+	if (panel && cols.length) {
+		onEnter(panel, () => {
+			gsap.fromTo(cols, { x: -40, opacity: 0 }, { x: 0, opacity: 1, duration: 0.6, ease: 'ch-smooth', stagger: 0.06, clearProps: 'transform,opacity' });
+		});
+	}
+</script>
+
+<style>
+	.case-brief {
+		background: var(--c-violet);
+		padding: 0 32px var(--s-20);
+	}
+
+	.panel {
+		max-width: 1320px;
+		margin-inline: auto;
+		background: var(--c-lavender);
+		color: var(--c-ink);
+		border-radius: var(--r-band);
+		padding: 64px;
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: var(--s-14);
+	}
+
+	h2 {
+		margin: 0 0 var(--s-4);
+		font-family: var(--f-display);
+		font-weight: 800;
+		font-size: 28px;
+	}
+
+	p {
+		margin: 0;
+		font-size: var(--fs-body-l);
+	}
+
+	@media (max-width: 1199.98px) {
+		.panel {
+			padding: 48px;
+			gap: var(--s-10);
+		}
+	}
+
+	@media (max-width: 767.98px) {
+		.case-brief {
+			padding: 0 16px var(--s-14);
+		}
+		.panel {
+			grid-template-columns: 1fr;
+			padding: 32px;
+			border-radius: var(--r-band-phone);
+			gap: var(--s-8);
+		}
+		p {
+			font-size: var(--fs-body-l-phone);
+		}
+	}
+
+	/* Hidden-state contract (BUILD §4): written only under html.js-motion, matched to the
+	   onEnter `data-m` + `.is-in` swap in scripts/motion/core.ts. */
+	:global(html.js-motion) .panel[data-m='stack']:not(.is-in) .col {
+		opacity: 0;
+	}
+</style>

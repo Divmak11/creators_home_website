@@ -241,3 +241,10 @@ html[data-motion='paused'] .mq-track {
 ::view-transition-group(root) {
   animation-duration: .35s;
 }
+
+/* U8: the card -> case-page cover morph (CaseHero.astro sets view-transition-class: cover
+   alongside each view-transition-name: cover-<slug>) runs slower than the root crossfade. */
+::view-transition-group(.cover) {
+  animation-duration: .5s;
+  animation-timing-function: cubic-bezier(.16,1,.3,1);
+}
