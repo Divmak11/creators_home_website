@@ -129,6 +129,12 @@
 			translate: 0 50px;
 		}
 	}
+	/* H1 is the home LCP element: it rises but never starts invisible, or LCP waits for the fade (spec §5.8) */
+	@keyframes ch-hl-rise {
+		from {
+			translate: 0 50px;
+		}
+	}
 	@keyframes ch-slap {
 		from {
 			opacity: 0;
@@ -138,6 +144,9 @@
 	html.js-motion .hero .hl {
 		animation: ch-hl 0.9s var(--e-smooth) both;
 		animation-delay: calc(0.2s + var(--i) * 0.1s);
+	}
+	html.js-motion .hero h1.hl {
+		animation-name: ch-hl-rise;
 	}
 	html.js-motion .hero .slap {
 		animation: ch-slap 0.55s var(--e-spring) both;

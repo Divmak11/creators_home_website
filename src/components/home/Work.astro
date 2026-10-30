@@ -16,7 +16,7 @@ import { campaigns, FILTERS, filterCount } from '../../data/campaigns.ts';
 
 		<div class="filters js-only" role="group" aria-label="Filter campaigns">
 			{FILTERS.map((f) => (
-				<button type="button" class="pill" data-filter={f.id} aria-pressed={f.id === 'all' ? 'true' : 'false'}>
+				<button type="button" class="pill" data-filter={f.id} data-label={f.label} aria-pressed={f.id === 'all' ? 'true' : 'false'}>
 					{f.label} <span class="count">{filterCount(f.id)}</span>
 				</button>
 			))}
@@ -58,7 +58,6 @@ import { campaigns, FILTERS, filterCount } from '../../data/campaigns.ts';
 <script>
 	import { gsap, Flip, onEnter, motionOn } from '../../scripts/motion/core';
 	import { countUp } from '../../scripts/motion/countup';
-	import { FILTERS } from '../../data/campaigns.ts';
 
 	const band = document.querySelector<HTMLElement>('.work');
 	const grid = band?.querySelector<HTMLElement>('.wgrid');
@@ -72,7 +71,7 @@ import { campaigns, FILTERS, filterCount } from '../../data/campaigns.ts';
 	const nextBtn = band?.querySelector<HTMLButtonElement>('.rail-btn.next');
 	const tapeBar = band?.querySelector<HTMLElement>('.tape-bar');
 
-	const VALID_IDS = FILTERS.map((f) => f.id);
+	const VALID_IDS = filterButtons.map((b) => b.dataset.filter ?? '');
 
 	function isPhoneRail(): boolean {
 		return matchMedia('(max-width: 767.98px)').matches;
@@ -145,7 +144,7 @@ import { campaigns, FILTERS, filterCount } from '../../data/campaigns.ts';
 		filterButtons.forEach((btn) => btn.setAttribute('aria-pressed', String(btn.dataset.filter === id)));
 
 		if (liveStatus) {
-			const label = FILTERS.find((f) => f.id === id)?.label ?? 'All';
+			const label = filterButtons.find((b) => b.dataset.filter === id)?.dataset.label ?? 'All';
 			liveStatus.textContent = id === 'all' ? `Showing all ${count} campaigns` : `Showing ${count} campaigns: ${label}`;
 		}
 

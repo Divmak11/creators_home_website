@@ -16,9 +16,11 @@ function seenPills(seenIn: string[]): string {
 		})
 		.join('');
 }
+const roomsData = services.map((s) => ({ id: s.id, name: s.name, text: s.text, seen: s.seenIn.map((slug) => ({ slug, title: getCampaign(slug)?.title ?? slug })) }));
 ---
 
 <section id="services" class="rooms container">
+	<script type="application/json" id="rooms-data" set:html={JSON.stringify(roomsData)} />
 	<h2>Pick your <span class="pill">room</span></h2>
 
 	<div class="chips" data-m="tumble">
@@ -65,8 +67,9 @@ function seenPills(seenIn: string[]): string {
 <script>
 	import { gsap, onEnter, motionOn } from '../../scripts/motion/core';
 	import { makeRand } from '../../scripts/seeded';
-	import { services } from '../../data/services';
-	import { getCampaign } from '../../data/campaigns';
+	type Room = { id: string; name: string; text: string; seen: { slug: string; title: string }[] };
+	const esc = (t: string) => t.replace(/&/g, '&amp;').replace(/</g, '&lt;');
+	const services: Room[] = JSON.parse(document.getElementById('rooms-data')?.textContent ?? '[]');
 
 	const section = document.querySelector<HTMLElement>('.rooms');
 	const chipsWrap = section?.querySelector<HTMLElement>('.chips');
@@ -87,12 +90,7 @@ function seenPills(seenIn: string[]): string {
 			const svc = services[i];
 			nameEl!.textContent = svc.name;
 			textEl!.textContent = svc.text;
-			pillsEl!.innerHTML = svc.seenIn
-				.map((slug) => {
-					const c = getCampaign(slug);
-					return `<a href="/work/${slug}/" class="seen-pill">${c?.title ?? slug}</a>`;
-				})
-				.join('');
+			pillsEl!.innerHTML = svc.seen.map((c) => `<a href="/work/${c.slug}/" class="seen-pill">${esc(c.title)}</a>`).join('');
 			ctaEl!.href = `/?service=${svc.id}#contact`;
 			ctaEl!.dataset.service = svc.id;
 		}
