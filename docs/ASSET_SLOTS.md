@@ -7,13 +7,13 @@
 | `cover:chhedas` | §8.2 Cover · chhedas | 1200×1500 src; 400, 800, 1200 | placeholder |
 | `cover:district-batwara-awarapan` | §8.2 Cover · district-batwara-awarapan | 590×1280 src, ≈4:5 crop; 400, 590 | placeholder |
 | `cover:fancode-ind-vs-zim` | §8.2 Cover · fancode | 1080×1230 src; 400, 800, 1080 | placeholder |
-| `cover:samsung-galaxy-z-fold8` | §8.2 Cover · samsung | 1080×705 src; 400, 800, 1080 | placeholder |
 | `cover:district-odyssey-filter` | §8.2 Cover · odyssey | 1080×1065 src; 400, 800, 1080 | placeholder |
 | `cover:dhamaal-4-reddit` | §8.2 Cover · dhamaal | 949×1600 src, ≈4:5 crop; 400, 800 | placeholder |
 | `wall:chhedas:1` … `wall:chhedas:5` | §4.5 proof wall — chhedas (5 items) | 360, 720 (phones); full ≤1600 for lightbox | placeholder |
 | `wall:district-batwara-awarapan:1` … `:3` | §4.5 proof wall — district × Batwara/Awarapan (3 items) | 360, 720; full ≤1600 | placeholder |
 | `wall:fancode-ind-vs-zim:1` … `:2` | §4.5 proof wall — FanCode IND vs ZIM (2 items) | 360, 720; full ≤1600 | placeholder |
 | `wall:dhamaal-4-reddit:1` | §4.5 proof wall — Dhamaal 4 (1 item) | 360, 720; full ≤1600 | placeholder |
+| `wall:samsung-galaxy-z-fold8:1` | U5 ruling — Samsung creative shown large on its case page proof wall, not as card cover — A1 note | 1080×705 src; 360 (peek/wall), 720 | placeholder |
 | `sticker:A-01` | §8 asset list — disco ball house | 1:1, 800 master; 160, 320 | placeholder |
 | `sticker:A-02` | §8 asset list — party popper | 1:1; 160, 320 | placeholder |
 | `sticker:A-03` | §8 asset list — speech bubble + heart | 1:1; 160, 320 | placeholder |

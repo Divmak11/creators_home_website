@@ -16,7 +16,7 @@ export interface Campaign {
   filters: Filter[]; platforms: Platform[];
   figure: Stat | null; badge: string | null; secondary: string;
   look: { bg: 'orange' | 'white' | 'ink'; tilt: number };
-  cover: { kind: 'art'; art: 'trophy' | 'reel'; panel: 'ink' | 'white' } | { kind: 'photo'; slot: SlotId; position: string; srcRef: string; width: number; height: number; alt: string };
+  cover: { kind: 'art'; art: 'trophy' | 'reel' | 'phone'; panel: 'ink' | 'white' | 'orange' } | { kind: 'photo'; slot: SlotId; position: string; srcRef: string; width: number; height: number; alt: string };
   stats: Stat[]; leaderboard: LeaderRow[]; platformSplit: { cards: PlatformCard[]; audience: { label: string; pct: number }[] } | null;
   wall: WallItem[]; quotes: Quote[]; lead: string; body: string; move: MoveCard[];
   dates: { label: string; iso: string } | null; peek: boolean;

@@ -4,7 +4,6 @@ export type CoverSlug =
   | 'chhedas'
   | 'district-batwara-awarapan'
   | 'fancode-ind-vs-zim'
-  | 'samsung-galaxy-z-fold8'
   | 'district-odyssey-filter'
   | 'dhamaal-4-reddit';
 
@@ -21,6 +20,7 @@ export type SlotId =
   | 'wall:fancode-ind-vs-zim:1'
   | 'wall:fancode-ind-vs-zim:2'
   | 'wall:dhamaal-4-reddit:1'
+  | 'wall:samsung-galaxy-z-fold8:1'
   | 'sticker:A-01'
   | 'sticker:A-02'
   | 'sticker:A-03'
@@ -32,7 +32,6 @@ export const slots: Record<SlotId, ImageMetadata | null> = {
   'cover:chhedas': null,
   'cover:district-batwara-awarapan': null,
   'cover:fancode-ind-vs-zim': null,
-  'cover:samsung-galaxy-z-fold8': null,
   'cover:district-odyssey-filter': null,
   'cover:dhamaal-4-reddit': null,
   'wall:chhedas:1': null,
@@ -46,6 +45,7 @@ export const slots: Record<SlotId, ImageMetadata | null> = {
   'wall:fancode-ind-vs-zim:1': null,
   'wall:fancode-ind-vs-zim:2': null,
   'wall:dhamaal-4-reddit:1': null,
+  'wall:samsung-galaxy-z-fold8:1': null,
   'sticker:A-01': null,
   'sticker:A-02': null,
   'sticker:A-03': null,

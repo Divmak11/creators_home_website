@@ -1,0 +1,570 @@
+---
+// The party wall (home §4 whole, spec §2.1). Eight campaign cards pinned on the lavender band;
+// filters cut the wall in place (M-24 GSAP Flip) on tablet/desktop, a snap rail on phone.
+// M-21 door-opens band entry + M-22 pin-drop cards run in the component <script> below.
+import WorkCard from '../WorkCard.astro';
+import Slot from '../Slot.astro';
+import { campaigns, FILTERS, filterCount } from '../../data/campaigns.ts';
+---
+
+<section id="work" class="work" data-m="door">
+	<div class="container">
+		<div class="head">
+			<h2>Hits from the house</h2>
+			<p class="sub">Eight launches, from celebrity pushes to Reddit threads.</p>
+		</div>
+
+		<div class="filters js-only" role="group" aria-label="Filter campaigns">
+			{FILTERS.map((f) => (
+				<button type="button" class="pill" data-filter={f.id} aria-pressed={f.id === 'all' ? 'true' : 'false'}>
+					{f.label} <span class="count">{filterCount(f.id)}</span>
+				</button>
+			))}
+		</div>
+		<p class="vh" aria-live="polite" data-status></p>
+
+		<div class="wgrid">
+			{campaigns.map((c) => (
+				<WorkCard campaign={c} />
+			))}
+		</div>
+
+		<div class="tape-track" aria-hidden="true">
+			<div class="tape-bar"></div>
+		</div>
+
+		<div class="rail-nav js-only">
+			<button type="button" class="rail-btn prev" aria-label="Previous campaign">‹</button>
+			<span class="counter" data-counter>1 / 8</span>
+			<button type="button" class="rail-btn next" aria-label="Next campaign">›</button>
+		</div>
+
+		<div class="empty" hidden data-empty>
+			<p class="empty-sticker tilt" style="--r: -2deg">Nothing in this room yet.</p>
+			<a href="/#contact" class="empty-link">Knock knock →</a>
+			<button type="button" class="show-all" data-show-all>Show all</button>
+		</div>
+
+		<div class="cta-row">
+			<a href="/#contact" class="cta">Got a launch? Knock knock →</a>
+		</div>
+	</div>
+
+	<div class="a01 tilt bob loop" style="--r: 8deg" aria-hidden="true">
+		<Slot id="sticker:A-01" alt="" width={160} height={160} widths={[160, 320]} />
+	</div>
+</section>
+
+<script>
+	import { gsap, Flip, onEnter, motionOn } from '../../scripts/motion/core';
+	import { countUp } from '../../scripts/motion/countup';
+	import { FILTERS } from '../../data/campaigns.ts';
+
+	const band = document.querySelector<HTMLElement>('.work');
+	const grid = band?.querySelector<HTMLElement>('.wgrid');
+	const filtersRow = band?.querySelector<HTMLElement>('.filters');
+	const filterButtons = filtersRow ? Array.from(filtersRow.querySelectorAll<HTMLButtonElement>('.pill')) : [];
+	const liveStatus = band?.querySelector<HTMLElement>('[data-status]');
+	const emptyState = band?.querySelector<HTMLElement>('[data-empty]');
+	const showAllBtn = band?.querySelector<HTMLButtonElement>('[data-show-all]');
+	const counterEl = band?.querySelector<HTMLElement>('[data-counter]');
+	const prevBtn = band?.querySelector<HTMLButtonElement>('.rail-btn.prev');
+	const nextBtn = band?.querySelector<HTMLButtonElement>('.rail-btn.next');
+	const tapeBar = band?.querySelector<HTMLElement>('.tape-bar');
+
+	const VALID_IDS = FILTERS.map((f) => f.id);
+
+	function isPhoneRail(): boolean {
+		return matchMedia('(max-width: 767.98px)').matches;
+	}
+
+	function cellMatches(cell: HTMLElement, id: string): boolean {
+		if (id === 'all') return true;
+		const filters = (cell.dataset.filters ?? '').split(' ');
+		return filters.includes(id);
+	}
+
+	function updateCounter(): void {
+		if (!grid || !counterEl) return;
+		const visible = Array.from(grid.querySelectorAll<HTMLElement>(':scope > .wcell')).filter((c) => !c.hidden);
+		const railRect = grid.getBoundingClientRect();
+		let idx = 0;
+		for (let i = 0; i < visible.length; i++) {
+			const r = visible[i].getBoundingClientRect();
+			if (r.left >= railRect.left - 1) {
+				idx = i;
+				break;
+			}
+		}
+		counterEl.textContent = `${idx + 1} / ${visible.length}`;
+	}
+
+	function updateTapeFallback(): void {
+		if (!grid || !tapeBar) return;
+		const max = grid.scrollWidth - grid.clientWidth;
+		const progress = max > 0 ? grid.scrollLeft / max : 0;
+		tapeBar.style.scale = `${progress} 1`;
+	}
+
+	function apply(id: string, { animate }: { animate: boolean }): void {
+		if (!grid) return;
+		const cells = Array.from(grid.querySelectorAll<HTMLElement>(':scope > .wcell'));
+		const doFlip = !isPhoneRail() && motionOn() && animate;
+		const state = doFlip ? Flip.getState(cells) : null;
+
+		cells.forEach((cell) => {
+			cell.hidden = !cellMatches(cell, id);
+		});
+		const count = cells.filter((c) => !c.hidden).length;
+
+		if (!isPhoneRail() && count > 0 && count < 4) {
+			grid.dataset.count = String(count);
+			grid.style.setProperty('--count', String(count));
+		} else {
+			delete grid.dataset.count;
+			grid.style.removeProperty('--count');
+		}
+
+		if (doFlip && state) {
+			Flip.from(state, {
+				duration: 0.6,
+				ease: 'back.out(1.2)',
+				absolute: true,
+				stagger: 0.03,
+				onEnter: (els: Element[]) =>
+					gsap.fromTo(els, { scale: 0.6, rotation: -6, opacity: 0 }, { scale: 1, rotation: 0, opacity: 1, duration: 0.6, ease: 'ch-spring' }),
+				onLeave: (els: Element[]) => gsap.to(els, { scale: 0.6, rotation: 6, opacity: 0, duration: 0.3 }),
+			});
+		}
+
+		if (isPhoneRail()) {
+			grid.scrollLeft = 0;
+			updateCounter();
+		}
+
+		filterButtons.forEach((btn) => btn.setAttribute('aria-pressed', String(btn.dataset.filter === id)));
+
+		if (liveStatus) {
+			const label = FILTERS.find((f) => f.id === id)?.label ?? 'All';
+			liveStatus.textContent = id === 'all' ? `Showing all ${count} campaigns` : `Showing ${count} campaigns: ${label}`;
+		}
+
+		const params = new URLSearchParams(location.search);
+		if (id === 'all') params.delete('filter');
+		else params.set('filter', id);
+		const qs = params.toString();
+		history.replaceState(null, '', location.pathname + (qs ? `?${qs}` : '') + location.hash);
+
+		if (emptyState) emptyState.hidden = count !== 0;
+
+		if (isPhoneRail()) {
+			const activeBtn = filterButtons.find((b) => b.dataset.filter === id);
+			activeBtn?.scrollIntoView({ inline: 'center', block: 'nearest' });
+		}
+	}
+
+	function selectFilter(id: string, { focusButton = false }: { focusButton?: boolean } = {}): void {
+		apply(id, { animate: true });
+		if (focusButton) {
+			const btn = filterButtons.find((b) => b.dataset.filter === id);
+			btn?.focus();
+		}
+	}
+
+	filterButtons.forEach((btn) => {
+		btn.addEventListener('click', () => {
+			apply(btn.dataset.filter ?? 'all', { animate: true });
+			btn.focus();
+		});
+	});
+
+	showAllBtn?.addEventListener('click', () => selectFilter('all', { focusButton: true }));
+
+	if (grid) {
+		const raw = new URLSearchParams(location.search).get('filter');
+		const initial = raw && VALID_IDS.includes(raw as (typeof VALID_IDS)[number]) ? raw : 'all';
+		apply(initial, { animate: false });
+	}
+
+	// Rail prev/next (§4.8 touch, BUILD §4 motionOn gate for smooth vs instant scroll).
+	function railStep(dir: 1 | -1): void {
+		if (!grid) return;
+		counterEl?.setAttribute('aria-live', 'polite');
+		const first = grid.querySelector<HTMLElement>(':scope > .wcell:not([hidden])');
+		const cellWidth = first?.getBoundingClientRect().width ?? 0;
+		grid.scrollBy({ left: dir * (cellWidth + 16), behavior: motionOn() ? 'smooth' : 'auto' });
+	}
+	prevBtn?.addEventListener('click', () => railStep(-1));
+	nextBtn?.addEventListener('click', () => railStep(1));
+
+	const tapeSupported = typeof CSS !== 'undefined' && CSS.supports && CSS.supports('animation-timeline: scroll()');
+	let ticking = false;
+	grid?.addEventListener(
+		'scroll',
+		() => {
+			if (ticking) return;
+			ticking = true;
+			requestAnimationFrame(() => {
+				updateCounter();
+				if (!tapeSupported) updateTapeFallback();
+				ticking = false;
+			});
+		},
+		{ passive: true }
+	);
+
+	// M-21 door opens + M-22 pin-drop (band entry, once).
+	if (band && grid) {
+		onEnter(
+			band,
+			() => {
+				const phone = isPhoneRail();
+				const insetStart = phone ? 'inset(8% 6% 8% 6% round 32px)' : 'inset(8% 6% 8% 6% round 56px)';
+				const insetEnd = phone ? 'inset(0% 0% 0% 0% round 32px)' : 'inset(0% 0% 0% 0% round 56px)';
+				gsap.fromTo(band, { clipPath: insetStart }, { clipPath: insetEnd, duration: 1.0, ease: 'ch-smooth', clearProps: 'clipPath' });
+
+				const cells = Array.from(grid.querySelectorAll<HTMLElement>(':scope > .wcell')).filter((c) => !c.hidden);
+
+				const land = (cell: HTMLElement, delay: number) => {
+					const card = cell.querySelector<HTMLElement>('.wcard');
+					if (card) gsap.fromTo(card, { '--sh-y': '0px' }, { '--sh-y': '16px', duration: 0.2, delay, clearProps: '--sh-y' });
+					const cu = cell.querySelector<HTMLElement>('.cu');
+					if (cu) countUp(cu, { duration: 1.2, delay });
+					const badge = cell.querySelector<HTMLElement>('.badge');
+					if (badge)
+						gsap.fromTo(
+							badge,
+							{ scale: 1.4, rotation: 3 },
+							{ scale: 1, rotation: 0, duration: 0.4, ease: 'ch-spring', delay, clearProps: 'transform' }
+						);
+				};
+
+				if (phone) {
+					const first2 = cells.slice(0, 2);
+					gsap.fromTo(
+						first2,
+						{ x: 40, opacity: 0 },
+						{ x: 0, opacity: 1, duration: 0.5, ease: 'ch-out', stagger: 0.06, delay: 0.35, clearProps: 'transform,opacity' }
+					);
+					cells.forEach((cell) => land(cell, 0));
+				} else {
+					cells.forEach((cell, i) => {
+						const delay = 0.35 + i * 0.08;
+						const rotation = i % 2 ? 10 : -10;
+						gsap.fromTo(
+							cell,
+							{ y: -70, rotation, opacity: 0 },
+							{
+								y: 0,
+								rotation: 0,
+								opacity: 1,
+								duration: 0.75,
+								ease: 'back.out(1.6)',
+								delay,
+								clearProps: 'transform,opacity',
+								onComplete: () => land(cell, 0),
+							}
+						);
+					});
+				}
+			},
+			'top 80%'
+		);
+	}
+</script>
+
+<style>
+	.work {
+		position: relative;
+		background: var(--c-lavender);
+		color: var(--c-ink);
+		border-radius: var(--r-band);
+		padding-block: var(--s-26);
+		overflow: clip;
+	}
+
+	.container {
+		max-width: 1320px;
+		margin-inline: auto;
+		padding-inline: 32px;
+	}
+
+	.head {
+		text-align: center;
+	}
+	h2 {
+		margin: 0;
+		font-family: var(--f-display);
+		font-weight: 800;
+		font-size: var(--fs-h2);
+		letter-spacing: -1.5px;
+	}
+	.sub {
+		margin: var(--s-2) 0 0;
+		font-size: var(--fs-body-l);
+	}
+
+	.js-only {
+		display: none;
+	}
+	:global(html.js) .js-only {
+		display: flex;
+	}
+
+	.filters {
+		margin-top: var(--s-12);
+		flex-wrap: wrap;
+		gap: var(--s-2);
+		justify-content: center;
+	}
+	.pill {
+		display: inline-flex;
+		align-items: center;
+		gap: var(--s-2);
+		min-height: 44px;
+		padding: 0 var(--s-5);
+		border-radius: var(--r-pill);
+		background: var(--c-white);
+		color: var(--c-ink);
+		border: 2px solid var(--c-ink);
+		font-weight: 700;
+		font-size: var(--fs-small);
+		transition: background-color var(--t-s) var(--e-smooth), color var(--t-s) var(--e-smooth);
+	}
+	.pill[aria-pressed='true'] {
+		background: var(--c-violet);
+		color: var(--c-white);
+		border-color: var(--c-violet);
+	}
+	.count {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		min-width: 22px;
+		height: 22px;
+		border-radius: var(--r-round);
+		background: var(--c-ink);
+		color: var(--c-white);
+		font-size: 12px;
+	}
+	.pill[aria-pressed='true'] .count {
+		background: var(--c-white);
+		color: var(--c-violet);
+	}
+
+	.wgrid {
+		margin-top: var(--s-14);
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 24px;
+	}
+
+	.tape-track {
+		display: none;
+	}
+
+	.rail-btn {
+		width: 44px;
+		height: 44px;
+		border-radius: var(--r-round);
+		background: var(--c-ink);
+		color: var(--c-white);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		font-size: 22px;
+	}
+	.counter {
+		font-weight: 700;
+		font-variant-numeric: tabular-nums;
+	}
+
+	.empty {
+		margin-top: var(--s-14);
+		text-align: center;
+	}
+	.empty-sticker {
+		display: inline-block;
+		background: var(--c-white);
+		border-radius: var(--r-sticker);
+		padding: var(--s-5) var(--s-8);
+		font-family: var(--f-display);
+		font-weight: 700;
+	}
+	.empty-link {
+		display: block;
+		margin-top: var(--s-4);
+		font-weight: 700;
+		text-decoration: none;
+	}
+	.show-all {
+		margin-top: var(--s-4);
+		display: inline-block;
+		padding: var(--s-3) var(--s-6);
+		border-radius: var(--r-pill);
+		background: var(--c-ink);
+		color: var(--c-white);
+		font-weight: 700;
+	}
+
+	.cta-row {
+		margin-top: var(--s-14);
+		text-align: center;
+	}
+	.cta {
+		display: inline-block;
+		text-decoration: none;
+		background: var(--c-ink);
+		color: var(--c-white);
+		font-weight: 700;
+		font-size: 18px;
+		padding: var(--s-4) var(--s-8);
+		border-radius: var(--r-pill);
+		transition: background-color var(--t-s) var(--e-smooth), color var(--t-s) var(--e-smooth);
+	}
+	@media (hover: hover) and (pointer: fine) {
+		.cta:hover {
+			background: var(--c-orange);
+			color: var(--c-ink);
+		}
+	}
+
+	.a01 {
+		position: absolute;
+		top: var(--s-8);
+		right: var(--s-8);
+		width: 120px;
+		display: none;
+	}
+
+	@media (min-width: 1200px) {
+		.work {
+			border-radius: var(--r-band);
+			padding-block: var(--s-26);
+		}
+		.wgrid {
+			grid-template-columns: repeat(4, minmax(0, 1fr));
+			gap: 28px;
+		}
+		.wgrid[data-count] {
+			grid-template-columns: repeat(var(--count), minmax(0, 305px));
+			justify-content: center;
+		}
+		.a01 {
+			display: block;
+		}
+	}
+
+	@media (min-width: 768px) {
+		.tape-track,
+		.rail-nav,
+		:global(html.js) .rail-nav {
+			display: none;
+		}
+	}
+
+	@media (max-width: 1199.98px) {
+		.work {
+			padding-block: var(--s-20);
+		}
+	}
+
+	@media (max-width: 767.98px) {
+		.work {
+			border-radius: var(--r-band-phone);
+			padding-block: var(--s-14);
+		}
+		.filters {
+			margin-top: var(--s-10);
+			flex-wrap: nowrap;
+			overflow-x: auto;
+			justify-content: flex-start;
+			padding-inline: var(--s-4);
+			margin-inline: calc(var(--s-4) * -1);
+			-webkit-mask-image: linear-gradient(to right, transparent, #000 24px, #000 calc(100% - 24px), transparent);
+			mask-image: linear-gradient(to right, transparent, #000 24px, #000 calc(100% - 24px), transparent);
+		}
+		.pill {
+			flex: none;
+		}
+
+		.wgrid {
+			display: flex;
+			grid-template-columns: none;
+			gap: 16px;
+			overflow-x: auto;
+			scroll-snap-type: x mandatory;
+			padding-inline: 16px;
+			padding-block: 24px;
+			scroll-padding-inline: 16px;
+			margin-inline: calc(var(--s-4) * -1);
+		}
+		.wgrid :global(.wcell) {
+			flex: 0 0 min(78vw, 320px);
+			scroll-snap-align: start;
+		}
+
+		.tape-track {
+			display: block;
+			margin-top: var(--s-4);
+			height: 4px;
+			background: var(--c-muted-ink);
+			border-radius: var(--r-pill);
+			overflow: hidden;
+		}
+		.tape-bar {
+			width: 100%;
+			height: 100%;
+			background: var(--c-orange);
+			transform-origin: left;
+			scale: 0 1;
+		}
+		@supports (animation-timeline: scroll()) {
+			.work {
+				timeline-scope: --rail;
+			}
+			.wgrid {
+				scroll-timeline: --rail x;
+			}
+			.tape-bar {
+				animation: ch-tape linear both;
+				animation-timeline: --rail;
+			}
+		}
+		@keyframes ch-tape {
+			from {
+				scale: 0 1;
+			}
+			to {
+				scale: 1 1;
+			}
+		}
+
+		.rail-nav {
+			margin-top: var(--s-4);
+			justify-content: center;
+			align-items: center;
+			gap: var(--s-5);
+		}
+	}
+
+	/* Hidden-state contract (BUILD §4): written only under html.js-motion, matched to the
+	   onEnter `data-m` + `.is-in` swap in scripts/motion/core.ts. */
+	:global(html.js-motion) .work[data-m='door']:not(.is-in) {
+		clip-path: inset(8% 6% 8% 6% round 56px);
+	}
+	:global(html.js-motion) .work[data-m='door']:not(.is-in) .wgrid :global(.wcell) {
+		opacity: 0;
+	}
+	:global(html.js-motion) .work[data-m='door']:not(.is-in) .wgrid :global(.wcard) {
+		--sh-y: 0px;
+	}
+	@media (max-width: 767.98px) {
+		:global(html.js-motion) .work[data-m='door']:not(.is-in) {
+			clip-path: inset(8% 6% 8% 6% round 32px);
+		}
+		:global(html.js-motion) .work[data-m='door']:not(.is-in) .wgrid :global(.wcell:nth-child(n+3)) {
+			opacity: 1;
+		}
+	}
+</style>

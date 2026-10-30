@@ -1,0 +1,117 @@
+---
+// Art panel for cards with no photo cover (§4.4 art panel + §4.9 generic fallback).
+// Three named treatments (Raghav Juyal / Manu Singh / Samsung) match the design's icon-panel
+// style (sources/designs/K_HomeParty_CreatorsHome.dc.html L126-132 trophy, L142 "7.7" badge).
+// Any other art-kind or broken-photo cover falls back to a plain category-colour panel with
+// the campaign's first platform icon (§4.9 "cover image missing/fails").
+import Icon from './Icon.astro';
+import type { Campaign, Filter } from '../data/types.ts';
+
+interface Props {
+  campaign: Campaign;
+}
+
+const { campaign } = Astro.props;
+
+const CATEGORY_BG: Record<Filter, string> = {
+  film: 'var(--c-violet)',
+  brands: 'var(--c-orange)',
+  celebs: 'var(--c-ink)',
+  reddit: 'var(--c-white)',
+};
+const CATEGORY_FG: Record<Filter, string> = {
+  film: 'var(--c-white)',
+  brands: 'var(--c-ink)',
+  celebs: 'var(--c-white)',
+  reddit: 'var(--c-ink)',
+};
+
+type ArtKind =
+  | { case: 'trophy'; bg: string; fg: string; figure: string; pill: false }
+  | { case: 'reel'; bg: string; fg: string; figure: string; pill: true }
+  | { case: 'phone'; bg: string; fg: string; figure: string; pill: false }
+  | { case: 'fallback'; bg: string; fg: string; icon: 'instagram' | 'facebook' | 'x' | 'reddit' };
+
+function resolve(c: Campaign): ArtKind {
+  if (c.slug === 'raghav-juyal') {
+    return { case: 'trophy', bg: 'var(--c-ink)', fg: 'var(--c-orange)', figure: c.figure?.num.display ?? '6M+', pill: false };
+  }
+  if (c.slug === 'manu-singh-interrogation') {
+    return { case: 'reel', bg: 'var(--c-white)', fg: 'var(--c-ink)', figure: c.figure?.num.display ?? '1.6M', pill: true };
+  }
+  if (c.slug === 'samsung-galaxy-z-fold8') {
+    return { case: 'phone', bg: 'var(--c-orange)', fg: 'var(--c-ink)', figure: 'Galaxy Z Fold8', pill: false };
+  }
+  const filter = c.filters[0];
+  const bg = CATEGORY_BG[filter] ?? 'var(--c-muted-violet)';
+  const fg = CATEGORY_FG[filter] ?? 'var(--c-ink)';
+  return { case: 'fallback', bg, fg, icon: c.platforms[0] };
+}
+
+const art = resolve(campaign);
+---
+
+<div class="artpanel" style={`background: ${art.bg}; color: ${art.fg};`} aria-hidden="true">
+	{art.case === 'fallback' ? (
+		<Icon name={art.icon} size={48} class="art-icon" />
+	) : (
+		<Icon name={art.case} size={88} class="art-icon bob loop" style="--r: -4deg" />
+	)}
+
+	{art.case === 'trophy' && <span class="art-figure plain">{art.figure}</span>}
+	{art.case === 'reel' && (
+		<span class="art-figure pill-wrap">
+			<span class="art-figure-pill">{art.figure}</span>
+		</span>
+	)}
+	{art.case === 'phone' && <span class="art-figure phone-label">{art.figure}</span>}
+</div>
+
+<style>
+	.artpanel {
+		position: relative;
+		width: 100%;
+		height: 100%;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		gap: var(--s-4);
+	}
+
+	.art-icon {
+		color: inherit;
+		flex: none;
+	}
+
+	.art-figure {
+		font-family: var(--f-display);
+		font-weight: 800;
+		line-height: 1;
+		text-align: center;
+	}
+	.art-figure.plain {
+		font-size: 64px;
+	}
+	.art-figure-pill {
+		display: inline-block;
+		background: var(--c-orange);
+		color: var(--c-ink);
+		border-radius: var(--r-pill);
+		padding: var(--s-1) var(--s-5);
+		font-size: 36px;
+	}
+	.art-figure.phone-label {
+		font-size: 26px;
+		padding-inline: var(--s-4);
+	}
+
+	@media (max-width: 767.98px) {
+		.art-figure.plain {
+			font-size: 48px;
+		}
+		.art-figure-pill {
+			font-size: 28px;
+		}
+	}
+</style>
