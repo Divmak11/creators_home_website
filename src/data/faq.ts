@@ -37,7 +37,7 @@ export const faq: FaqItem[] = [
   },
   {
     q: 'Are the numbers on this site real?',
-    a: "Yes. Every number comes from our campaign reports — views, reach and engagement as the platforms reported them. We don't publish inflated reach estimates.",
+    a: "Yes. Every number comes from our campaign reports — views, reach and engagement as the platforms reported them.",
     hasPlaceholder: false,
   },
 ];
