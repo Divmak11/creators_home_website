@@ -58,7 +58,7 @@ async function loadAssets() {
 function titleFontSize(title: string): number {
   if (title.length <= 14) return 64;
   if (title.length <= 22) return 52;
-  if (title.length <= 30) return 44;
+  if (title.length <= 30) return 48;
   if (title.length <= 38) return 32;
   return 28;
 }
