@@ -1,0 +1,705 @@
+---
+// Come on in — contact form (home §3.1-14, spec §9.5; BUILD.md §7 ruling: Web3Forms). Server
+// renders WITHOUT `novalidate` so no-JS submissions use native constraint validation and the
+// provider's `redirect` to `/?sent=1#contact`; the component script enhances with `fetch` +
+// JSON, per-field custom messages, role/service preselect (role.ts) and M-19 confetti on
+// success. Creator fieldset renders visible+enabled for no-JS (with a note); JS hides/disables
+// it on init and reveals it only for role = creator/meme.
+import Ph from '../Ph.astro';
+import Slot from '../Slot.astro';
+import { FORM_ENDPOINT, WEB3FORMS_ACCESS_KEY, SITE_URL, CONTACT } from '../../config';
+
+const warnIcon =
+	'<svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 2 1 21h22L12 2Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><line x1="12" y1="9" x2="12" y2="14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="17.3" r="1" fill="currentColor"/></svg>';
+---
+
+<section id="contact" class="contact">
+	<div class="panel" data-m="door2">
+		<div class="inner">
+			<div class="head">
+				<h2>Come on in.</h2>
+				<p class="line">Brands &amp; creators — we reply within <Ph text="one working day — confirm" />.</p>
+				<div class="sticker tilt" aria-hidden="true" style="--r: -4deg">
+					<Slot id="sticker:A-04" alt="" width={240} height={199} widths={[240, 480]} />
+				</div>
+			</div>
+
+			<form id="contact-form" method="POST" action={FORM_ENDPOINT}>
+				<input type="hidden" name="access_key" value={WEB3FORMS_ACCESS_KEY} />
+				<input type="hidden" name="subject" value="New enquiry — CreatorsHome website" />
+				<input type="hidden" name="from_name" value="CreatorsHome website" />
+				<input type="hidden" name="redirect" value={`${SITE_URL}/?sent=1#contact`} />
+				<input type="hidden" name="source_page" value="" data-source-page />
+				<input type="hidden" name="service" value="" data-service-field />
+
+				<div class="fields">
+					<div class="f-row">
+						<label for="f-name">Name <span aria-hidden="true">*</span></label>
+						<input id="f-name" name="name" type="text" required autocomplete="name" aria-describedby="name-err" />
+						<p id="name-err" class="err" hidden><span class="warn" set:html={warnIcon} /><span class="err-text" /></p>
+					</div>
+
+					<div class="f-row">
+						<label for="f-email">Email <span aria-hidden="true">*</span></label>
+						<input id="f-email" name="email" type="email" required autocomplete="email" aria-describedby="email-err" />
+						<p id="email-err" class="err" hidden><span class="warn" set:html={warnIcon} /><span class="err-text" /></p>
+					</div>
+
+					<div class="f-row">
+						<label for="f-mobile">Mobile</label>
+						<input id="f-mobile" name="mobile" type="tel" autocomplete="tel" aria-describedby="mobile-err" />
+						<p id="mobile-err" class="err" hidden><span class="warn" set:html={warnIcon} /><span class="err-text" /></p>
+					</div>
+
+					<div class="f-row">
+						<label for="f-role">I am a <span aria-hidden="true">*</span></label>
+						<select id="f-role" name="role" required aria-describedby="role-err">
+							<option value="" selected disabled>Choose one</option>
+							<option value="brand">Brand</option>
+							<option value="creator">Creator</option>
+							<option value="meme">Meme page</option>
+						</select>
+						<p id="role-err" class="err" hidden><span class="warn" set:html={warnIcon} /><span class="err-text" /></p>
+					</div>
+
+					<div class="f-row span-2">
+						<label for="f-handle">Website or handle <span aria-hidden="true">*</span></label>
+						<input id="f-handle" name="handle" type="text" required aria-describedby="handle-err" />
+						<p id="handle-err" class="err" hidden><span class="warn" set:html={warnIcon} /><span class="err-text" /></p>
+					</div>
+
+					<div class="f-row span-2">
+						<label for="f-message">Message</label>
+						<textarea id="f-message" name="message" rows="4" aria-describedby="message-err"></textarea>
+						<p id="message-err" class="err" hidden><span class="warn" set:html={warnIcon} /><span class="err-text" /></p>
+					</div>
+
+					<fieldset id="creator-fields">
+						<legend>About your page</legend>
+						<p class="creator-note">Creators and meme pages: tell us about your page</p>
+
+						<div class="f-row">
+							<label for="f-platform">Main platform</label>
+							<select id="f-platform" name="platform" aria-describedby="platform-err">
+								<option value="instagram">Instagram</option>
+								<option value="youtube">YouTube</option>
+								<option value="facebook">Facebook</option>
+								<option value="x">X</option>
+								<option value="reddit">Reddit</option>
+								<option value="other">Other</option>
+							</select>
+							<p id="platform-err" class="err" hidden><span class="warn" set:html={warnIcon} /><span class="err-text" /></p>
+						</div>
+
+						<div class="f-row">
+							<label for="f-followers">Followers</label>
+							<select id="f-followers" name="followers" aria-describedby="followers-err">
+								<option value="<10k">&lt; 10K</option>
+								<option value="10k-100k">10K–100K</option>
+								<option value="100k-1m">100K–1M</option>
+								<option value="1m+">1M+</option>
+							</select>
+							<p id="followers-err" class="err" hidden><span class="warn" set:html={warnIcon} /><span class="err-text" /></p>
+						</div>
+
+						<div class="f-row">
+							<label for="f-niche">Niche</label>
+							<input id="f-niche" name="niche" type="text" aria-describedby="niche-err" />
+							<p id="niche-err" class="err" hidden><span class="warn" set:html={warnIcon} /><span class="err-text" /></p>
+						</div>
+
+						<div class="f-row">
+							<label for="f-languages">Languages</label>
+							<input id="f-languages" name="languages" type="text" aria-describedby="languages-err" />
+							<p id="languages-err" class="err" hidden><span class="warn" set:html={warnIcon} /><span class="err-text" /></p>
+						</div>
+					</fieldset>
+
+					<div class="f-row span-2">
+						<label for="f-consent" class="consent-label">
+							<input id="f-consent" type="checkbox" name="consent" required aria-describedby="consent-err" />
+							<span>I agree to the <a href="/privacy/">Privacy Policy</a> and to CreatorsHome contacting me about this.</span>
+						</label>
+						<p id="consent-err" class="err" hidden><span class="warn" set:html={warnIcon} /><span class="err-text" /></p>
+					</div>
+
+					<div class="f-row span-2 vh honeypot" aria-hidden="true">
+						<label for="f-company">Company website</label>
+						<input id="f-company" type="text" name="company_website" tabindex="-1" autocomplete="off" />
+					</div>
+
+					<div class="f-row span-2 banner-slot" data-banner-slot></div>
+
+					<div class="f-row span-2 submit-row">
+						<button type="submit" id="submit-btn" class="submit">
+							<span class="btn-label">Send it →</span>
+							<span class="btn-spinner" hidden>
+								<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round">
+									<path d="M3 11 12 4 21 11 V20 H3 Z M9 20 V13 H15 V20" />
+								</svg>
+							</span>
+						</button>
+					</div>
+				</div>
+
+				<template data-banner-tpl>
+					<p class="banner" role="alert">
+						That didn't go through. Try again, or email us at {CONTACT.email ? (
+							<a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>
+						) : (
+							<Ph text="email" />
+						)}.
+					</p>
+				</template>
+			</form>
+		</div>
+	</div>
+</section>
+
+<script>
+	import { gsap, onEnter, motionOn, SplitText } from '../../scripts/motion/core';
+	import { onRole, onService, type Role } from '../../scripts/role';
+	import { makeRand } from '../../scripts/seeded';
+	import { services } from '../../data/services';
+	import { FORM_ENDPOINT } from '../../config';
+
+	type FieldEl = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
+
+	const panel = document.querySelector<HTMLElement>('.contact .panel');
+	const inner = panel?.querySelector<HTMLElement>('.inner');
+	const form = document.querySelector<HTMLFormElement>('#contact-form');
+
+	if (panel && inner && form) {
+		form.noValidate = true;
+
+		const roleSelect = form.querySelector<HTMLSelectElement>('#f-role')!;
+		const creatorFieldset = form.querySelector<HTMLFieldSetElement>('#creator-fields')!;
+		const messageField = form.querySelector<HTMLTextAreaElement>('#f-message')!;
+		const serviceHidden = form.querySelector<HTMLInputElement>('[data-service-field]')!;
+		const sourcePageHidden = form.querySelector<HTMLInputElement>('[data-source-page]')!;
+		const honeypot = form.querySelector<HTMLInputElement>('#f-company')!;
+		const submitBtn = form.querySelector<HTMLButtonElement>('#submit-btn')!;
+		const btnLabel = submitBtn.querySelector<HTMLElement>('.btn-label')!;
+		const btnSpinner = submitBtn.querySelector<HTMLElement>('.btn-spinner')!;
+		const bannerSlot = form.querySelector<HTMLElement>('[data-banner-slot]')!;
+		const bannerTpl = form.querySelector<HTMLTemplateElement>('template[data-banner-tpl]')!;
+
+		sourcePageHidden.value = location.pathname;
+
+		// Creator fields: hidden/disabled until role is creator or meme (no-JS shows them open).
+		function updateCreatorFields(role: string): void {
+			const show = role === 'creator' || role === 'meme';
+			creatorFieldset.hidden = !show;
+			creatorFieldset.disabled = !show;
+		}
+		creatorFieldset.hidden = true;
+		creatorFieldset.disabled = true;
+		roleSelect.addEventListener('change', () => updateCreatorFields(roleSelect.value));
+
+		onRole((role: Role) => {
+			roleSelect.value = role;
+			updateCreatorFields(role);
+		});
+
+		onService((id: string) => {
+			serviceHidden.value = id;
+			if (!messageField.value) {
+				const svc = services.find((s) => s.id === id);
+				if (svc) messageField.value = `Interested in: ${svc.name}`;
+			}
+		});
+
+		function allFields(): FieldEl[] {
+			return Array.from(form!.querySelectorAll<FieldEl>('input, select, textarea')).filter((el) => {
+				if (el.name === 'company_website' || !el.name) return false;
+				if (el instanceof HTMLInputElement && el.type === 'hidden') return false;
+				return true;
+			});
+		}
+
+		function messageFor(field: FieldEl): string {
+			const v = field.validity;
+			if (v.valueMissing) {
+				if (field.name === 'role') return "Pick one so we know who's knocking.";
+				if (field.name === 'consent') return 'Please tick this so we can reply.';
+				return 'Please fill this in.';
+			}
+			if (v.typeMismatch) return "That email doesn't look right.";
+			return field.validationMessage || 'Please fill this in.';
+		}
+
+		function errElFor(field: FieldEl): HTMLElement | null {
+			const id = field.getAttribute('aria-describedby');
+			return id ? document.getElementById(id) : null;
+		}
+
+		function showError(field: FieldEl): void {
+			field.setAttribute('aria-invalid', 'true');
+			const err = errElFor(field);
+			if (err) {
+				const text = err.querySelector<HTMLElement>('.err-text');
+				if (text) text.textContent = messageFor(field);
+				err.hidden = false;
+			}
+		}
+
+		function clearError(field: FieldEl): void {
+			field.removeAttribute('aria-invalid');
+			const err = errElFor(field);
+			if (err) err.hidden = true;
+		}
+
+		function validateField(field: FieldEl): boolean {
+			if (field.checkValidity()) {
+				clearError(field);
+				return true;
+			}
+			showError(field);
+			return false;
+		}
+
+		allFields().forEach((field) => {
+			field.addEventListener('blur', () => validateField(field));
+			field.addEventListener('input', () => {
+				if (field.getAttribute('aria-invalid') === 'true' && field.checkValidity()) clearError(field);
+			});
+		});
+
+		function hideBanner(): void {
+			bannerSlot.innerHTML = '';
+		}
+		function showBanner(): void {
+			bannerSlot.innerHTML = '';
+			bannerSlot.appendChild(bannerTpl.content.cloneNode(true));
+		}
+
+		function setLoading(loading: boolean): void {
+			submitBtn.disabled = loading;
+			submitBtn.setAttribute('aria-busy', String(loading));
+			btnLabel.textContent = loading ? 'Sending…' : 'Send it →';
+			btnSpinner.hidden = !loading;
+		}
+
+		function buildConfettiPiece(kind: 'house' | 'heart' | 'star', colour: string, size: number): SVGElement {
+			const paths: Record<string, string> = {
+				house: '<path d="M3 11 12 4 21 11 V20 H3 Z M9 20 V13 H15 V20" fill="none" stroke="var(--pc)" stroke-width="2" stroke-linejoin="round"/>',
+				heart: '<path d="M12 21s-8-5.5-8-11a4 4 0 0 1 8-1.5A4 4 0 0 1 20 10c0 5.5-8 11-8 11z" fill="var(--pc)"/>',
+				star: '<path d="M12 2l2.9 6.9 7.1.6-5.5 4.6 1.8 7-6.3-4-6.3 4 1.8-7L2 9.5l7.1-.6z" fill="var(--pc)"/>',
+			};
+			const wrap = document.createElement('div');
+			wrap.innerHTML = `<svg width="${size}" height="${size}" viewBox="0 0 24 24" aria-hidden="true">${paths[kind]}</svg>`;
+			const svg = wrap.firstElementChild as SVGSVGElement;
+			svg.style.setProperty('--pc', colour);
+			return svg;
+		}
+
+		function spawnConfetti(origin: { x: number; y: number }): void {
+			const rand = makeRand(Date.now() % 2147483647);
+			const kinds: Array<'house' | 'heart' | 'star'> = ['house', 'heart', 'star'];
+			const colours = ['var(--c-ink)', 'var(--c-white)', 'var(--c-violet)'];
+			for (let i = 0; i < 24; i++) {
+				const piece = buildConfettiPiece(kinds[i % kinds.length], colours[i % colours.length], rand(14, 20));
+				piece.classList.add('confetti-piece');
+				piece.style.position = 'absolute';
+				piece.style.left = `${origin.x}px`;
+				piece.style.top = `${origin.y}px`;
+				piece.style.pointerEvents = 'none';
+				panel!.appendChild(piece);
+				gsap.to(piece, {
+					x: rand(-260, 260),
+					y: rand(-320, -60),
+					rotation: rand(-200, 200),
+					opacity: 0,
+					duration: 1.2,
+					ease: 'power2.out',
+					onComplete: () => piece.remove(),
+				});
+			}
+		}
+
+		function showSuccessCard({ confetti, focus }: { confetti: boolean; focus: boolean }): void {
+			setLoading(false);
+			hideBanner();
+			let origin: { x: number; y: number } | null = null;
+			if (confetti && motionOn()) {
+				const btnRect = submitBtn.getBoundingClientRect();
+				const panelRect = panel!.getBoundingClientRect();
+				origin = { x: btnRect.left + btnRect.width / 2 - panelRect.left, y: btnRect.top + btnRect.height / 2 - panelRect.top };
+			}
+			const successEl = document.createElement('div');
+			successEl.className = 'success';
+			successEl.tabIndex = -1;
+			successEl.innerHTML = "<h3>You're in! We'll knock back soon.</h3>";
+			form!.replaceWith(successEl);
+			if (focus) successEl.focus();
+			if (origin) spawnConfetti(origin);
+		}
+
+		form.addEventListener('submit', async (e) => {
+			e.preventDefault();
+			hideBanner();
+
+			if (honeypot.value) {
+				showSuccessCard({ confetti: false, focus: true });
+				return;
+			}
+
+			const toValidate = allFields().filter((f) => !(f as HTMLInputElement).disabled);
+			let firstInvalid: FieldEl | null = null;
+			toValidate.forEach((field) => {
+				if (!validateField(field) && !firstInvalid) firstInvalid = field;
+			});
+			if (firstInvalid) {
+				(firstInvalid as FieldEl).focus();
+				return;
+			}
+
+			setLoading(true);
+			try {
+				const res = await fetch(FORM_ENDPOINT, { method: 'POST', headers: { Accept: 'application/json' }, body: new FormData(form!) });
+				const json = await res.json().catch(() => null);
+				if (res.ok && json && json.success) {
+					showSuccessCard({ confetti: true, focus: true });
+				} else {
+					setLoading(false);
+					showBanner();
+				}
+			} catch {
+				setLoading(false);
+				showBanner();
+			}
+		});
+
+		const sentParams = new URLSearchParams(location.search);
+		if (sentParams.get('sent') === '1') {
+			showSuccessCard({ confetti: false, focus: true });
+			sentParams.delete('sent');
+			const qs = sentParams.toString();
+			history.replaceState(null, '', location.pathname + (qs ? `?${qs}` : '') + location.hash);
+		}
+
+		// M-18 door open: panel scale + radius, inner fade, heading chars bounce, fields rise.
+		onEnter(panel, () => {
+			const phone = matchMedia('(max-width: 767.98px)').matches;
+			gsap.fromTo(
+				panel,
+				{ scale: 0.92, borderRadius: 120 },
+				{ scale: 1, borderRadius: phone ? 32 : 56, duration: 0.8, ease: 'ch-smooth', clearProps: 'scale,borderRadius' }
+			);
+			gsap.fromTo(inner, { opacity: 0 }, { opacity: 1, duration: 0.5, delay: 0.2, clearProps: 'opacity' });
+
+			const h2 = panel.querySelector<HTMLElement>('h2');
+			if (h2) {
+				const split = SplitText.create(h2, { type: 'chars', aria: 'auto' });
+				gsap.fromTo(
+					split.chars,
+					{ y: -40, opacity: 0 },
+					{
+						y: 0,
+						opacity: 1,
+						duration: 0.5,
+						ease: 'back.out(2)',
+						stagger: 0.025,
+						onComplete: () => {
+							split.revert();
+						},
+					}
+				);
+			}
+
+			const rows = Array.from(form!.querySelectorAll<HTMLElement>('.f-row'));
+			gsap.fromTo(rows, { y: 16, opacity: 0 }, { y: 0, opacity: 1, duration: 0.4, stagger: 0.05, clearProps: 'transform,opacity' });
+		});
+	}
+</script>
+
+<style>
+	.contact {
+		padding: 0 32px var(--s-26);
+	}
+
+	.panel {
+		position: relative;
+		max-width: 1320px;
+		margin-inline: auto;
+		background: var(--c-orange);
+		color: var(--c-ink);
+		border-radius: var(--r-band);
+		padding: 64px;
+		overflow: clip;
+	}
+
+	.inner {
+		display: grid;
+		grid-template-columns: 5fr 7fr;
+		gap: var(--s-10);
+		align-items: start;
+	}
+
+	.head {
+		position: relative;
+	}
+	h2 {
+		margin: 0;
+		font-family: var(--f-display);
+		font-weight: 800;
+		font-size: var(--fs-h2-xl);
+		line-height: 1;
+		letter-spacing: -3px;
+	}
+	.line {
+		margin: var(--s-5) 0 0;
+		font-size: 20px;
+		font-weight: 700;
+	}
+	.sticker {
+		margin-top: var(--s-10);
+		width: 180px;
+		display: none;
+	}
+
+	form {
+		color: var(--c-ink);
+	}
+
+	.fields {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 14px;
+	}
+	.span-2 {
+		flex-basis: 100%;
+	}
+
+	.f-row {
+		flex: 1 1 calc(50% - 7px);
+		display: flex;
+		flex-direction: column;
+		gap: 6px;
+	}
+	label {
+		font-weight: 700;
+		font-size: 14px;
+	}
+
+	input,
+	select,
+	textarea {
+		width: 100%;
+		min-height: 48px;
+		border: 2px solid var(--c-ink);
+		border-radius: var(--r-field);
+		padding: 0 var(--s-4);
+		background: var(--c-white);
+		color: var(--c-ink);
+	}
+	textarea {
+		min-height: 110px;
+		padding: var(--s-3) var(--s-4);
+	}
+
+	.fields input:focus,
+	.fields select:focus,
+	.fields textarea:focus {
+		outline: 3px solid var(--c-violet);
+		outline-offset: 2px;
+	}
+	.fields input:focus-visible,
+	.fields select:focus-visible,
+	.fields textarea:focus-visible {
+		outline: 3px solid #fff;
+		outline-offset: 2px;
+		box-shadow: 0 0 0 6px var(--c-ink);
+	}
+
+	input[aria-invalid='true'],
+	select[aria-invalid='true'],
+	textarea[aria-invalid='true'] {
+		border-color: var(--c-ink-2);
+	}
+
+	.err {
+		margin: 0;
+		display: flex;
+		align-items: flex-start;
+		gap: 6px;
+		font-size: var(--fs-small);
+		color: var(--c-ink);
+	}
+	.err[hidden] {
+		display: none;
+	}
+	.warn {
+		flex: none;
+		margin-top: 2px;
+	}
+
+	fieldset {
+		flex-basis: 100%;
+		display: flex;
+		flex-wrap: wrap;
+		gap: 14px;
+		border: 0;
+		padding: 0;
+	}
+	fieldset[hidden] {
+		display: none;
+	}
+	fieldset[disabled] {
+		opacity: 0.6;
+	}
+	legend {
+		flex-basis: 100%;
+		padding: 0;
+		font-family: var(--f-display);
+		font-weight: 700;
+		font-size: 16px;
+		margin-bottom: 4px;
+	}
+	.creator-note {
+		flex-basis: 100%;
+		margin: 0 0 4px;
+		font-size: var(--fs-small);
+		font-weight: 700;
+	}
+
+	.consent-label {
+		display: flex;
+		align-items: flex-start;
+		gap: var(--s-2);
+		font-weight: 500;
+		font-size: var(--fs-small);
+	}
+	.consent-label input {
+		width: 20px;
+		height: 20px;
+		min-height: 0;
+		flex: none;
+		margin-top: 2px;
+	}
+	.consent-label a {
+		text-decoration: underline;
+	}
+
+	.banner-slot:empty {
+		display: none;
+	}
+	.banner {
+		margin: 0;
+		background: var(--c-ink);
+		color: var(--c-white);
+		border-radius: var(--r-field);
+		padding: var(--s-4);
+		font-weight: 700;
+		font-size: var(--fs-small);
+	}
+	.banner :global(.ph) {
+		color: var(--c-white);
+	}
+
+	.submit {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		gap: var(--s-2);
+		min-height: 52px;
+		padding: 0 var(--s-8);
+		border-radius: var(--r-pill);
+		background: var(--c-ink);
+		color: var(--c-white);
+		font-weight: 700;
+		font-size: 18px;
+		transition: translate var(--t-s) var(--e-spring), box-shadow var(--t-s) var(--e-spring);
+	}
+	@media (hover: hover) and (pointer: fine) {
+		.submit:hover {
+			translate: 0 -3px;
+			box-shadow: var(--sh-btn);
+		}
+	}
+	.submit:disabled {
+		cursor: default;
+	}
+
+	@keyframes ch-btn-spin {
+		to {
+			rotate: 360deg;
+		}
+	}
+	.btn-spinner {
+		display: inline-flex;
+		animation: ch-btn-spin 0.8s linear infinite;
+	}
+	.btn-spinner[hidden] {
+		display: none;
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.btn-spinner {
+			animation: none;
+		}
+	}
+
+	.success {
+		background: var(--c-white);
+		color: var(--c-ink);
+		border-radius: var(--r-card-l);
+		padding: var(--s-12);
+		text-align: center;
+	}
+	.success h3 {
+		margin: 0;
+		font-family: var(--f-display);
+		font-weight: 800;
+		font-size: 28px;
+	}
+
+	@media (min-width: 768px) {
+		.sticker {
+			display: block;
+		}
+	}
+
+	@media (max-width: 1199.98px) {
+		.panel {
+			padding: 48px;
+		}
+		.inner {
+			grid-template-columns: 1fr;
+		}
+	}
+
+	@media (max-width: 767.98px) {
+		.contact {
+			padding: 0 16px var(--s-14);
+		}
+		.panel {
+			padding: 24px;
+			border-radius: var(--r-band-phone);
+		}
+		.f-row {
+			flex-basis: 100%;
+		}
+		input,
+		select,
+		textarea {
+			font-size: 16px;
+			min-height: 52px;
+		}
+		.consent-label input {
+			width: 46px;
+			height: 46px;
+		}
+	}
+
+	/* Hidden-state contract (BUILD §4): written only under html.js-motion, matched to the
+	   onEnter `data-m` + `.is-in` swap in scripts/motion/core.ts. */
+	:global(html.js-motion) .panel[data-m='door2']:not(.is-in) {
+		scale: 0.92;
+		border-radius: 120px;
+	}
+	:global(html.js-motion) .panel[data-m='door2']:not(.is-in) .inner,
+	:global(html.js-motion) .panel[data-m='door2']:not(.is-in) h2,
+	:global(html.js-motion) .panel[data-m='door2']:not(.is-in) .f-row {
+		opacity: 0;
+	}
+</style>

@@ -1,0 +1,157 @@
+---
+// House rules / FAQ (home §3.1-13; data faq.ts). Native `<details name="faq">` exclusive
+// accordion, item 1 open. Height animates via `::details-content` + `interpolate-size` where
+// supported (CSS only, per founder instruction — no JS height fallback); "+" disc rotates 45deg
+// when open. M-17 slide-stack entry runs in the component <script>.
+import Ph from '../Ph.astro';
+import { faq } from '../../data/faq';
+---
+
+<section id="faq" class="faq">
+	<h2>House rules</h2>
+
+	<div class="list" data-m="stack">
+		{faq.map((item, i) => {
+			const parts = item.hasPlaceholder ? item.a.split('{ph}') : [item.a];
+			return (
+				<details name="faq" class="fq-item" open={i === 0}>
+					<summary>
+						<span class="q">{item.q}</span>
+						<span class="plus" aria-hidden="true">+</span>
+					</summary>
+					<p>
+						{item.hasPlaceholder ? (
+							<>
+								{parts[0]}
+								<Ph text={item.placeholder ?? ''} />
+								{parts[1]}
+							</>
+						) : (
+							item.a
+						)}
+					</p>
+				</details>
+			);
+		})}
+	</div>
+</section>
+
+<script>
+	import { gsap, onEnter } from '../../scripts/motion/core';
+
+	const list = document.querySelector<HTMLElement>('.faq .list');
+
+	if (list) {
+		onEnter(list, () => {
+			const items = Array.from(list.querySelectorAll<HTMLElement>('.fq-item'));
+			const pluses = Array.from(list.querySelectorAll<HTMLElement>('.plus'));
+			gsap.fromTo(items, { x: -40, opacity: 0 }, { x: 0, opacity: 1, duration: 0.6, ease: 'ch-smooth', stagger: 0.06, clearProps: 'transform,opacity' });
+			gsap.fromTo(pluses, { rotation: -180 }, { rotation: 0, duration: 0.6, ease: 'ch-smooth', stagger: 0.06, clearProps: 'transform' });
+		});
+	}
+</script>
+
+<style>
+	.faq {
+		max-width: 920px;
+		margin-inline: auto;
+		padding: 0 32px var(--s-26);
+		text-align: center;
+	}
+
+	h2 {
+		margin: 0 0 var(--s-10);
+		font-family: var(--f-display);
+		font-weight: 800;
+		font-size: var(--fs-h2);
+		letter-spacing: -1.5px;
+	}
+
+	.list {
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
+		text-align: left;
+	}
+
+	.fq-item {
+		background: var(--c-white);
+		color: var(--c-ink);
+		border-radius: 24px;
+		padding: 22px 26px;
+	}
+
+	summary {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: var(--s-4);
+		cursor: pointer;
+		list-style: none;
+		font-family: var(--f-display);
+		font-weight: 700;
+		font-size: 19px;
+	}
+	summary::-webkit-details-marker {
+		display: none;
+	}
+
+	.plus {
+		flex: none;
+		width: 38px;
+		height: 38px;
+		border-radius: var(--r-round);
+		background: var(--c-orange);
+		color: var(--c-ink);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		font-size: 22px;
+		rotate: 0deg;
+		transition: rotate 0.3s var(--e-smooth);
+	}
+	.fq-item[open] .plus {
+		rotate: 45deg;
+	}
+
+	.fq-item p {
+		margin: 14px 0 0;
+		font-size: 17px;
+		line-height: 1.6;
+	}
+
+	@supports (interpolate-size: allow-keywords) {
+		.faq {
+			interpolate-size: allow-keywords;
+		}
+		.fq-item::details-content {
+			block-size: 0;
+			overflow: clip;
+			transition: block-size 0.35s var(--e-smooth), content-visibility 0.35s allow-discrete;
+		}
+		.fq-item[open]::details-content {
+			block-size: auto;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.fq-item::details-content {
+			transition: none;
+		}
+	}
+
+	@media (max-width: 767.98px) {
+		.faq {
+			padding: 0 16px var(--s-14);
+		}
+		summary {
+			font-size: 17px;
+		}
+	}
+
+	/* Hidden-state contract (BUILD §4): written only under html.js-motion, matched to the
+	   onEnter `data-m` + `.is-in` swap in scripts/motion/core.ts. */
+	:global(html.js-motion) .list[data-m='stack']:not(.is-in) .fq-item {
+		opacity: 0;
+	}
+</style>

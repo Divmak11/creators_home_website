@@ -10,6 +10,9 @@ import Process from '../components/home/Process.astro';
 import Why from '../components/home/Why.astro';
 import Rooms from '../components/home/Rooms.astro';
 import Industries from '../components/home/Industries.astro';
+import Overheard from '../components/home/Overheard.astro';
+import Faq from '../components/home/Faq.astro';
+import Contact from '../components/home/Contact.astro';
 ---
 
 <Base
@@ -27,12 +30,7 @@ import Industries from '../components/home/Industries.astro';
 	<Why />
 	<Rooms />
 	<Industries />
-	<section id="faq" class="container stub"><h2>TODO faq</h2></section>
-	<section id="contact" class="container stub"><h2>TODO contact</h2></section>
+	<Overheard />
+	<Faq />
+	<Contact />
 </Base>
-
-<style>
-	.stub {
-		padding-block: var(--s-26);
-	}
-</style>

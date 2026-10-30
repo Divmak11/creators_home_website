@@ -1,0 +1,120 @@
+---
+// Quote card (home §3.1-12 / spec §2.6; shared by Overheard.astro). White card, ink text, a
+// bottom-left speech-bubble tail (`[data-part="tail"]`, drawn via its own `::after` triangle so
+// GSAP can scale the whole tail element on M-15 landing), avatar circle holding the platform
+// glyph (colours per design L231-233: orange / white+ink-border / violet). Quote words are
+// wrapped in `<span class="w">` server-side (spaces kept between spans) for the M-15 word reveal.
+import Icon from './Icon.astro';
+
+interface Quote {
+  text: string;
+  attribution: string;
+  platform: 'instagram' | 'facebook' | 'x' | 'reddit';
+}
+
+interface Props {
+  quote: Quote;
+  tilt: number;
+  colourIndex: 0 | 1 | 2;
+}
+
+const { quote, tilt, colourIndex } = Astro.props;
+
+const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;');
+const wordsHtml = quote.text
+  .split(' ')
+  .map((w) => `<span class="w">${esc(w)}</span>`)
+  .join(' ');
+
+const avatarGlyphColour = colourIndex === 2 ? '#fff' : 'var(--c-ink)';
+---
+
+<figure class="qcard tilt" style={`--r: ${tilt}deg`} data-colour={colourIndex}>
+	<blockquote set:html={wordsHtml} />
+	<figcaption>
+		<span class="avatar" aria-hidden="true">
+			<Icon name={quote.platform} size={22} style={`color: ${avatarGlyphColour}`} />
+		</span>
+		<p class="attribution">{quote.attribution}</p>
+	</figcaption>
+	<span class="tail" data-part="tail" aria-hidden="true"></span>
+</figure>
+
+<style>
+	.qcard {
+		position: relative;
+		margin: 0;
+		background: var(--c-white);
+		color: var(--c-ink);
+		border-radius: var(--r-card);
+		padding: var(--s-7);
+	}
+
+	blockquote {
+		margin: 0 0 var(--s-6);
+		font-family: var(--f-body);
+		font-weight: 500;
+		font-size: 18px;
+		line-height: 1.5;
+	}
+
+	figcaption {
+		display: flex;
+		align-items: center;
+		gap: var(--s-3);
+	}
+
+	.avatar {
+		flex: none;
+		width: 48px;
+		height: 48px;
+		border-radius: var(--r-round);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+	.qcard[data-colour='0'] .avatar {
+		background: var(--c-orange);
+	}
+	.qcard[data-colour='1'] .avatar {
+		background: var(--c-white);
+		border: 2px solid var(--c-ink);
+	}
+	.qcard[data-colour='2'] .avatar {
+		background: var(--c-violet);
+	}
+
+	.attribution {
+		margin: 0;
+		font-family: var(--f-body);
+		font-weight: 700;
+		font-size: var(--fs-small);
+		color: var(--c-muted-light);
+	}
+
+	.tail {
+		position: absolute;
+		left: var(--s-7);
+		bottom: -14px;
+		width: 24px;
+		height: 14px;
+		display: block;
+	}
+	.tail::after {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 0;
+		height: 0;
+		border-style: solid;
+		border-width: 16px 16px 0 0;
+		border-color: var(--c-white) transparent transparent transparent;
+	}
+
+	@media (max-width: 767.98px) {
+		.qcard {
+			padding: var(--s-6);
+		}
+	}
+</style>
