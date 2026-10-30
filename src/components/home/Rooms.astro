@@ -1,0 +1,344 @@
+---
+// Pick your room (home §3.1-10, spec §2.7; data services.ts). No-JS: chips render but do
+// nothing (no handler), and a plain list of all 9 rooms renders below them. With JS: the
+// `.js-only` room panel replaces the list; the first chip opens by default. M-13 chip tumble
+// runs below.
+import { services } from '../../data/services';
+import { getCampaign } from '../../data/campaigns';
+
+const chipTilts = [-2, 2, -1, 3, -3, 1, -2, 2, -1];
+
+function seenPills(seenIn: string[]): string {
+	return seenIn
+		.map((slug) => {
+			const c = getCampaign(slug);
+			return `<a href="/work/${slug}/" class="seen-pill">${c?.title ?? slug}</a>`;
+		})
+		.join('');
+}
+---
+
+<section id="services" class="rooms container">
+	<h2>Pick your <span class="pill">room</span></h2>
+
+	<div class="chips" data-m="tumble">
+		{services.map((svc, i) => (
+			<button
+				type="button"
+				class="chip tilt"
+				style={`--r: ${chipTilts[i]}deg`}
+				data-id={svc.id}
+				aria-expanded={i === 0 ? 'true' : 'false'}
+				aria-controls="room-panel"
+				tabindex={i === 0 ? 0 : -1}
+			>
+				{svc.name}
+			</button>
+		))}
+	</div>
+
+	<div id="room-panel" class="room js-only" role="region" aria-live="polite">
+		<div class="room-grow">
+			<div class="room-inner">
+				<div class="room-name">{services[0].name}</div>
+				<p class="room-text">{services[0].text}</p>
+				<div class="room-seen">
+					<span class="seen-label">Seen in:</span>
+					<span class="seen-pills" set:html={seenPills(services[0].seenIn)} />
+				</div>
+				<a class="room-cta" href={`/?service=${services[0].id}#contact`} data-service={services[0].id}>Book this room →</a>
+			</div>
+		</div>
+	</div>
+
+	<ul class="rooms-list nojs-only">
+		{services.map((svc) => (
+			<li>
+				<strong>{svc.name}</strong>
+				<p>{svc.text}</p>
+				<p class="seen" set:html={`Seen in: ${seenPills(svc.seenIn)}`} />
+			</li>
+		))}
+	</ul>
+</section>
+
+<script>
+	import { gsap, onEnter, motionOn } from '../../scripts/motion/core';
+	import { makeRand } from '../../scripts/seeded';
+	import { services } from '../../data/services';
+	import { getCampaign } from '../../data/campaigns';
+
+	const section = document.querySelector<HTMLElement>('.rooms');
+	const chipsWrap = section?.querySelector<HTMLElement>('.chips');
+	const chips = chipsWrap ? Array.from(chipsWrap.querySelectorAll<HTMLButtonElement>('.chip')) : [];
+	const panel = section?.querySelector<HTMLElement>('#room-panel');
+	const roomGrow = panel?.querySelector<HTMLElement>('.room-grow');
+	const inner = panel?.querySelector<HTMLElement>('.room-inner');
+	const nameEl = panel?.querySelector<HTMLElement>('.room-name');
+	const textEl = panel?.querySelector<HTMLElement>('.room-text');
+	const pillsEl = panel?.querySelector<HTMLElement>('.seen-pills');
+	const ctaEl = panel?.querySelector<HTMLAnchorElement>('.room-cta');
+
+	if (section && chipsWrap && chips.length && panel && roomGrow && inner && nameEl && textEl && pillsEl && ctaEl) {
+		let openIndex = 0;
+		let focusIndex = 0;
+
+		function renderPanel(i: number): void {
+			const svc = services[i];
+			nameEl!.textContent = svc.name;
+			textEl!.textContent = svc.text;
+			pillsEl!.innerHTML = svc.seenIn
+				.map((slug) => {
+					const c = getCampaign(slug);
+					return `<a href="/work/${slug}/" class="seen-pill">${c?.title ?? slug}</a>`;
+				})
+				.join('');
+			ctaEl!.href = `/?service=${svc.id}#contact`;
+			ctaEl!.dataset.service = svc.id;
+		}
+
+		function openChip(i: number, { focus = false }: { focus?: boolean } = {}): void {
+			chips.forEach((chip, idx) => {
+				chip.setAttribute('aria-expanded', String(idx === i));
+				chip.setAttribute('tabindex', idx === i ? '0' : '-1');
+			});
+			focusIndex = i;
+			if (i === openIndex) {
+				if (focus) chips[i].focus();
+				return;
+			}
+			openIndex = i;
+
+			if (motionOn()) {
+				gsap.fromTo(inner!, { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.3, ease: 'ch-smooth', clearProps: 'transform,opacity' });
+			}
+			renderPanel(i);
+			if (focus) chips[i].focus();
+		}
+
+		chips.forEach((chip, i) => {
+			chip.addEventListener('click', () => openChip(i));
+		});
+
+		chipsWrap.addEventListener('keydown', (e: KeyboardEvent) => {
+			const key = e.key;
+			if (!['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown', 'Home', 'End', 'Enter', ' '].includes(key)) return;
+			e.preventDefault();
+			if (key === 'Enter' || key === ' ') {
+				openChip(focusIndex, { focus: true });
+				return;
+			}
+			let next = focusIndex;
+			if (key === 'ArrowRight' || key === 'ArrowDown') next = (focusIndex + 1) % chips.length;
+			else if (key === 'ArrowLeft' || key === 'ArrowUp') next = (focusIndex - 1 + chips.length) % chips.length;
+			else if (key === 'Home') next = 0;
+			else if (key === 'End') next = chips.length - 1;
+
+			chips.forEach((chip, idx) => chip.setAttribute('tabindex', idx === next ? '0' : '-1'));
+			focusIndex = next;
+			chips[next].focus();
+		});
+
+		// Panel mount flourish: grid-template-rows 0fr -> 1fr (spec §5.3 exception).
+		requestAnimationFrame(() => requestAnimationFrame(() => roomGrow.classList.add('is-open')));
+
+		// M-13 chip tumble.
+		onEnter(chipsWrap, () => {
+			const rand = makeRand(20261030);
+			chips.forEach((chip) => {
+				gsap.fromTo(
+					chip,
+					{ y: -140, rotation: rand(-25, 25), opacity: 0 },
+					{ y: 0, rotation: 0, opacity: 1, duration: 0.9, ease: 'bounce.out', delay: rand(0, 0.5), clearProps: 'transform,opacity' }
+				);
+			});
+		});
+	}
+</script>
+
+<style>
+	.rooms {
+		max-width: 1100px;
+		padding-block: var(--s-26);
+		text-align: center;
+	}
+
+	h2 {
+		margin: 0 0 var(--s-12);
+		font-family: var(--f-display);
+		font-weight: 800;
+		font-size: var(--fs-h2);
+		letter-spacing: -1.5px;
+	}
+	h2 .pill {
+		display: inline-block;
+		background: var(--c-white);
+		color: var(--c-ink);
+		padding: 0 var(--s-4);
+		border-radius: var(--r-pill);
+	}
+
+	.js-only {
+		display: none;
+	}
+	:global(html.js) .js-only {
+		display: flex;
+	}
+	.nojs-only {
+		text-align: left;
+	}
+	:global(html.js) .nojs-only {
+		display: none;
+	}
+
+	.chips {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
+		gap: 14px;
+		margin-bottom: var(--s-10);
+	}
+	.chip {
+		display: inline-flex;
+		align-items: center;
+		min-height: 44px;
+		padding: 18px 28px;
+		border-radius: var(--r-pill);
+		background: var(--c-white);
+		color: var(--c-ink);
+		border: 2px solid var(--c-ink);
+		font-weight: 700;
+		font-size: 20px;
+		transition: scale var(--t-m) var(--e-spring), rotate var(--t-m) var(--e-spring), background-color var(--t-s) var(--e-smooth), color var(--t-s) var(--e-smooth);
+	}
+	@media (hover: hover) and (pointer: fine) {
+		.chip:hover {
+			scale: 1.08;
+			rotate: -3deg;
+			background: var(--c-orange);
+			color: var(--c-ink);
+		}
+	}
+	.chip[aria-expanded='true'] {
+		background: var(--c-orange);
+		color: var(--c-ink);
+		rotate: 0deg;
+	}
+
+	.room {
+		text-align: left;
+	}
+	.room-grow {
+		display: grid;
+		grid-template-rows: 1fr;
+	}
+	:global(html.js-motion) .room-grow {
+		grid-template-rows: 0fr;
+		transition: grid-template-rows 0.45s var(--e-out);
+	}
+	:global(html.js-motion) .room-grow.is-open {
+		grid-template-rows: 1fr;
+	}
+	.room-inner {
+		overflow: hidden;
+		min-height: 0;
+		background: var(--c-white);
+		color: var(--c-ink);
+		border-radius: var(--r-card-l);
+		box-shadow: 0 12px 0 var(--c-ink);
+		padding: var(--s-8);
+	}
+	.room-name {
+		font-family: var(--f-display);
+		font-weight: 800;
+		font-size: 28px;
+	}
+	.room-text {
+		margin: var(--s-3) 0 0;
+	}
+	.room-seen {
+		margin-top: var(--s-5);
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: var(--s-2);
+	}
+	.seen-label {
+		font-weight: 700;
+	}
+	.seen-pills {
+		display: inline-flex;
+		flex-wrap: wrap;
+		gap: var(--s-2);
+	}
+	.seen-pills :global(.seen-pill),
+	.nojs-only .seen :global(a) {
+		display: inline-block;
+		text-decoration: none;
+		font-weight: 700;
+		padding: 4px var(--s-3);
+		margin-right: 6px;
+		border-radius: var(--r-pill);
+		background: var(--c-lavender);
+		color: var(--c-violet);
+	}
+	.room-cta {
+		display: inline-block;
+		margin-top: var(--s-8);
+		text-decoration: none;
+		font-weight: 700;
+		font-size: 18px;
+		padding: var(--s-4) var(--s-7);
+		border-radius: var(--r-pill);
+		background: var(--c-ink);
+		color: var(--c-white);
+		transition: background-color var(--t-s) var(--e-smooth), color var(--t-s) var(--e-smooth);
+	}
+	@media (hover: hover) and (pointer: fine) {
+		.room-cta:hover {
+			background: var(--c-orange);
+			color: var(--c-ink);
+		}
+	}
+
+	.rooms-list li {
+		border-top: 1px solid var(--c-rule);
+		padding-block: var(--s-5);
+	}
+	.rooms-list li:first-child {
+		border-top: 0;
+	}
+	.rooms-list strong {
+		font-family: var(--f-display);
+		font-weight: 800;
+		font-size: var(--fs-h3);
+	}
+	.rooms-list p {
+		margin: var(--s-2) 0 0;
+	}
+
+	@media (max-width: 1199.98px) {
+		.chip {
+			font-size: 18px;
+		}
+	}
+
+	@media (max-width: 767.98px) {
+		.rooms {
+			padding-block: var(--s-14);
+		}
+		.chip {
+			font-size: 16px;
+			padding: 12px 18px;
+		}
+		.room-inner {
+			padding: var(--s-6);
+		}
+	}
+
+	/* Hidden-state contract (BUILD §4): written only under html.js-motion, matched to the
+	   onEnter `data-m` + `.is-in` swap in scripts/motion/core.ts. */
+	:global(html.js-motion) .chips[data-m='tumble']:not(.is-in) .chip {
+		opacity: 0;
+	}
+</style>

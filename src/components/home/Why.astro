@@ -1,0 +1,231 @@
+---
+// Why the house wins (home §3.1-9, spec F-24; data why.ts). Full-bleed ink band, radius 56 top
+// corners only (0 on phone). Card backgrounds/tilts follow the design's L189-200 scheme
+// (violet/orange/white/violet); muted text follows F-10/F-11 per that background (ink on
+// orange always; --c-muted-violet on violet; --c-muted-light on white).
+import { why } from '../../data/why';
+
+const cardStyle: { bg: 'violet' | 'orange' | 'white'; tilt: number }[] = [
+	{ bg: 'violet', tilt: -2 },
+	{ bg: 'orange', tilt: 2 },
+	{ bg: 'white', tilt: -1 },
+	{ bg: 'violet', tilt: 2 },
+];
+
+// Path data per icon (rather than `set:html`), so every <path> is part of the Astro template
+// and picks up the component's scoped style attribute like any other element — raw-HTML
+// injection bypasses that scoping and the `.ico-path` rules below would silently never match.
+type IconPath = { d: string; cls?: string };
+const iconPaths: Record<(typeof why)[number]['icon'], IconPath[]> = {
+	smiley: [
+		{ d: 'M8 32a24 24 0 1 0 48 0 24 24 0 1 0 -48 0' },
+		{ d: 'M24 26h.01', cls: 'eye' },
+		{ d: 'M40 26h.01', cls: 'eye' },
+		{ d: 'M20 38c4 6 10 9 12 9s8-3 12-9' },
+	],
+	house: [
+		{ d: 'M8 30 L32 8 L56 30' },
+		{ d: 'M14 28 V54 H50 V28' },
+		{ d: 'M32 46c-5-4-9-8-9-13a6 6 0 0111-3.5A6 6 0 0144 33c0 5-4 9-9 13z', cls: 'heart' },
+	],
+	trend: [{ d: 'M8 46 L24 28 L36 38 L56 14' }, { d: 'M44 14 H56 V26', cls: 'arrowhead' }],
+	bolt: [{ d: 'M34 4 L12 36 H28 L26 60 L52 28 H36 Z', cls: 'bolt' }],
+};
+---
+
+<section class="why" data-m="spot">
+	<div class="container">
+		<h2>Why the house wins</h2>
+		<div class="cards">
+			{why.map((card, i) => {
+				const style = cardStyle[i];
+				return (
+					<div class={`card bg-${style.bg} tilt`} style={`--r: ${style.tilt}deg`}>
+						<svg class="icon" width="52" height="52" viewBox="0 0 64 64" aria-hidden="true">
+							{iconPaths[card.icon].map((p) => (
+								<path d={p.d} class={`ico-path ${p.cls ?? ''}`.trim()} pathLength="1" />
+							))}
+						</svg>
+						<h3>{card.title}</h3>
+						<p class="card-text">{card.text}</p>
+					</div>
+				);
+			})}
+		</div>
+	</div>
+</section>
+
+<script>
+	import { gsap, onEnter } from '../../scripts/motion/core';
+
+	const band = document.querySelector<HTMLElement>('.why');
+	const cards = band ? Array.from(band.querySelectorAll<HTMLElement>('.card')) : [];
+
+	if (band && cards.length) {
+		onEnter(
+			band,
+			() => {
+				gsap.fromTo(
+					band,
+					{ clipPath: 'circle(0% at 50% 30%)' },
+					{ clipPath: 'circle(150% at 50% 30%)', duration: 1.1, ease: 'ch-smooth', clearProps: 'clipPath' }
+				);
+
+				cards.forEach((card, i) => {
+					const paths = Array.from(card.querySelectorAll<SVGGeometryElement>('.ico-path'));
+					const text = card.querySelector<HTMLElement>('.card-text');
+					const delay = i * 0.12;
+					gsap.fromTo(paths, { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 0.8, delay, clearProps: 'strokeDashoffset' });
+					if (text) {
+						gsap.fromTo(
+							text,
+							{ y: 16, opacity: 0 },
+							{ y: 0, opacity: 1, duration: 0.5, delay: delay + 0.8, clearProps: 'transform,opacity' }
+						);
+					}
+				});
+			},
+			'top 80%'
+		);
+	}
+</script>
+
+<style>
+	.why {
+		background: var(--c-ink);
+		color: var(--c-white);
+		border-radius: var(--r-band) var(--r-band) 0 0;
+		padding-block: var(--s-26);
+	}
+
+	h2 {
+		margin: 0 0 var(--s-12);
+		font-family: var(--f-display);
+		font-weight: 800;
+		font-size: var(--fs-h2);
+		letter-spacing: -1.5px;
+	}
+
+	.cards {
+		display: grid;
+		grid-template-columns: repeat(4, minmax(0, 1fr));
+		gap: 20px;
+	}
+
+	.card {
+		border-radius: var(--r-card);
+		padding: var(--s-8);
+	}
+	.bg-violet {
+		background: var(--c-violet);
+		color: var(--c-white);
+	}
+	.bg-orange {
+		background: var(--c-orange);
+		color: var(--c-ink);
+	}
+	.bg-white {
+		background: var(--c-white);
+		color: var(--c-ink);
+	}
+
+	.icon {
+		display: block;
+	}
+	.ico-path {
+		fill: none;
+		stroke: currentColor;
+		stroke-width: 4;
+		stroke-linecap: round;
+		stroke-linejoin: round;
+		stroke-dasharray: 1;
+		stroke-dashoffset: 0;
+	}
+
+	h3 {
+		margin: var(--s-5) 0 6px;
+		font-family: var(--f-display);
+		font-weight: 700;
+		font-size: 22px;
+	}
+	.card-text {
+		margin: 0;
+	}
+	.bg-violet .card-text {
+		color: var(--c-muted-violet);
+	}
+	.bg-orange .card-text {
+		font-weight: 700;
+	}
+	.bg-white .card-text {
+		color: var(--c-muted-light);
+	}
+
+	@media (hover: hover) and (pointer: fine) {
+		.card:hover .eye {
+			scale: 1 0.1;
+			transform-origin: center;
+		}
+		.card:hover .heart {
+			scale: 1.2;
+			transform-origin: center;
+		}
+		.card:hover .arrowhead {
+			translate: 4px 0;
+		}
+		.card:hover .bolt {
+			animation: ch-flicker 0.4s 2;
+		}
+	}
+	@keyframes ch-flicker {
+		50% {
+			opacity: 0.3;
+		}
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.card:hover .eye,
+		.card:hover .heart,
+		.card:hover .arrowhead,
+		.card:hover .bolt {
+			scale: 1;
+			translate: 0;
+			animation: none;
+		}
+	}
+	:global(html[data-motion='paused']) .card:hover .eye,
+	:global(html[data-motion='paused']) .card:hover .heart,
+	:global(html[data-motion='paused']) .card:hover .arrowhead,
+	:global(html[data-motion='paused']) .card:hover .bolt {
+		scale: 1;
+		translate: 0;
+		animation: none;
+	}
+
+	@media (max-width: 1199.98px) {
+		.cards {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+	}
+
+	@media (max-width: 767.98px) {
+		.why {
+			border-radius: 0;
+			padding-block: var(--s-14);
+		}
+		.cards {
+			grid-template-columns: 1fr;
+		}
+	}
+
+	/* Hidden-state contract (BUILD §4): written only under html.js-motion, matched to the
+	   onEnter `data-m` + `.is-in` swap in scripts/motion/core.ts. */
+	:global(html.js-motion) .why[data-m='spot']:not(.is-in) {
+		clip-path: circle(0% at 50% 30%);
+	}
+	:global(html.js-motion) .why[data-m='spot']:not(.is-in) .ico-path {
+		stroke-dashoffset: 1;
+	}
+	:global(html.js-motion) .why[data-m='spot']:not(.is-in) .card-text {
+		opacity: 0;
+	}
+</style>

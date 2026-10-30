@@ -1,0 +1,304 @@
+---
+// How it works (home §3.1-8, spec F-20; data process.ts). M-11 scroll-scrubbed squiggle path
+// runs behind the 4 cards, built from their disc centres; each card pops as the dashed line
+// reaches it. The `.is-in` class is added as soon as the ScrollTrigger is created (not on
+// scroll-into-view) because the squiggle needs to exist before any scroll happens — cards are
+// then hidden by GSAP's own `gsap.set(cards, { opacity: 0 })` instead of the CSS hidden state.
+import { process } from '../../data/process';
+
+const tilts = [-3, 2, -2, 3];
+---
+
+<section class="process container" data-m="path">
+	<h2>How it works</h2>
+	<div class="track">
+		<svg class="squiggle" aria-hidden="true">
+			<defs>
+				<mask id="sq-mask">
+					<path class="sq-mask-path"></path>
+				</mask>
+			</defs>
+			<path class="sq-visible" mask="url(#sq-mask)"></path>
+		</svg>
+		<div class="cards">
+			{process.map((step, i) => (
+				<div class="pcard2 tilt" style={`--r: ${tilts[i]}deg`} data-step={step.n}>
+					<div class="disc"><span class="disc-num">{step.n}</span></div>
+					<h3>{step.title}</h3>
+					<p>{step.text}</p>
+				</div>
+			))}
+		</div>
+	</div>
+</section>
+
+<script>
+	import { gsap, ScrollTrigger, motionOn } from '../../scripts/motion/core';
+
+	const section = document.querySelector<HTMLElement>('.process');
+	const track = section?.querySelector<HTMLElement>('.track');
+	const svg = section?.querySelector<SVGSVGElement>('.squiggle');
+	const visiblePath = svg?.querySelector<SVGPathElement>('.sq-visible');
+	const maskPath = svg?.querySelector<SVGPathElement>('.sq-mask-path');
+	const cardsWrap = section?.querySelector<HTMLElement>('.cards');
+	const cards = cardsWrap ? Array.from(cardsWrap.querySelectorAll<HTMLElement>('.pcard2')) : [];
+	const discs = cards.map((c) => c.querySelector<HTMLElement>('.disc-num'));
+
+	if (section && track && svg && visiblePath && maskPath && cardsWrap && cards.length) {
+		const popped: boolean[] = cards.map(() => false);
+		let fractions: number[] = [];
+		let scrollTrigger: ScrollTrigger | undefined;
+		let built = false;
+
+		function isPhone(): boolean {
+			return matchMedia('(max-width: 767.98px)').matches;
+		}
+
+		function discCenters(): { x: number; y: number }[] {
+			const trackRect = track!.getBoundingClientRect();
+			return cards.map((card) => {
+				const disc = card.querySelector<HTMLElement>('.disc')!;
+				const r = disc.getBoundingClientRect();
+				return { x: r.left + r.width / 2 - trackRect.left, y: r.top + r.height / 2 - trackRect.top };
+			});
+		}
+
+		function buildPathD(points: { x: number; y: number }[]): string {
+			if (isPhone()) {
+				const x = points[0].x;
+				let d = `M ${x} ${points[0].y}`;
+				for (let i = 1; i < points.length; i++) d += ` L ${x} ${points[i].y}`;
+				return d;
+			}
+			let d = `M ${points[0].x} ${points[0].y}`;
+			for (let i = 1; i < points.length; i++) {
+				const p0 = points[i - 1];
+				const p1 = points[i];
+				const midY = (p0.y + p1.y) / 2;
+				const wave = i % 2 === 1 ? -40 : 40;
+				const c1x = p0.x + (p1.x - p0.x) / 3;
+				const c2x = p0.x + ((p1.x - p0.x) * 2) / 3;
+				d += ` C ${c1x} ${midY + wave}, ${c2x} ${midY - wave}, ${p1.x} ${p1.y}`;
+			}
+			return d;
+		}
+
+		function sampleFractions(path: SVGPathElement, points: { x: number; y: number }[]): number[] {
+			const L = path.getTotalLength();
+			if (!L) return points.map(() => 0);
+			const samples: { len: number; x: number; y: number }[] = [];
+			for (let len = 0; len <= L; len += 4) {
+				const pt = path.getPointAtLength(len);
+				samples.push({ len, x: pt.x, y: pt.y });
+			}
+			return points.map((p) => {
+				let best = samples[0];
+				let bestDist = Infinity;
+				for (const s of samples) {
+					const dist = (s.x - p.x) ** 2 + (s.y - p.y) ** 2;
+					if (dist < bestDist) {
+						bestDist = dist;
+						best = s;
+					}
+				}
+				return best.len / L;
+			});
+		}
+
+		function pop(i: number): void {
+			if (popped[i]) return;
+			popped[i] = true;
+			gsap.fromTo(
+				cards[i],
+				{ scale: 0.6, rotation: -6, opacity: 0 },
+				{ scale: 1, rotation: 0, opacity: 1, duration: 0.7, ease: 'ch-spring', clearProps: 'transform,opacity' }
+			);
+			const disc = discs[i];
+			if (disc) gsap.fromTo(disc, { scale: 0 }, { scale: 1, duration: 0.5, ease: 'ch-spring', clearProps: 'transform' });
+		}
+
+		function popUpTo(p: number): void {
+			fractions.forEach((f, i) => {
+				if (f <= p) pop(i);
+			});
+		}
+
+		function build(): void {
+			const points = discCenters();
+			const d = buildPathD(points);
+			visiblePath!.setAttribute('d', d);
+			maskPath!.setAttribute('d', d);
+			const L = maskPath!.getTotalLength();
+			maskPath!.setAttribute('stroke-dasharray', String(L));
+			fractions = sampleFractions(maskPath!, points);
+
+			if (scrollTrigger) scrollTrigger.kill();
+
+			if (!motionOn()) {
+				gsap.set(maskPath!, { strokeDashoffset: 0 });
+				return;
+			}
+
+			const tween = gsap.fromTo(
+				maskPath!,
+				{ strokeDashoffset: L },
+				{
+					strokeDashoffset: 0,
+					ease: 'none',
+					scrollTrigger: {
+						trigger: section,
+						start: 'top 75%',
+						end: 'bottom 60%',
+						scrub: 0.6,
+						onUpdate: (self) => popUpTo(self.progress),
+					},
+				}
+			);
+			scrollTrigger = tween.scrollTrigger;
+
+			if (!built) {
+				built = true;
+				gsap.set(cards, { opacity: 0 });
+				section!.classList.add('is-in');
+			}
+		}
+
+		function debounce(fn: () => void, ms: number): () => void {
+			let t: ReturnType<typeof setTimeout>;
+			return () => {
+				clearTimeout(t);
+				t = setTimeout(fn, ms);
+			};
+		}
+
+		build();
+		window.addEventListener('resize', debounce(build, 150));
+	}
+</script>
+
+<style>
+	.process {
+		padding-block: 0 var(--s-26);
+	}
+
+	h2 {
+		margin: 0 0 var(--s-12);
+		text-align: center;
+		font-family: var(--f-display);
+		font-weight: 800;
+		font-size: var(--fs-h2);
+		letter-spacing: -1.5px;
+	}
+
+	.track {
+		position: relative;
+	}
+
+	.squiggle {
+		position: absolute;
+		inset: 0;
+		width: 100%;
+		height: 100%;
+		pointer-events: none;
+		z-index: 0;
+	}
+	.sq-visible {
+		fill: none;
+		stroke: var(--c-white);
+		stroke-width: 3;
+		stroke-dasharray: 10 10;
+	}
+	.sq-mask-path {
+		fill: none;
+		stroke: #fff;
+		stroke-width: 8;
+	}
+
+	.cards {
+		position: relative;
+		z-index: 1;
+		display: grid;
+		grid-template-columns: repeat(4, minmax(0, 1fr));
+		gap: 20px;
+	}
+
+	.pcard2 {
+		background: var(--c-white);
+		color: var(--c-ink);
+		border-radius: var(--r-card-l);
+		padding: var(--s-8);
+		transition: rotate var(--t-m) var(--e-spring), scale var(--t-m) var(--e-spring);
+	}
+	@media (min-width: 768px) {
+		.pcard2:nth-child(2),
+		.pcard2:nth-child(4) {
+			translate: 0 32px;
+		}
+	}
+
+	.disc {
+		width: 64px;
+		height: 64px;
+		border-radius: var(--r-round);
+		background: var(--c-orange);
+		color: var(--c-ink);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		font-family: var(--f-display);
+		font-weight: 800;
+		font-size: 26px;
+	}
+	h3 {
+		margin: var(--s-5) 0 6px;
+		font-family: var(--f-display);
+		font-weight: 700;
+		font-size: var(--fs-h3);
+	}
+	.pcard2 p {
+		margin: 0;
+		font-weight: 500;
+	}
+
+	@media (hover: hover) and (pointer: fine) {
+		.pcard2:hover {
+			rotate: 0deg;
+			scale: 1.03;
+		}
+	}
+
+	@media (max-width: 1199.98px) {
+		.cards {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+	}
+
+	@media (max-width: 767.98px) {
+		.process {
+			padding-block: 0 var(--s-14);
+		}
+		.cards {
+			grid-template-columns: 1fr;
+		}
+		.pcard2:nth-child(2),
+		.pcard2:nth-child(4) {
+			translate: 0 0;
+		}
+		.pcard2:nth-child(odd) {
+			--r: 3deg;
+		}
+		.pcard2:nth-child(even) {
+			--r: -3deg;
+		}
+		h3 {
+			font-size: var(--fs-h3-phone);
+		}
+	}
+
+	/* Hidden-state contract (BUILD §4): written only under html.js-motion. Unlike the standard
+	   onEnter contract, `.is-in` here is added as soon as the squiggle's ScrollTrigger is
+	   created (see component script), not on scroll-into-view. */
+	:global(html.js-motion) .process[data-m='path']:not(.is-in) .pcard2 {
+		opacity: 0;
+	}
+</style>

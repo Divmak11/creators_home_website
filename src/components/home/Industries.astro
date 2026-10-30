@@ -1,0 +1,120 @@
+---
+// Industries & languages ribbon (home §3.1-11, spec F-22/F-28; data industries.ts). Marquee
+// markup mirrors Ribbons.astro (4 sets, no scroll coupling). Indic items carry `lang` + the
+// Indic font stack. The languages line is flagged until confirmed (spec §11.1).
+import Ph from '../Ph.astro';
+import { industries } from '../../data/industries';
+
+const SETS = 4;
+const languageTexts = new Set(['English']);
+const isLanguage = (item: (typeof industries)[number]) => item.lang !== undefined || languageTexts.has(item.text);
+const industryItems = industries.filter((i) => !isLanguage(i));
+const languageItems = industries.filter(isLanguage);
+---
+
+<section class="industries" data-m="swing" aria-label="Industries and languages">
+	<p class="vh">Industries: {industryItems.map((i) => i.text).join(', ')}.</p>
+	<p class="vh">Languages: {languageItems.map((i) => i.text).join(', ')}.</p>
+
+	<div class="band">
+		<div class="bar mq" data-dir="left" data-speed="45" aria-hidden="true">
+			<div class="mq-track loop">
+				{Array.from({ length: SETS }).map(() => (
+					<div class="mq-set">
+						{industries.map((item) => (
+							<>
+								{item.lang ? <span lang={item.lang} class="indic">{item.text}</span> : <span>{item.text}</span>}
+								<span class="sep" aria-hidden="true">●</span>
+							</>
+						))}
+					</div>
+				))}
+			</div>
+		</div>
+	</div>
+
+	<p class="note"><Ph text="confirm languages served" /></p>
+</section>
+
+<script>
+	import { gsap, onEnter } from '../../scripts/motion/core';
+
+	const section = document.querySelector<HTMLElement>('.industries');
+	const bar = section?.querySelector<HTMLElement>('.bar');
+
+	if (section && bar) {
+		onEnter(section, () => {
+			gsap.fromTo(
+				bar,
+				{ rotation: 2, scaleX: 0.6, opacity: 0 },
+				{ rotation: 0, scaleX: 1, opacity: 1, duration: 1.2, ease: 'elastic.out(1, 0.5)', clearProps: 'transform,opacity' }
+			);
+		});
+	}
+</script>
+
+<style>
+	.industries {
+		padding-block: 0 var(--s-26);
+	}
+
+	.band {
+		overflow-x: clip;
+		overflow-y: visible;
+	}
+
+	.bar {
+		margin-inline: -120px;
+		padding-block: 22px;
+		background: var(--c-white);
+		color: var(--c-ink);
+		rotate: -2deg;
+		transform-origin: left center;
+		font-family: var(--f-display);
+		font-weight: 700;
+		font-size: 24px;
+		white-space: nowrap;
+	}
+	.mq-set {
+		gap: 36px;
+	}
+	.mq-set span {
+		display: inline-flex;
+	}
+	.sep {
+		color: var(--c-orange);
+	}
+	.indic {
+		font-family: var(--f-indic);
+		font-weight: 700;
+	}
+
+	.note {
+		margin-top: var(--s-6);
+		text-align: center;
+		color: var(--c-legal);
+		font-size: var(--fs-small);
+	}
+
+	@media (max-width: 1199.98px) {
+		.bar {
+			font-size: 20px;
+		}
+	}
+
+	@media (max-width: 767.98px) {
+		.industries {
+			padding-block: 0 var(--s-14);
+		}
+		.bar {
+			rotate: -1.5deg;
+			font-size: 16px;
+		}
+	}
+
+	/* Hidden-state contract (BUILD §4): written only under html.js-motion, matched to the
+	   onEnter `data-m` + `.is-in` swap in scripts/motion/core.ts. */
+	:global(html.js-motion) .industries[data-m='swing']:not(.is-in) .bar {
+		opacity: 0;
+	}
+</style>

@@ -1,0 +1,288 @@
+---
+// Brands / creators toggle (home §3.1-7, spec F-08/F-10/F-13; data toggle.ts). No-JS: both
+// panels render (brands first), the segmented switch is `.js-only`. With JS: brands is active
+// by default; `role.ts`'s `onRole` (URL `?role=`, hero/nav CTAs) can switch to creators. M-09
+// entry (SplitText word rise + pill spring) and M-10 switch (card drop/spring) run below.
+import { toggle } from '../../data/toggle';
+
+const cardTilts = [-2, 1, -1];
+
+function renderHeading(heading: string, pillWord: string): string {
+  const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;');
+  const idx = heading.indexOf(pillWord);
+  if (idx === -1) return esc(heading);
+  return (
+    esc(heading.slice(0, idx)) +
+    `<span class="pill tilt" style="--r: -3deg">${esc(pillWord)}</span>` +
+    esc(heading.slice(idx + pillWord.length))
+  );
+}
+---
+
+<section id="who" class="who container" data-m="rise">
+	<div class="seg js-only" role="group" aria-label="Choose audience" data-active="brand">
+		<span class="thumb" aria-hidden="true"></span>
+		<button type="button" class="seg-btn" data-seg="brand" aria-pressed="true">For brands</button>
+		<button type="button" class="seg-btn" data-seg="creator" aria-pressed="false">For creators</button>
+	</div>
+
+	<div class="tpanel" id="panel-brands" data-role-panel="brand">
+		<h2 set:html={renderHeading(toggle.brands.heading, toggle.brands.pillWord)} />
+		<div class="cards">
+			{toggle.brands.cards.map((card, i) => (
+				<div class="tcard tilt" style={`--r: ${cardTilts[i]}deg`}>
+					<div class="ttitle">{card.title}</div>
+					<p>{card.text}</p>
+				</div>
+			))}
+		</div>
+		<a class="cta cta-brand" href={`/?role=${toggle.brands.cta.role}#contact`} data-role={toggle.brands.cta.role}>
+			{toggle.brands.cta.label}
+		</a>
+	</div>
+
+	<div class="tpanel" id="panel-creators" data-role-panel="creator">
+		<h2 set:html={renderHeading(toggle.creators.heading, toggle.creators.pillWord)} />
+		<div class="cards">
+			{toggle.creators.cards.map((card, i) => (
+				<div class="tcard tilt" style={`--r: ${cardTilts[i]}deg`}>
+					<div class="ttitle">{card.title}</div>
+					<p>{card.text}</p>
+				</div>
+			))}
+		</div>
+		<a class="cta cta-creator" href={`/?role=${toggle.creators.cta.role}#contact`} data-role={toggle.creators.cta.role}>
+			{toggle.creators.cta.label}
+		</a>
+	</div>
+</section>
+
+<script>
+	import { gsap, onEnter, motionOn, SplitText } from '../../scripts/motion/core';
+	import { onRole, setRole } from '../../scripts/role';
+
+	type Side = 'brand' | 'creator';
+
+	const section = document.querySelector<HTMLElement>('#who');
+	const seg = section?.querySelector<HTMLElement>('.seg');
+	const brandBtn = section?.querySelector<HTMLButtonElement>('[data-seg="brand"]');
+	const creatorBtn = section?.querySelector<HTMLButtonElement>('[data-seg="creator"]');
+	const brandsPanel = section?.querySelector<HTMLElement>('#panel-brands');
+	const creatorsPanel = section?.querySelector<HTMLElement>('#panel-creators');
+
+	if (section && seg && brandBtn && creatorBtn && brandsPanel && creatorsPanel) {
+		let active: Side = 'brand';
+		let entered = false;
+
+		function panelFor(side: Side): HTMLElement {
+			return side === 'brand' ? brandsPanel! : creatorsPanel!;
+		}
+
+		function setState(side: Side, animate: boolean): void {
+			const outgoing = panelFor(active);
+			if (side === active) {
+				outgoing.hidden = false;
+				panelFor(side === 'brand' ? 'creator' : 'brand').hidden = true;
+				return;
+			}
+			const incoming = panelFor(side);
+			active = side;
+			seg!.dataset.active = side;
+			brandBtn!.setAttribute('aria-pressed', String(side === 'brand'));
+			creatorBtn!.setAttribute('aria-pressed', String(side === 'creator'));
+
+			if (animate && motionOn() && entered) {
+				const outCards = Array.from(outgoing.querySelectorAll<HTMLElement>('.tcard'));
+				gsap.to(outCards, {
+					y: 24,
+					opacity: 0,
+					duration: 0.2,
+					ease: 'power1.out',
+					onComplete: () => {
+						outgoing.hidden = true;
+						incoming.hidden = false;
+						gsap.set(outCards, { clearProps: 'transform,opacity' });
+						const h2 = incoming.querySelector<HTMLElement>('h2');
+						if (h2) gsap.fromTo(h2, { opacity: 0 }, { opacity: 1, duration: 0.25, ease: 'ch-smooth', clearProps: 'opacity' });
+						const inCards = Array.from(incoming.querySelectorAll<HTMLElement>('.tcard'));
+						gsap.fromTo(
+							inCards,
+							{ scale: 0.85, opacity: 0 },
+							{ scale: 1, opacity: 1, duration: 0.45, ease: 'ch-spring', stagger: 0.06, clearProps: 'transform,opacity' }
+						);
+					},
+				});
+			} else {
+				outgoing.hidden = true;
+				incoming.hidden = false;
+			}
+		}
+
+		// Init: brands active by default.
+		creatorsPanel.hidden = true;
+		brandsPanel.hidden = false;
+
+		brandBtn.addEventListener('click', () => {
+			setState('brand', true);
+			setRole('brand');
+		});
+		creatorBtn.addEventListener('click', () => {
+			setState('creator', true);
+			setRole('creator');
+		});
+
+		onRole((role) => {
+			setState(role === 'brand' ? 'brand' : 'creator', true);
+		});
+
+		// M-09 entry: SplitText word rise on the active panel's H2 (pill word excluded, lands
+		// last with a spring scale); cards slide in from the toggle's side.
+		onEnter(section, () => {
+			entered = true;
+			const activePanel = panelFor(active);
+			const h2 = activePanel.querySelector<HTMLElement>('h2');
+			const pill = h2?.querySelector<HTMLElement>('.pill');
+			const cards = Array.from(activePanel.querySelectorAll<HTMLElement>('.tcard'));
+			const fromX = active === 'brand' ? -60 : 60;
+
+			gsap.fromTo(cards, { x: fromX, opacity: 0 }, { x: 0, opacity: 1, duration: 0.6, ease: 'ch-spring', stagger: 0.06, clearProps: 'transform,opacity' });
+
+			if (h2 && pill) {
+				const split = SplitText.create(h2, { type: 'words,lines', mask: 'lines', aria: 'auto' });
+				const words = split.words.filter((w) => !pill.contains(w));
+				const tl = gsap.timeline({
+					onComplete: () => {
+						split.revert();
+						gsap.set(h2, { clearProps: 'all' });
+					},
+				});
+				tl.fromTo(words, { yPercent: 100 }, { yPercent: 0, duration: 0.7, stagger: 0.05, ease: 'ch-smooth' });
+				tl.fromTo(pill, { scale: 0 }, { scale: 1, duration: 0.5, ease: 'ch-spring' }, '-=0.1');
+			}
+		});
+	}
+</script>
+
+<style>
+	.who {
+		padding-block: var(--s-26);
+		text-align: center;
+	}
+
+	.seg {
+		position: relative;
+		display: inline-flex;
+		gap: 4px;
+		background: var(--c-ink);
+		border-radius: var(--r-pill);
+		padding: 6px;
+		margin-bottom: var(--s-10);
+	}
+	.thumb {
+		position: absolute;
+		top: 6px;
+		left: 6px;
+		width: calc(50% - 6px);
+		height: calc(100% - 12px);
+		background: var(--c-orange);
+		border-radius: var(--r-pill);
+		transition: translate 0.35s var(--e-spring);
+	}
+	.seg[data-active='creator'] .thumb {
+		translate: 100% 0;
+	}
+	.seg-btn {
+		position: relative;
+		z-index: 1;
+		min-height: 44px;
+		padding: 0 var(--s-6);
+		border-radius: var(--r-pill);
+		font-weight: 700;
+		font-size: 16px;
+		color: var(--c-white);
+		transition: color var(--t-s) var(--e-smooth);
+	}
+	.seg-btn[aria-pressed='true'] {
+		color: var(--c-ink);
+	}
+
+	.tpanel h2 {
+		margin: 0 auto var(--s-10);
+		max-width: 900px;
+		font-family: var(--f-display);
+		font-weight: 800;
+		font-size: var(--fs-h2-xl);
+		line-height: 1.05;
+		letter-spacing: -2px;
+	}
+	.tpanel :global(.pill) {
+		display: inline-block;
+		background: var(--c-orange);
+		color: var(--c-ink);
+		padding: 0 var(--s-4);
+		border-radius: var(--r-pill);
+	}
+
+	.cards {
+		display: grid;
+		grid-template-columns: repeat(3, minmax(200px, 1fr));
+		gap: var(--s-4);
+		text-align: left;
+	}
+	.tcard {
+		background: var(--c-white);
+		color: var(--c-ink);
+		border-radius: var(--r-card);
+		padding: var(--s-7);
+	}
+	.ttitle {
+		font-family: var(--f-display);
+		font-weight: 800;
+		font-size: 22px;
+	}
+	.tcard p {
+		margin: var(--s-2) 0 0;
+		font-weight: 500;
+	}
+
+	.cta {
+		display: inline-block;
+		margin-top: var(--s-10);
+		text-decoration: none;
+		font-weight: 700;
+		font-size: 18px;
+		padding: var(--s-5) var(--s-8);
+		border-radius: var(--r-pill);
+		transition: translate var(--t-s) var(--e-spring), box-shadow var(--t-s) var(--e-spring);
+	}
+	.cta-brand {
+		background: var(--c-orange);
+		color: var(--c-ink);
+	}
+	.cta-creator {
+		background: var(--c-white);
+		color: var(--c-ink);
+	}
+
+	@media (hover: hover) and (pointer: fine) {
+		.cta:hover {
+			translate: 0 -3px;
+			box-shadow: var(--sh-btn);
+		}
+	}
+
+	@media (max-width: 767.98px) {
+		.who {
+			padding-block: var(--s-14);
+		}
+		.cards {
+			grid-template-columns: 1fr;
+		}
+	}
+
+	/* Hidden-state contract (BUILD §4): written only under html.js-motion, matched to the
+	   onEnter `data-m` + `.is-in` swap in scripts/motion/core.ts. */
+	:global(html.js-motion) .who[data-m='rise']:not(.is-in) .tpanel:not([hidden]) :is(h2, .tcard) {
+		opacity: 0;
+	}
+</style>
