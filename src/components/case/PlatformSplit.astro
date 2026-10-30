@@ -27,7 +27,7 @@ const tilts = [-2, 2, -2];
 						<Icon name={card.platform as Platform} size={20} />
 						{cap(card.platform)}
 					</span>
-					<span class="cu-wrap" aria-label={`${card.headline.num.spoken} ${card.headline.label}`}>
+					<span class="cu-wrap" role="img" aria-label={`${card.headline.num.spoken} ${card.headline.label}`}>
 						<span class="cu" data-to={card.headline.num.value} data-dec={card.headline.num.decimals} aria-hidden="true">
 							{formatNum(card.headline.num.value, card.headline.num.decimals)}
 						</span>
@@ -38,7 +38,7 @@ const tilts = [-2, 2, -2];
 						<ul class="rows">
 							{card.rows.map((row) => (
 								<li>
-									<span class="cu-wrap small" aria-label={`${row.num.spoken} ${row.label}`}>
+									<span class="cu-wrap small" role="img" aria-label={`${row.num.spoken} ${row.label}`}>
 										<span class="cu" data-to={row.num.value} data-dec={row.num.decimals} aria-hidden="true">
 											{formatNum(row.num.value, row.num.decimals)}
 										</span>

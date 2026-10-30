@@ -24,7 +24,7 @@ const max = Math.max(...campaign.leaderboard.map((r) => r.num.value));
 					<span class="bar">
 						<span class="bar-fill"></span>
 					</span>
-					<span class="cu-wrap" aria-label={`${row.num.spoken} views`}>
+					<span class="cu-wrap" role="img" aria-label={`${row.num.spoken} views`}>
 						<span class="cu" data-to={row.num.value} data-dec={row.num.decimals} aria-hidden="true">
 							{formatNum(row.num.value, row.num.decimals)}
 						</span>

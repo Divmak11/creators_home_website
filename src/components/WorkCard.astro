@@ -93,7 +93,7 @@ const platformsLabel = `Platforms: ${platforms.map(cap).join(', ')}`;
 		<p class="kicker">{kicker}</p>
 
 		{figure ? (
-			<span class="cu-wrap" aria-label={`${figure.num.spoken} ${figure.label}`}>
+			<span class="cu-wrap" role="img" aria-label={`${figure.num.spoken} ${figure.label}`}>
 				<span class="cu" data-to={figure.num.value} data-dec={figure.num.decimals} aria-hidden="true">
 					{formatNum(figure.num.value, figure.num.decimals)}
 				</span>

@@ -19,7 +19,7 @@ const centre = campaign.stats.length < 4;
 		<div class="grid" data-m="pop" data-centre={centre ? 'true' : undefined}>
 			{campaign.stats.map((stat, i) => (
 				<div class="stat tilt" style={`--r: ${tilts[i % tilts.length]}deg`}>
-					<span class="cu-wrap" aria-label={`${stat.num.spoken} ${stat.label}`}>
+					<span class="cu-wrap" role="img" aria-label={`${stat.num.spoken} ${stat.label}`}>
 						<span class="cu" data-to={stat.num.value} data-dec={stat.num.decimals} aria-hidden="true">
 							{formatNum(stat.num.value, stat.num.decimals)}
 						</span>

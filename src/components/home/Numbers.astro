@@ -23,7 +23,7 @@ const tilts = [-2, 2, -1, 1, 2, -2];
 						popovertarget={id}
 						style={`--r: ${tilts[i]}deg; anchor-name: --a${i + 1}`}
 					>
-						<span class="cu-wrap" aria-label={`${card.num.spoken} ${card.label}`}>
+						<span class="cu-wrap" role="img" aria-label={`${card.num.spoken} ${card.label}`}>
 							<span class="cu" data-to={card.num.value} data-dec={card.num.decimals} aria-hidden="true">
 								{formatNum(card.num.value, card.num.decimals)}
 							</span>
