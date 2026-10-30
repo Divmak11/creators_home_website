@@ -130,8 +130,9 @@ const platformsLabel = `Platforms: ${platforms.map(cap).join(', ')}`;
 
 	.peek {
 		position: absolute;
-		top: 0;
-		right: 0;
+		/* at rest the mini sits fully behind the card's top-right corner; hover lifts it ~45px above the edge */
+		top: 8px;
+		right: 40px;
 		width: 96px;
 		height: 128px;
 		z-index: 0;
