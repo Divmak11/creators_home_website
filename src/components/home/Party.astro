@@ -38,10 +38,9 @@ function dotColor(bg: 'orange' | 'white' | 'ink'): string {
 					href={`/work/${card.campaign}/`}
 					class={`pcard tilt bg-${card.bg}`}
 					style={`--r: ${tilts[i]}deg; --dot: ${dotColor(card.bg)}`}
-					aria-label={`${card.name} — ${card.num.spoken} ${card.label} — see the ${title} campaign`}
+					aria-label={`${card.name} ${platformLabel(card.platform)} — ${card.num.spoken} ${card.label} — see the ${title} campaign`}
 				>
-					<strong class="name" set:html={breakName(card.name)} />
-					<span class="platform">{platformLabel(card.platform)}</span>
+					<strong class="name" set:html={breakName(card.name)} /> <span class="platform">{platformLabel(card.platform)}</span>
 					<span class="cu-wrap" aria-hidden="true">
 						<span class="cu" data-to={card.num.value} data-dec={card.num.decimals}>
 							{formatNum(card.num.value, card.num.decimals)}
