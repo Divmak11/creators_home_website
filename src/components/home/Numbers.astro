@@ -1,0 +1,208 @@
+---
+// The house numbers (home §3.1-4, spec §2.3 + §5.5). Six cards from site-stats.ts; each card is
+// a <button popovertarget> revealing its maths sticker via CSS anchor positioning (§3.1-4
+// Interactions). M-06 pop-in + M-07 count-up run together in the component <script> below.
+import { siteStats } from '../../data/site-stats';
+import { formatNum } from '../../data/format';
+
+const tilts = [-2, 2, -1, 1, 2, -2];
+---
+
+<section id="numbers" class="numbers container">
+	<h2>The house numbers</h2>
+	<p class="intro">A digital-first agency built on virality — we plan, seed and track campaigns across Instagram, Facebook, X and Reddit.</p>
+
+	<div class="grid" data-m="pop">
+		{siteStats.map((card, i) => {
+			const id = `maths-${i + 1}`;
+			return (
+				<>
+					<button
+						type="button"
+						class="stat tilt"
+						popovertarget={id}
+						style={`--r: ${tilts[i]}deg; anchor-name: --a${i + 1}`}
+					>
+						<span class="cu-wrap" aria-label={`${card.num.spoken} ${card.label}`}>
+							<span class="cu" data-to={card.num.value} data-dec={card.num.decimals} aria-hidden="true">
+								{formatNum(card.num.value, card.num.decimals)}
+							</span>
+							<span class="sfx" aria-hidden="true">{card.num.suffix}</span>
+						</span>
+						<span class="label">{card.label}</span>
+					</button>
+					<div id={id} popover="auto" class="maths" style={`position-anchor: --a${i + 1}`}>
+						{card.maths}
+					</div>
+				</>
+			);
+		})}
+	</div>
+
+	<p class="footnote">Totals from the 8 campaigns on this page. Tap a number for its maths.</p>
+</section>
+
+<script>
+	import { gsap, onEnter } from '../../scripts/motion/core';
+	import { countUp } from '../../scripts/motion/countup';
+
+	const grid = document.querySelector<HTMLElement>('.numbers .grid');
+	const cards = grid ? Array.from(grid.querySelectorAll<HTMLElement>('.stat')) : [];
+
+	if (grid && cards.length) {
+		onEnter(
+			grid,
+			() => {
+				cards.forEach((card, i) => {
+					const delay = i * 0.07;
+					const tl = gsap.timeline({ delay });
+					tl.fromTo(card, { opacity: 0 }, { opacity: 1, duration: 0.6, ease: 'power1.out', clearProps: 'opacity' }, 0);
+					tl.fromTo(
+						card,
+						{ scale: 0.6, rotation: -6 },
+						{ scale: 1, rotation: 0, duration: 0.7, ease: 'ch-spring', clearProps: 'transform' },
+						0
+					);
+					const cu = card.querySelector<HTMLElement>('.cu');
+					if (cu) countUp(cu, { duration: 1.6, delay: delay + 0.15 });
+				});
+			},
+			'top 85%'
+		);
+	}
+</script>
+
+<style>
+	.numbers {
+		padding-block: var(--s-26) var(--s-26);
+		text-align: center;
+	}
+
+	h2 {
+		margin: 0 0 var(--s-6);
+		font-family: var(--f-display);
+		font-weight: 800;
+		font-size: var(--fs-h2);
+		letter-spacing: -1.5px;
+	}
+
+	.intro {
+		max-width: 680px;
+		margin: 0 auto var(--s-12);
+		font-size: var(--fs-body-l);
+	}
+
+	.grid {
+		display: grid;
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		gap: 20px;
+	}
+
+	.stat {
+		position: relative;
+		overflow: hidden;
+		background: var(--c-white);
+		color: var(--c-ink);
+		border-radius: var(--r-card-l);
+		padding: 32px;
+		text-align: center;
+		transition: rotate var(--t-m) var(--e-spring), scale var(--t-m) var(--e-spring);
+	}
+
+	.cu-wrap {
+		display: inline-flex;
+		flex-wrap: wrap;
+		align-items: baseline;
+		justify-content: center;
+		max-width: 100%;
+		font-variant-numeric: tabular-nums;
+	}
+	.cu,
+	.sfx {
+		font-family: var(--f-display);
+		font-weight: 800;
+		font-size: var(--fs-stat);
+		line-height: 1;
+	}
+
+	.label {
+		display: block;
+		margin-top: var(--s-3);
+		font-weight: 700;
+		font-size: 18px;
+	}
+
+	.maths {
+		margin: 0;
+		background: var(--c-ink);
+		color: var(--c-white);
+		border: 0;
+		border-radius: var(--r-panel);
+		padding: var(--s-4) var(--s-5);
+		font-weight: 700;
+		font-size: var(--fs-small);
+		max-width: 320px;
+		scale: 1;
+		opacity: 1;
+		transition: scale var(--t-m) var(--e-spring), opacity var(--t-m) var(--e-smooth), display var(--t-m) allow-discrete;
+	}
+	.maths:not(:popover-open) {
+		scale: 0.8;
+		opacity: 0;
+	}
+	@starting-style {
+		.maths:popover-open {
+			scale: 0.8;
+			opacity: 0;
+		}
+	}
+
+	@supports (position-anchor: --a) {
+		.maths {
+			top: calc(anchor(bottom) + var(--s-2));
+			justify-self: anchor-center;
+		}
+	}
+
+	.footnote {
+		margin: var(--s-10) 0 0;
+		color: var(--c-muted-violet);
+		font-size: var(--fs-small);
+	}
+
+	@media (hover: hover) and (pointer: fine) {
+		.stat:hover {
+			rotate: 0deg;
+			scale: 1.03;
+		}
+	}
+
+	@media (max-width: 1199.98px) {
+		.cu,
+		.sfx {
+			font-size: 44px;
+		}
+	}
+
+	@media (max-width: 767.98px) {
+		.numbers {
+			padding-block: var(--s-14);
+		}
+		.grid {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+		.stat {
+			padding: 20px;
+		}
+		.cu,
+		.sfx {
+			font-size: 36px;
+		}
+	}
+
+	/* Hidden-state contract (BUILD §4): written only under html.js-motion, matched to the
+	   onEnter `data-m` + `.is-in` swap in scripts/motion/core.ts. */
+	:global(html.js-motion) .numbers [data-m='pop']:not(.is-in) .stat {
+		opacity: 0;
+	}
+</style>

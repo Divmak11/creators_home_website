@@ -1,6 +1,9 @@
 ---
 import Base from '../layouts/Base.astro';
+import Hero from '../components/home/Hero.astro';
 import Ribbons from '../components/home/Ribbons.astro';
+import Numbers from '../components/home/Numbers.astro';
+import Party from '../components/home/Party.astro';
 ---
 
 <Base
@@ -8,11 +11,10 @@ import Ribbons from '../components/home/Ribbons.astro';
 	description="CreatorsHome plans, seeds and tracks creator, meme-page and Reddit campaigns across Instagram, Facebook and X. 9M+ reach across our campaigns."
 	canonicalPath="/"
 >
-	<section class="stub-hero container">
-		<h1>Home of India's next big hit.</h1>
-	</section>
+	<Hero />
 	<Ribbons />
-	<section id="numbers" class="container stub"><h2>TODO numbers</h2></section>
+	<Numbers />
+	<Party />
 	<section id="work" class="container stub"><h2>TODO work</h2></section>
 	<section id="who" class="container stub"><h2>TODO who</h2></section>
 	<section id="services" class="container stub"><h2>TODO services</h2></section>
@@ -21,7 +23,6 @@ import Ribbons from '../components/home/Ribbons.astro';
 </Base>
 
 <style>
-	.stub-hero,
 	.stub {
 		padding-block: var(--s-26);
 	}

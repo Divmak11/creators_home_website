@@ -1,0 +1,498 @@
+---
+// Hero (home §3.1-2, spec §2.8 stickers). Preserves design L64–77: eyebrow, rotator H1, sub,
+// two CTAs, four stickers (card/starburst/pill/badge). K1 (.hl rise) and M-03 (sticker slap) are
+// pure CSS keyframes gated by html.js-motion (BUILD §4) — no scroll trigger needed, hero is
+// always above the fold. M-04 pointer drift runs in the component <script> below.
+---
+
+<section class="hero">
+	<div class="copy">
+		<p class="hl eyebrow" style="--i:0">Influencer, meme-page &amp; Reddit marketing</p>
+		<h1 class="hl" style="--i:1">
+			Home of India's next big <span class="vh">hit.</span><span class="rot" aria-hidden="true"><span class="rot-track loop"><span>hit.</span><span>trend.</span><span>meme.</span><span>thread.</span><span>hit.</span></span></span>
+		</h1>
+		<p class="hl sub" style="--i:2">Creators, meme pages &amp; Reddit — under one roof.</p>
+		<div class="hl ctas" style="--i:3">
+			<a href="/?role=brand#contact" data-role="brand" class="cta cta-brand">I'm a brand</a>
+			<a href="/?role=creator#who" data-role="creator" class="cta cta-creator">I'm a creator</a>
+		</div>
+	</div>
+
+	<div class="sticker-row">
+		<div class="drift sticker-card" data-drift aria-hidden="true">
+			<div class="slap" data-m="card">
+				<div class="stk tilt bob loop" style="--r: -10deg">
+					<strong class="stk-num">9M+</strong>
+					<span class="stk-label">reach</span>
+				</div>
+			</div>
+		</div>
+
+		<div class="drift sticker-star" data-drift aria-hidden="true">
+			<div class="slap" data-m="starburst">
+				<div class="stk tilt bob loop" style="--r: 8deg">
+					<svg viewBox="0 0 100 100" width="100%" height="100%">
+						<path d="M50 4l10 22 24-6-8 23 20 13-22 10 4 24-22-12-16 18-6-24-24-2 14-20L8 32l24-2z" fill="#FF6A1F"></path>
+						<text x="50" y="46" text-anchor="middle" font-family="Unbounded Variable, Unbounded, sans-serif" font-weight="800" font-size="13" fill="#160A33">TRENDED</text>
+						<text x="50" y="62" text-anchor="middle" font-family="Unbounded Variable, Unbounded, sans-serif" font-weight="800" font-size="12" fill="#160A33">on X</text>
+					</svg>
+				</div>
+			</div>
+		</div>
+
+		<div class="drift sticker-pill" data-drift aria-hidden="true">
+			<div class="slap" data-m="pill">
+				<div class="stk tilt bob loop" style="--r: 6deg">Meme-page network</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="drift sticker-badge" data-drift aria-hidden="true">
+		<div class="slap" data-m="badge">
+			<img src="/brand/badge.svg" alt="" width="130" height="130" class="spin loop" />
+		</div>
+	</div>
+
+	<button type="button" class="hero-pause js-only" data-pause-toggle data-icon-toggle aria-pressed="false" aria-label="Pause animations">
+		<span class="glyph" aria-hidden="true"></span>
+	</button>
+</section>
+
+<script>
+	import { motionOn, isPaused } from '../../scripts/motion/core';
+
+	const hero = document.querySelector<HTMLElement>('.hero');
+	const drifters = hero ? Array.from(hero.querySelectorAll<HTMLElement>('[data-drift]')) : [];
+
+	if (hero && drifters.length && motionOn() && matchMedia('(hover: hover) and (pointer: fine)').matches) {
+		let targetX = 0;
+		let targetY = 0;
+		const current = drifters.map(() => ({ x: 0, y: 0 }));
+		let rafId: number | null = null;
+		let onscreen = true;
+
+		function onMove(e: PointerEvent): void {
+			const rect = hero!.getBoundingClientRect();
+			const cx = rect.left + rect.width / 2;
+			const cy = rect.top + rect.height / 2;
+			const nx = Math.max(-1, Math.min(1, (e.clientX - cx) / (rect.width / 2)));
+			const ny = Math.max(-1, Math.min(1, (e.clientY - cy) / (rect.height / 2)));
+			targetX = -nx * 12;
+			targetY = -ny * 12;
+		}
+
+		function tick(): void {
+			drifters.forEach((el, i) => {
+				const c = current[i];
+				c.x += (targetX - c.x) * 0.08;
+				c.y += (targetY - c.y) * 0.08;
+				el.style.translate = `${c.x}px ${c.y}px`;
+			});
+			rafId = requestAnimationFrame(tick);
+		}
+
+		function start(): void {
+			if (rafId === null && onscreen && !isPaused()) rafId = requestAnimationFrame(tick);
+		}
+		function stop(): void {
+			if (rafId !== null) {
+				cancelAnimationFrame(rafId);
+				rafId = null;
+			}
+		}
+
+		window.addEventListener('pointermove', onMove);
+
+		const io = new IntersectionObserver((entries) => {
+			for (const entry of entries) {
+				onscreen = entry.isIntersecting;
+				if (onscreen) start();
+				else stop();
+			}
+		});
+		io.observe(hero);
+
+		document.addEventListener('ch:motion', (e: Event) => {
+			const paused = (e as CustomEvent<{ paused: boolean }>).detail?.paused;
+			if (paused) stop();
+			else start();
+		});
+
+		start();
+	}
+</script>
+
+<style is:global>
+	@keyframes ch-hl {
+		from {
+			opacity: 0;
+			translate: 0 50px;
+		}
+	}
+	@keyframes ch-slap {
+		from {
+			opacity: 0;
+			transform: scale(1.6) rotate(12deg);
+		}
+	}
+	html.js-motion .hero .hl {
+		animation: ch-hl 0.9s var(--e-smooth) both;
+		animation-delay: calc(0.2s + var(--i) * 0.1s);
+	}
+	html.js-motion .hero .slap {
+		animation: ch-slap 0.55s var(--e-spring) both;
+	}
+	html.js-motion .hero .slap[data-m='card'] {
+		animation-delay: 0.75s;
+	}
+	html.js-motion .hero .slap[data-m='starburst'] {
+		animation-delay: 0.85s;
+	}
+	html.js-motion .hero .slap[data-m='pill'] {
+		animation-delay: 0.95s;
+	}
+	html.js-motion .hero .slap[data-m='badge'] {
+		animation-delay: 1.05s;
+	}
+	html.js-motion .hero .slap[data-m='card'] .stk {
+		animation-delay: 1.3s;
+	}
+	html.js-motion .hero .slap[data-m='starburst'] .stk {
+		animation-delay: 1.4s;
+	}
+	html.js-motion .hero .slap[data-m='pill'] .stk {
+		animation-delay: 1.5s;
+	}
+	html.js-motion .hero .slap[data-m='badge'] img {
+		animation-delay: 1.6s;
+	}
+</style>
+
+<style>
+	.hero {
+		position: relative;
+		overflow-x: clip;
+		overflow-y: visible;
+		padding: 56px 32px 120px;
+		text-align: center;
+	}
+
+	.copy {
+		max-width: 1100px;
+		margin-inline: auto;
+		position: relative;
+		z-index: 2;
+	}
+
+	.eyebrow {
+		display: inline-block;
+		margin: 0 0 var(--s-6);
+		background: var(--c-ink);
+		color: var(--c-white);
+		border-radius: var(--r-pill);
+		padding: var(--s-3) var(--s-5);
+		font-weight: 700;
+		font-size: 15px;
+	}
+
+	h1 {
+		margin: 0 auto;
+		font-family: var(--f-display);
+		font-weight: 800;
+		font-size: var(--fs-h1);
+		line-height: 1.06;
+		letter-spacing: -2px;
+	}
+
+	.hero .rot {
+		background: var(--c-orange);
+		color: var(--c-white);
+		padding: 0 20px 4px;
+		border-radius: var(--r-pill);
+		rotate: -3deg;
+	}
+
+	.sub {
+		margin: 28px auto 40px;
+		font-size: var(--fs-body-l);
+		font-weight: 500;
+		max-width: 540px;
+	}
+
+	.ctas {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--s-3);
+		justify-content: center;
+	}
+
+	.cta {
+		text-decoration: none;
+		font-weight: 700;
+		font-size: 18px;
+		padding: var(--s-5) var(--s-8);
+		border-radius: var(--r-pill);
+		color: var(--c-ink);
+		transition: translate var(--t-s) var(--e-spring), scale var(--t-s) var(--e-spring), box-shadow var(--t-s) var(--e-spring);
+	}
+	.cta-brand {
+		background: var(--c-orange);
+	}
+	.cta-creator {
+		background: var(--c-white);
+	}
+
+	@media (hover: hover) and (pointer: fine) {
+		.cta:hover {
+			translate: 0 -3px;
+			box-shadow: 0 9px 0 var(--c-ink);
+		}
+		.cta:active {
+			translate: 0 0;
+			box-shadow: 0 2px 0 var(--c-ink);
+		}
+	}
+
+	/* Stickers */
+	.sticker-row {
+		display: contents;
+	}
+
+	.drift {
+		position: absolute;
+		z-index: 1;
+	}
+
+	.stk {
+		display: block;
+	}
+
+	.sticker-card .stk {
+		background: var(--c-white);
+		color: var(--c-ink);
+		border-radius: var(--r-sticker);
+		padding: var(--s-4) var(--s-5);
+		font-family: var(--f-display);
+	}
+	.sticker-card .stk-num {
+		display: block;
+		font-weight: 800;
+		font-size: 28px;
+		line-height: 1;
+	}
+	.sticker-card .stk-label {
+		display: block;
+		margin-top: var(--s-2);
+		font-family: var(--f-body);
+		font-weight: 700;
+		font-size: var(--fs-small);
+	}
+
+	.sticker-star {
+		width: 120px;
+		height: 120px;
+	}
+	.sticker-star .stk,
+	.sticker-star svg {
+		width: 100%;
+		height: 100%;
+		display: block;
+	}
+
+	.sticker-pill .stk {
+		background: var(--c-white);
+		color: var(--c-ink);
+		border-radius: var(--r-pill);
+		padding: var(--s-4) var(--s-6);
+		font-weight: 700;
+		font-size: 18px;
+		white-space: nowrap;
+	}
+
+	.sticker-badge {
+		width: 130px;
+		height: 130px;
+	}
+	.sticker-badge img {
+		width: 100%;
+		height: 100%;
+	}
+
+	.sticker-card {
+		left: 2%;
+		top: 60px;
+	}
+	.sticker-star {
+		right: 3%;
+		top: 30px;
+	}
+	.sticker-pill {
+		left: 6%;
+		bottom: 30px;
+	}
+	.sticker-badge {
+		right: 6%;
+		bottom: 10px;
+	}
+
+	.hero-pause {
+		position: absolute;
+		left: var(--s-5);
+		bottom: var(--s-5);
+		z-index: 3;
+		width: 36px;
+		height: 36px;
+		border-radius: var(--r-round);
+		background: var(--c-ink);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+	.js-only {
+		display: none;
+	}
+	:global(html.js) .js-only {
+		display: flex;
+	}
+	.glyph {
+		position: relative;
+		width: 14px;
+		height: 14px;
+		display: inline-block;
+	}
+	.glyph::before,
+	.glyph::after {
+		content: '';
+		position: absolute;
+		top: 0;
+		width: 4px;
+		height: 14px;
+		background: var(--c-white);
+	}
+	.glyph::before {
+		left: 0;
+	}
+	.glyph::after {
+		left: 8px;
+	}
+	.hero-pause[aria-pressed='true'] .glyph::before {
+		width: 0;
+		height: 0;
+		top: -1px;
+		left: 1px;
+		background: transparent;
+		border-style: solid;
+		border-width: 8px 0 8px 12px;
+		border-color: transparent transparent transparent var(--c-white);
+	}
+	.hero-pause[aria-pressed='true'] .glyph::after {
+		display: none;
+	}
+
+	@media (max-width: 1199.98px) {
+		h1 {
+			font-size: 64px;
+		}
+	}
+
+	/* Sticker positions switch to the "pushed out of the text column" treatment a bit earlier
+	   than the 1200px breakpoint: the centred 1100px copy column leaves too little margin for
+	   the literal desktop (left 2% / top 60) offsets right above the 1200px line (e.g. 1280px),
+	   which would otherwise overlap the H1 (F-18, "nothing may overlap… at any width 360–1600"). */
+	@media (max-width: 1365.98px) {
+		.sticker-card {
+			top: 12px;
+			left: 16px;
+			scale: 0.85;
+			bottom: auto;
+			right: auto;
+		}
+		.sticker-star {
+			top: 0;
+			right: 16px;
+			scale: 0.85;
+			left: auto;
+			bottom: auto;
+		}
+		.sticker-pill {
+			bottom: 8px;
+			left: 24px;
+			top: auto;
+			right: auto;
+		}
+		.sticker-badge {
+			width: 96px;
+			height: 96px;
+			bottom: 0;
+			right: 24px;
+			top: auto;
+		}
+	}
+
+	@media (max-width: 767.98px) {
+		.hero {
+			padding: 32px 16px 56px;
+		}
+		.eyebrow {
+			margin-right: 88px;
+		}
+		h1 {
+			font-size: 44px;
+		}
+		.ctas {
+			flex-direction: column;
+			gap: 12px;
+		}
+		.cta {
+			width: 100%;
+			text-align: center;
+		}
+
+		.sticker-row {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			margin-top: var(--s-8);
+			position: relative;
+		}
+		.sticker-row .drift {
+			position: relative;
+			top: auto;
+			left: auto;
+			right: auto;
+			bottom: auto;
+			scale: 1;
+		}
+		.sticker-row .drift + .drift {
+			margin-left: -8px;
+		}
+		.sticker-star {
+			width: 72px;
+			height: 72px;
+		}
+		.sticker-card .stk {
+			padding: var(--s-2) var(--s-3);
+		}
+		.sticker-card .stk-num {
+			font-size: 18px;
+		}
+		.sticker-card .stk-label {
+			font-size: 11px;
+		}
+		.sticker-pill .stk {
+			font-size: 12px;
+			padding: var(--s-2) var(--s-3);
+			white-space: normal;
+			max-width: 110px;
+			text-align: center;
+		}
+
+		.sticker-badge {
+			width: 80px;
+			height: 80px;
+			top: 8px;
+			right: 16px;
+			bottom: auto;
+		}
+	}
+</style>

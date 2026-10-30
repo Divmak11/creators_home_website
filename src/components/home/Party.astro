@@ -1,0 +1,296 @@
+---
+// Who's at the party (home §3.1-5, spec §2.4 + §7.4). Six partner pages that carried our
+// campaigns, repurposing design L98–109. M-08 card deal (desktop/tablet stack-and-deal, phone
+// rail slide-in) runs in the component <script> below.
+import { pagesWall } from '../../data/pages-wall';
+import { getCampaign } from '../../data/campaigns';
+import { formatNum } from '../../data/format';
+
+const tilts = [-3, 2, -2, 3, -2, 2];
+
+function platformLabel(p: string): string {
+	return p.charAt(0).toUpperCase() + p.slice(1) + ' page';
+}
+
+function dotColor(bg: 'orange' | 'white' | 'ink'): string {
+	return bg === 'white' ? 'var(--c-orange)' : bg === 'orange' ? 'var(--c-ink)' : 'var(--c-orange)';
+}
+---
+
+<section id="party" class="party container">
+	<div class="head">
+		<div>
+			<h2>Who's at the party</h2>
+			<p class="sub">Pages our campaigns ran through — and what they pulled.</p>
+		</div>
+		<a href="/?role=creator#contact" data-role="creator" class="join">Join the house →</a>
+	</div>
+
+	<p class="swipe-hint">Swipe →</p>
+
+	<div class="grid" data-m="deal">
+		{pagesWall.map((card, i) => {
+			const campaign = getCampaign(card.campaign);
+			const title = campaign?.title ?? card.campaign;
+			return (
+				<a
+					href={`/work/${card.campaign}/`}
+					class={`pcard tilt bg-${card.bg}`}
+					style={`--r: ${tilts[i]}deg; --dot: ${dotColor(card.bg)}`}
+					aria-label={`${card.name} — ${card.num.spoken} ${card.label} — see the ${title} campaign`}
+				>
+					<strong class="name">{card.name}</strong>
+					<span class="platform">{platformLabel(card.platform)}</span>
+					<span class="cu-wrap" aria-hidden="true">
+						<span class="cu" data-to={card.num.value} data-dec={card.num.decimals}>
+							{formatNum(card.num.value, card.num.decimals)}
+						</span>
+						<span class="sfx">{card.num.suffix}</span>
+					</span>
+					<span class="label" aria-hidden="true">{card.label}</span>
+					<span class="seen" aria-hidden="true">seen in: {title} →</span>
+				</a>
+			);
+		})}
+	</div>
+</section>
+
+<script>
+	import { gsap, onEnter } from '../../scripts/motion/core';
+	import { countUp } from '../../scripts/motion/countup';
+
+	const section = document.querySelector<HTMLElement>('.party');
+	const grid = section?.querySelector<HTMLElement>('.grid');
+	const cards = grid ? Array.from(grid.querySelectorAll<HTMLElement>('.pcard')) : [];
+
+	if (grid && cards.length) {
+		onEnter(
+			grid,
+			() => {
+				const isRail = matchMedia('(max-width: 767.98px)').matches;
+				const rotations = [-12, 8, -5, 11, -9, 4];
+
+				if (isRail) {
+					gsap.fromTo(
+						cards,
+						{ x: 60, opacity: 0 },
+						{ x: 0, opacity: 1, duration: 0.5, ease: 'ch-out', stagger: 0.06, clearProps: 'transform,opacity' }
+					);
+				} else {
+					const gridRect = grid.getBoundingClientRect();
+					const gcx = gridRect.left + gridRect.width / 2;
+					const gcy = gridRect.top + gridRect.height / 2;
+
+					cards.forEach((card, i) => {
+						const r = card.getBoundingClientRect();
+						const cx = r.left + r.width / 2;
+						const cy = r.top + r.height / 2;
+						const dx = gcx - cx;
+						const dy = gcy - cy;
+
+						const tl = gsap.timeline({ delay: i * 0.08 });
+						tl.set(card, { x: dx, y: dy, rotation: rotations[i], opacity: i === 5 ? 1 : 0 });
+						tl.to(card, { x: 0, y: 0, rotation: 0, duration: 0.6, ease: 'back.out(1.4)', clearProps: 'transform,opacity' }, 0);
+						tl.set(card, { opacity: 1 }, 0);
+
+						const cu = card.querySelector<HTMLElement>('.cu');
+						if (cu) countUp(cu, { duration: 1.2, delay: i * 0.08 + 0.4 });
+					});
+					return;
+				}
+
+				cards.forEach((card, i) => {
+					const cu = card.querySelector<HTMLElement>('.cu');
+					if (cu) countUp(cu, { duration: 1.2, delay: i * 0.08 + 0.4 });
+				});
+			},
+			'top 80%'
+		);
+	}
+
+	const rail = grid;
+	const hint = section?.querySelector<HTMLElement>('.swipe-hint');
+	if (rail && hint) {
+		rail.addEventListener(
+			'scroll',
+			() => {
+				hint.style.opacity = '0';
+			},
+			{ once: true }
+		);
+	}
+</script>
+
+<style>
+	.party {
+		padding-block: var(--s-26);
+	}
+
+	.head {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: space-between;
+		align-items: flex-end;
+		gap: var(--s-4);
+		margin-bottom: var(--s-10);
+	}
+
+	h2 {
+		margin: 0;
+		font-family: var(--f-display);
+		font-weight: 800;
+		font-size: var(--fs-h2);
+		letter-spacing: -1.5px;
+	}
+
+	.sub {
+		margin: var(--s-2) 0 0;
+		font-size: var(--fs-body-l);
+	}
+
+	.join {
+		text-decoration: none;
+		font-weight: 700;
+		white-space: nowrap;
+	}
+
+	.swipe-hint {
+		display: none;
+		text-align: right;
+		font-weight: 700;
+		margin: 0 0 var(--s-3);
+		transition: opacity var(--t-l) var(--e-smooth);
+	}
+
+	.grid {
+		display: grid;
+		grid-template-columns: repeat(6, minmax(0, 1fr));
+		gap: 20px;
+	}
+
+	.pcard {
+		position: relative;
+		display: flex;
+		flex-direction: column;
+		justify-content: flex-end;
+		aspect-ratio: 3 / 4;
+		border-radius: var(--r-card);
+		padding: var(--s-5);
+		overflow: hidden;
+		text-decoration: none;
+		transition: rotate var(--t-m) var(--e-spring), scale var(--t-m) var(--e-spring);
+	}
+	.pcard::after {
+		content: '';
+		position: absolute;
+		inset: -20%;
+		rotate: 12deg;
+		background-image: radial-gradient(circle, var(--dot) 3px, transparent 3px);
+		background-size: 28px 28px;
+		opacity: 0.12;
+		pointer-events: none;
+	}
+
+	.bg-orange {
+		background: var(--c-orange);
+		color: var(--c-ink);
+	}
+	.bg-white {
+		background: var(--c-white);
+		color: var(--c-ink);
+	}
+	.bg-ink {
+		background: var(--c-ink);
+		color: var(--c-white);
+	}
+
+	.name {
+		position: relative;
+		z-index: 1;
+		display: block;
+		overflow-wrap: anywhere;
+		font-family: var(--f-display);
+		font-weight: 700;
+		font-size: 20px;
+	}
+	.platform {
+		position: relative;
+		z-index: 1;
+		display: block;
+		margin: var(--s-1) 0 var(--s-4);
+		font-weight: 700;
+		font-size: var(--fs-small);
+	}
+	.cu-wrap {
+		position: relative;
+		z-index: 1;
+		display: block;
+		font-family: var(--f-display);
+		font-weight: 800;
+		font-size: var(--fs-card-figure);
+		font-variant-numeric: tabular-nums;
+	}
+	.label {
+		position: relative;
+		z-index: 1;
+		display: block;
+		font-weight: 700;
+		font-size: var(--fs-small);
+	}
+	.seen {
+		position: relative;
+		z-index: 1;
+		display: block;
+		margin-top: var(--s-3);
+		font-weight: 700;
+		font-size: 13px;
+	}
+
+	@media (hover: hover) and (pointer: fine) {
+		.pcard:hover {
+			rotate: 0deg;
+			scale: 1.03;
+		}
+	}
+
+	@media (max-width: 1199.98px) {
+		.grid {
+			grid-template-columns: repeat(3, minmax(0, 1fr));
+			grid-template-rows: repeat(2, 1fr);
+		}
+	}
+
+	@media (max-width: 767.98px) {
+		.party {
+			padding-block: var(--s-14);
+		}
+		.swipe-hint {
+			display: block;
+		}
+		.grid {
+			display: flex;
+			grid-template-columns: none;
+			overflow-x: auto;
+			scroll-snap-type: x mandatory;
+			gap: 14px;
+			padding-inline: 16px;
+			margin-inline: calc(var(--s-4) * -1);
+		}
+		.pcard {
+			flex: 0 0 62vw;
+			scroll-snap-align: start;
+		}
+		.pcard:nth-child(odd) {
+			rotate: -1.5deg;
+		}
+		.pcard:nth-child(even) {
+			rotate: 1.5deg;
+		}
+	}
+
+	/* Hidden-state contract (BUILD §4): written only under html.js-motion, matched to the
+	   onEnter `data-m` + `.is-in` swap in scripts/motion/core.ts. */
+	:global(html.js-motion) .party [data-m='deal']:not(.is-in) .pcard {
+		opacity: 0;
+	}
+</style>
