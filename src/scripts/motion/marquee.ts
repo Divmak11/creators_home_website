@@ -22,7 +22,8 @@ export function buildMarquee(mq: HTMLElement): void {
   if (!track) return;
   const firstSet = track.querySelector<HTMLElement>('.mq-set');
   if (!firstSet) return;
-  const setW = firstSet.offsetWidth;
+  // computed width keeps the fractional layout px (offsetWidth rounds, which shows at the seam)
+  const setW = parseFloat(getComputedStyle(firstSet).width);
   if (!setW) return;
 
   const speed = Number(mq.dataset.speed ?? '60');
