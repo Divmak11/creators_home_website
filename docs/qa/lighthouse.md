@@ -61,3 +61,14 @@ unit's scope. No performance fixes applied (out of scope per step 6; see `open.m
 | privacy desktop | `unused-javascript` | 50ms / 35.8 KB |
 
 No performance fixes applied (out of scope per step 6; see `open.md`).
+
+## Final (parent fixes 3b04843, d34fd93; final build f5b3810) — mobile
+
+| Page | Perf | A11y | BP | SEO | LCP | CLS | TBT |
+|---|---|---|---|---|---|---|---|
+| / | 100 | 100 | 100 | 100 | 1.1s | 0 | 0ms |
+| /work/chhedas/ | 94 | 100 | 100 | 100 | 3.0s | 0 | 0ms |
+| /privacy/ | 100 | 100 | 100 | 69* | 0.8s | 0 | 0ms |
+
+\* intentional `noindex, follow` while `LEGAL_READY=false`. Home LCP moved from the header logo to the H1 once the H1
+stopped starting at opacity 0. Chheda's LCP is the case-hero cover (800w AVIF, eager, fetchpriority high).

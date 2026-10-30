@@ -76,3 +76,11 @@ visible "...page 4 6 m views..." vs label "...page 4 6 **million** views..." bre
 spelled-out-spoken pattern, not a missing label fragment. Fixing it would mean either abbreviating the spoken value
 (contradicts spec §5.5) or restructuring the card markup — a content/spec trade-off, not a mechanical ARIA fix, so
 left open.
+
+## Status after parent fixes (2026-10-31)
+- #1 JS: campaign data removed from the client bundle → 71.5 KB gzip on `/` (budget 70). The remainder is the GSAP
+  bundle (58.7 KB vs the spec's 45–50 KB estimate). Listed exception; dropping a spec-mandated plugin is a design call.
+- #2 Phone height: 10,759 px at 390 (≤ 11,000) — resolved.
+- #3 Home perf: 100, LCP 1.1s — resolved. Chheda's case page perf 94 / LCP 3.0s remains (cover image weight).
+- #4, #5 contrast: resolved (items carry their bar's ground; note uses `--c-muted-violet`; Ph opacity removed). Home A11y 100.
+- #6 party-card label mismatch: open (spec §5.5 spoken-vs-visible conflict); Lighthouse A11y does not flag it.
