@@ -227,6 +227,8 @@ function seenPills(seenIn: string[]): string {
 
 	.room {
 		text-align: left;
+		width: 100%; /* spec §3.1-10: panel spans the container */
+		align-self: stretch;
 	}
 	.room-grow {
 		display: grid;
