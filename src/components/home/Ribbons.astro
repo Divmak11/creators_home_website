@@ -1,0 +1,168 @@
+---
+// Crossing brand ribbons (home §3.1-3, spec §2.5 copy, §5.6 marquee rules). Text only, no logos
+// (no permission on file). Moving tracks are `aria-hidden`; the a11y list lives in the hidden <ul>.
+import { ribbon1, ribbon2, brandsAccessibleSentence } from '../../data/brands';
+
+const brandNames = brandsAccessibleSentence
+	.replace("Brands we've worked with: ", '')
+	.replace(/\.$/, '')
+	.split(', ');
+
+const SETS = 4;
+---
+
+<section class="ribbons" data-m="tape" aria-labelledby="brands-h">
+	<h2 id="brands-h" class="vh">Brands we've worked with</h2>
+	<ul class="vh">
+		{brandNames.map((name) => <li>{name}</li>)}
+	</ul>
+	<div class="band">
+		<div class="bar bar-1 mq" data-dir="left" data-speed="60" data-coupling aria-hidden="true">
+			<div class="mq-track loop">
+				{Array.from({ length: SETS }).map(() => (
+					<div class="mq-set">
+						{ribbon1.map((brand) => (
+							<>
+								<span>{brand}</span>
+								<span class="sep" aria-hidden="true">✱</span>
+							</>
+						))}
+					</div>
+				))}
+			</div>
+		</div>
+		<div class="bar bar-2 mq" data-dir="right" data-speed="60" data-coupling aria-hidden="true">
+			<div class="mq-track loop">
+				{Array.from({ length: SETS }).map(() => (
+					<div class="mq-set">
+						{ribbon2.map((brand) => (
+							<>
+								<span>{brand}</span>
+								<span class="sep" aria-hidden="true">✱</span>
+							</>
+						))}
+					</div>
+				))}
+			</div>
+		</div>
+	</div>
+</section>
+
+<script>
+	import { gsap, onEnter } from '../../scripts/motion/core';
+
+	const section = document.querySelector<HTMLElement>('.ribbons[data-m="tape"]');
+	const band = section?.querySelector<HTMLElement>('.band');
+	const bar1 = section?.querySelector<HTMLElement>('.bar-1');
+	const bar2 = section?.querySelector<HTMLElement>('.bar-2');
+
+	if (section && band && bar1 && bar2) {
+		onEnter(section, () => {
+			gsap.fromTo(
+				bar1,
+				{ clipPath: 'inset(0 100% 0 0)' },
+				{ clipPath: 'inset(0 0% 0 0)', duration: 0.9, ease: 'ch-smooth', clearProps: 'clipPath' }
+			);
+			gsap.fromTo(
+				bar2,
+				{ clipPath: 'inset(0 0 0 100%)' },
+				{ clipPath: 'inset(0 0 0 0%)', duration: 0.9, delay: 0.15, ease: 'ch-smooth', clearProps: 'clipPath' }
+			);
+		});
+	}
+</script>
+
+<style>
+	.ribbons {
+		position: relative;
+	}
+
+	.band {
+		position: relative;
+		height: 200px;
+		overflow-x: clip;
+		overflow-y: visible;
+		padding-block: var(--s-6);
+	}
+
+	.bar {
+		position: absolute;
+		left: 0;
+		right: 0;
+		margin-inline: -120px;
+		padding-block: 18px;
+		font-family: var(--f-display);
+		font-weight: 700;
+		font-size: var(--fs-ribbon);
+		text-transform: uppercase;
+		white-space: nowrap;
+	}
+	.bar .mq-set {
+		gap: var(--s-8);
+	}
+	.bar .mq-set span {
+		display: inline-flex;
+	}
+
+	.bar-1 {
+		top: 25%;
+		background: var(--c-orange);
+		color: var(--c-ink);
+		rotate: -4deg;
+	}
+	.bar-1 .sep {
+		color: var(--c-ink);
+	}
+
+	.bar-2 {
+		top: 32%;
+		background: var(--c-white);
+		color: var(--c-ink);
+		rotate: 3deg;
+	}
+	.bar-2 .sep {
+		color: var(--c-orange);
+	}
+
+	@media (hover: hover) and (pointer: fine) {
+		.band:hover .mq-track,
+		.band:focus-within .mq-track {
+			animation-play-state: paused;
+		}
+	}
+
+	@media (max-width: 1199.98px) {
+		.band {
+			height: 170px;
+		}
+		.bar {
+			padding-block: 14px;
+			font-size: var(--fs-ribbon-tablet);
+		}
+	}
+
+	@media (max-width: 767.98px) {
+		.band {
+			height: 140px;
+		}
+		.bar {
+			padding-block: 10px;
+			font-size: var(--fs-ribbon-phone);
+		}
+		.bar-1 {
+			rotate: -3deg;
+		}
+		.bar-2 {
+			rotate: 2deg;
+		}
+	}
+
+	/* Entry M-05 tape pull (spec §3.1-3): hidden only under html.js-motion, matching the
+	   entry contract in scripts/motion/core.ts (data-m="tape" + :not(.is-in)). */
+	:global(html.js-motion) .ribbons[data-m='tape']:not(.is-in) .bar-1 {
+		clip-path: inset(0 100% 0 0);
+	}
+	:global(html.js-motion) .ribbons[data-m='tape']:not(.is-in) .bar-2 {
+		clip-path: inset(0 0 0 100%);
+	}
+</style>

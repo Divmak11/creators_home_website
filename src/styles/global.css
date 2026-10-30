@@ -124,6 +124,108 @@ html[data-motion='paused'] .loop {
 .loop.is-off {
   animation-play-state: paused;
 }
+html.tab-hidden .loop {
+  animation-play-state: paused;
+}
+
+/* Loop keyframes (spec §5, names carry the `ch-*` prefix — F-38) */
+
+/* Word rotator (design L32–35, K2) */
+.rot {
+  display: inline-block;
+  height: 1.1em;
+  overflow: hidden;
+  vertical-align: bottom;
+}
+.rot-track {
+  display: flex;
+  flex-direction: column;
+  animation: ch-rot 8s var(--e-rot) infinite;
+}
+.rot-track > span {
+  height: 1.1em;
+  line-height: 1.1em;
+}
+@keyframes ch-rot {
+  0%, 20% {
+    translate: 0 0;
+  }
+  25%, 45% {
+    translate: 0 -1.1em;
+  }
+  50%, 70% {
+    translate: 0 -2.2em;
+  }
+  75%, 95% {
+    translate: 0 -3.3em;
+  }
+  100% {
+    translate: 0 -4.4em;
+  }
+}
+
+/* Bob (F-15: tilt lives in `rotate`, kept under reduced motion by `.tilt`) */
+@keyframes ch-bob {
+  0%, 100% {
+    translate: 0 0;
+    rotate: calc(var(--r, 0deg) * var(--tilt-k, 1));
+  }
+  50% {
+    translate: 0 -14px;
+    rotate: calc(var(--r, 0deg) * var(--tilt-k, 1) * -1);
+  }
+}
+.bob {
+  animation: ch-bob 4s ease-in-out infinite;
+}
+
+/* Spin (K9 badge) */
+@keyframes ch-spin {
+  to {
+    rotate: 360deg;
+  }
+}
+.spin {
+  animation: ch-spin 12s linear infinite;
+}
+
+/* Marquee (spec §5.6, scripts/motion/marquee.ts) */
+.mq-track {
+  display: flex;
+  width: max-content;
+  animation: ch-mq var(--dur, 40s) linear infinite;
+}
+.mq[data-dir='right'] .mq-track {
+  animation-direction: reverse;
+}
+.mq-set {
+  display: flex;
+  flex: none;
+}
+@keyframes ch-mq {
+  from {
+    translate: 0 0;
+  }
+  to {
+    translate: var(--shift, -25%) 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mq-set ~ .mq-set {
+    display: none;
+  }
+  .mq-track {
+    width: 100%;
+    justify-content: center;
+  }
+}
+html[data-motion='paused'] .mq-set ~ .mq-set {
+  display: none;
+}
+html[data-motion='paused'] .mq-track {
+  width: 100%;
+  justify-content: center;
+}
 
 /* View transitions */
 @view-transition {
