@@ -639,14 +639,15 @@ const warnIcon =
 		}
 	}
 
-	.success {
+	.panel :global(.success) {
+		box-shadow: var(--sh-hard);
 		background: var(--c-white);
 		color: var(--c-ink);
 		border-radius: var(--r-card-l);
 		padding: var(--s-12);
 		text-align: center;
 	}
-	.success h3 {
+	.panel :global(.success h3) {
 		margin: 0;
 		font-family: var(--f-display);
 		font-weight: 800;
