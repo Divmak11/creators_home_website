@@ -1,6 +1,5 @@
 ---
-import { Picture } from 'astro:assets';
-import { slots, type SlotId } from '../data/assets';
+import { getSlot, type SlotId, type SlotSrc } from '../data/assets';
 
 interface Props {
   id: SlotId;
@@ -13,8 +12,8 @@ interface Props {
   loading?: 'lazy' | 'eager';
   fit?: 'cover' | 'contain';
   position?: string;
-  fallbackBg?: string;
-  fallbackFg?: string;
+  fill?: boolean;
+  priority?: boolean;
 }
 
 const {
@@ -27,55 +26,65 @@ const {
   class: className,
   loading = 'lazy',
   fit = 'cover',
-  position = 'center',
-  fallbackBg = 'var(--c-muted-violet)',
-  fallbackFg = 'var(--c-ink)',
+  position,
+  fill = false,
+  priority = false,
 } = Astro.props;
 
-const image = slots[id];
-const ratio = `${width} / ${height}`;
+const image = getSlot(id);
+
+// `widths` filters the manifest's widths down to the requested subset (all if omitted). If the
+// requested widths don't intersect what the manifest has for this slot, fall back to everything
+// available rather than render an empty srcset.
+function filterByWidths(list: SlotSrc[]): SlotSrc[] {
+  if (!widths || widths.length === 0) return list;
+  const matched = list.filter((f) => widths.includes(f.w));
+  return matched.length ? matched : list;
+}
+
+const avifList = filterByWidths(image.avif);
+const webpList = filterByWidths(image.webp);
+
+function toSrcset(list: SlotSrc[]): string {
+  return list.map((f) => `${f.src} ${f.w}w`).join(', ');
+}
+
+function closestTo800(list: SlotSrc[]): SlotSrc | undefined {
+  if (!list.length) return undefined;
+  return list.reduce((best, cur) => (Math.abs(cur.w - 800) < Math.abs(best.w - 800) ? cur : best));
+}
+
+const imgFile = closestTo800(webpList) ?? webpList[webpList.length - 1] ?? closestTo800(avifList) ?? avifList[avifList.length - 1];
+
+const resolvedPosition = position ?? image.position ?? 'center';
+const resolvedLoading = priority ? 'eager' : loading;
+const fetchPriority = priority ? 'high' : 'low';
+
+const pictureStyle = fill ? 'position: absolute; inset: 0;' : undefined;
+
+const imgStyle = [
+  'width: 100%',
+  fill ? 'height: 100%' : 'height: auto',
+  fill ? `object-fit: ${fit}` : null,
+  `object-position: ${resolvedPosition}`,
+  image.lqip ? `background-color: ${image.lqip}` : null,
+]
+  .filter(Boolean)
+  .join('; ');
 ---
 
-{image ? (
-	<Picture
-		src={image}
-		alt={alt}
-		formats={['avif', 'webp']}
-		widths={widths}
-		sizes={sizes}
+<picture class={className} style={pictureStyle}>
+	{avifList.length > 0 && <source type="image/avif" srcset={toSrcset(avifList)} sizes={sizes} />}
+	{webpList.length > 0 && <source type="image/webp" srcset={toSrcset(webpList)} sizes={sizes} />}
+	<img
+		src={imgFile?.src}
 		width={width}
 		height={height}
-		loading={loading}
-		class={className}
-		style={`aspect-ratio: ${ratio}; object-fit: ${fit}; object-position: ${position};`}
+		alt={alt}
+		loading={resolvedLoading}
+		decoding="async"
+		fetchpriority={fetchPriority}
+		sizes={sizes}
+		style={imgStyle}
 	/>
-) : (
-	<div
-		role="img"
-		aria-label={alt}
-		class={`slot-ph ${className ?? ''}`}
-		style={`aspect-ratio: ${ratio}; background: ${fallbackBg}; color: ${fallbackFg};`}
-	>
-		<span class="slot-ph-tag" aria-hidden="true">A1 · {id}</span>
-	</div>
-)}
-
-<style>
-	.slot-ph {
-		position: relative;
-		width: 100%;
-		display: flex;
-		align-items: flex-end;
-		justify-content: flex-start;
-		overflow: hidden;
-	}
-	.slot-ph-tag {
-		margin: var(--s-2);
-		border: 1px dashed currentColor;
-		border-radius: var(--r-field);
-		padding: 2px var(--s-2);
-		font-size: var(--fs-small);
-		font-weight: 700;
-		opacity: 0.7;
-	}
-</style>
+</picture>

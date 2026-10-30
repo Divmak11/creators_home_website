@@ -1,7 +1,7 @@
 ---
 // Proof-wall lightbox (spec §4.5 / §4.6). Mounted once by ProofWall.astro. Native <dialog>,
-// content cloned at open time from whichever `.wall-item` button was clicked (its <picture> or
-// placeholder) so the image markup is never duplicated in the page source. Keys: Esc closes
+// content cloned at open time from whichever `.wall-item` button was clicked (its <picture>)
+// so the image markup is never duplicated in the page source. Keys: Esc closes
 // (native dialog behaviour), ←/→ navigate; touch swipe via pointer events. Open motion is a
 // FLIP read of the opener's rect into the dialog figure's final rect (reduced motion: instant).
 ---
@@ -40,14 +40,22 @@
 		function render(i: number): void {
 			index = (i + items.length) % items.length;
 			const btn = items[index];
-			const media = btn.querySelector('picture, .slot-ph');
+			const media = btn.querySelector('picture');
 			figureEl.innerHTML = '';
 			if (media) {
 				const clone = media.cloneNode(true) as HTMLElement;
+				// Reset the opener's `fill` inline positioning (phone frames render with
+				// position:absolute/inset:0 on the picture and width/height:100% on the img) so
+				// the clone falls back to the lightbox's own CSS (max-height, object-fit: contain).
+				clone.style.position = '';
+				clone.style.inset = '';
 				const img = clone.querySelector<HTMLImageElement>('img');
 				if (img) {
 					img.setAttribute('sizes', '90vw');
 					img.loading = 'eager';
+					img.style.width = '';
+					img.style.height = '';
+					img.style.objectFit = 'contain';
 				}
 				figureEl.appendChild(clone);
 			}
@@ -157,8 +165,7 @@
 		max-height: 72vh;
 	}
 	.lb-figure :global(picture),
-	.lb-figure :global(img),
-	.lb-figure :global(.slot-ph) {
+	.lb-figure :global(img) {
 		max-width: 100%;
 		max-height: 72vh;
 		width: auto;

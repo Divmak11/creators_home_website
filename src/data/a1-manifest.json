@@ -1,0 +1,1237 @@
+{
+  "site": "creatorshome",
+  "generatedBy": "A1 assets job",
+  "date": "2026-10-30",
+  "pathsRelativeTo": "brand-assets/creatorshome/",
+  "totalBytes": 4949370,
+  "slotCount": 35,
+  "slots": {
+    "A-01": {
+      "slot": "A-01",
+      "alt": "",
+      "placement": "Work band corner sticker (desktop only), decorative",
+      "source": "_work/gen/creatorshome/A-01/gen-20261030-161907-1.webp",
+      "processing": "nano-banana-pro; #00FF00 keyed by border flood-fill + despill, trimmed, padded square, master 800px; alpha kept",
+      "decorative": true,
+      "note": "decorative: render with alt=\"\" aria-hidden",
+      "files": [
+        {
+          "path": "img/generated/disco-ball-house-160.avif",
+          "format": "avif",
+          "width": 160,
+          "height": 160,
+          "bytes": 9874
+        },
+        {
+          "path": "img/generated/disco-ball-house-160.webp",
+          "format": "webp",
+          "width": 160,
+          "height": 160,
+          "bytes": 12960
+        },
+        {
+          "path": "img/generated/disco-ball-house-320.avif",
+          "format": "avif",
+          "width": 320,
+          "height": 320,
+          "bytes": 21556
+        },
+        {
+          "path": "img/generated/disco-ball-house-320.webp",
+          "format": "webp",
+          "width": 320,
+          "height": 320,
+          "bytes": 33450
+        }
+      ]
+    },
+    "A-02": {
+      "slot": "A-02",
+      "alt": "",
+      "placement": "Case-study hero corner sticker, decorative",
+      "source": "_work/gen/creatorshome/A-02/gen-20261030-161940-1.webp",
+      "processing": "nano-banana-pro; #00FF00 keyed by border flood-fill + despill, trimmed, padded square, master 800px; alpha kept",
+      "decorative": true,
+      "note": "decorative: render with alt=\"\" aria-hidden",
+      "files": [
+        {
+          "path": "img/generated/party-popper-160.avif",
+          "format": "avif",
+          "width": 160,
+          "height": 160,
+          "bytes": 7419
+        },
+        {
+          "path": "img/generated/party-popper-160.webp",
+          "format": "webp",
+          "width": 160,
+          "height": 160,
+          "bytes": 8750
+        },
+        {
+          "path": "img/generated/party-popper-320.avif",
+          "format": "avif",
+          "width": 320,
+          "height": 320,
+          "bytes": 14177
+        },
+        {
+          "path": "img/generated/party-popper-320.webp",
+          "format": "webp",
+          "width": 320,
+          "height": 320,
+          "bytes": 21962
+        }
+      ]
+    },
+    "A-03": {
+      "slot": "A-03",
+      "alt": "",
+      "placement": "\"Overheard\" section sticker, decorative",
+      "source": "_work/gen/creatorshome/A-03/gen-20261030-162315-1.webp",
+      "processing": "nano-banana-pro; #00FF00 keyed by border flood-fill + despill, trimmed, padded square, master 800px; alpha kept",
+      "decorative": true,
+      "note": "decorative: render with alt=\"\" aria-hidden",
+      "files": [
+        {
+          "path": "img/generated/speech-heart-160.avif",
+          "format": "avif",
+          "width": 160,
+          "height": 160,
+          "bytes": 3115
+        },
+        {
+          "path": "img/generated/speech-heart-160.webp",
+          "format": "webp",
+          "width": 160,
+          "height": 160,
+          "bytes": 5588
+        },
+        {
+          "path": "img/generated/speech-heart-320.avif",
+          "format": "avif",
+          "width": 320,
+          "height": 320,
+          "bytes": 6489
+        },
+        {
+          "path": "img/generated/speech-heart-320.webp",
+          "format": "webp",
+          "width": 320,
+          "height": 320,
+          "bytes": 11604
+        }
+      ]
+    },
+    "A-04": {
+      "slot": "A-04",
+      "alt": "",
+      "placement": "Contact panel sticker (desktop/tablet), decorative",
+      "source": "_work/gen/creatorshome/A-04/gen-20261030-162043-1.webp",
+      "processing": "nano-banana-pro; #00FF00 keyed by border flood-fill + despill, trimmed, master 1200px; alpha kept",
+      "decorative": true,
+      "note": "decorative: render with alt=\"\" aria-hidden",
+      "files": [
+        {
+          "path": "img/generated/doormat-240.avif",
+          "format": "avif",
+          "width": 240,
+          "height": 199,
+          "bytes": 9297
+        },
+        {
+          "path": "img/generated/doormat-240.webp",
+          "format": "webp",
+          "width": 240,
+          "height": 199,
+          "bytes": 15252
+        },
+        {
+          "path": "img/generated/doormat-480.avif",
+          "format": "avif",
+          "width": 480,
+          "height": 398,
+          "bytes": 19868
+        },
+        {
+          "path": "img/generated/doormat-480.webp",
+          "format": "webp",
+          "width": 480,
+          "height": 398,
+          "bytes": 35964
+        }
+      ]
+    },
+    "A-05": {
+      "slot": "A-05",
+      "alt": "A party house with its door ajar and balloons on the handle",
+      "placement": "/404 illustration",
+      "source": "_work/gen/creatorshome/A-05/gen-20261030-162115-1.webp",
+      "processing": "nano-banana-pro; #00FF00 keyed by border flood-fill + despill, trimmed, padded square, master 1200px; alpha kept",
+      "decorative": false,
+      "note": "",
+      "files": [
+        {
+          "path": "img/generated/404-house-320.avif",
+          "format": "avif",
+          "width": 320,
+          "height": 320,
+          "bytes": 14991
+        },
+        {
+          "path": "img/generated/404-house-320.webp",
+          "format": "webp",
+          "width": 320,
+          "height": 320,
+          "bytes": 27008
+        },
+        {
+          "path": "img/generated/404-house-640.avif",
+          "format": "avif",
+          "width": 640,
+          "height": 640,
+          "bytes": 32793
+        },
+        {
+          "path": "img/generated/404-house-640.webp",
+          "format": "webp",
+          "width": 640,
+          "height": 640,
+          "bytes": 64576
+        },
+        {
+          "path": "img/generated/404-house-960.avif",
+          "format": "avif",
+          "width": 960,
+          "height": 960,
+          "bytes": 51610
+        },
+        {
+          "path": "img/generated/404-house-960.webp",
+          "format": "webp",
+          "width": 960,
+          "height": 960,
+          "bytes": 99920
+        }
+      ]
+    },
+    "A-06": {
+      "slot": "A-06",
+      "alt": "",
+      "placement": "OG background for the build-time OG generator (spec §9.3)",
+      "source": "_work/gen/creatorshome/A-06/gen-20261030-162148-1.webp",
+      "processing": "nano-banana-pro; corner sparkle filled with sampled bg violet; cover 1200x630 anchored right; palette PNG",
+      "files": [
+        {
+          "path": "og/og-bg.png",
+          "format": "png",
+          "bytes": 365290,
+          "width": 1200,
+          "height": 630
+        }
+      ]
+    },
+    "brand/badge": {
+      "slot": "brand/badge",
+      "alt": "CreatorsHome",
+      "placement": "hero spinning badge + OG stamp (concept B, secondary seal only)",
+      "source": "brand-assets/_work/scripts",
+      "processing": "hand-built SVG from code (scripts/brand.mjs)",
+      "files": [
+        {
+          "path": "brand/badge.svg",
+          "format": "svg",
+          "bytes": 11459
+        }
+      ]
+    },
+    "brand/logo-ink": {
+      "slot": "brand/logo-ink",
+      "alt": "CreatorsHome",
+      "placement": "header/footer lockup — white/lavender/orange surfaces (ink text)",
+      "source": "brand-assets/_work/scripts",
+      "processing": "hand-built SVG from code (scripts/brand.mjs)",
+      "files": [
+        {
+          "path": "brand/logo-ink.svg",
+          "format": "svg",
+          "bytes": 9118
+        }
+      ]
+    },
+    "brand/logo-mono-ink": {
+      "slot": "brand/logo-mono-ink",
+      "alt": "CreatorsHome",
+      "placement": "header/footer lockup — one-colour on light",
+      "source": "brand-assets/_work/scripts",
+      "processing": "hand-built SVG from code (scripts/brand.mjs)",
+      "files": [
+        {
+          "path": "brand/logo-mono-ink.svg",
+          "format": "svg",
+          "bytes": 9354
+        }
+      ]
+    },
+    "brand/logo-mono-white": {
+      "slot": "brand/logo-mono-white",
+      "alt": "CreatorsHome",
+      "placement": "header/footer lockup — one-colour on dark/photos",
+      "source": "brand-assets/_work/scripts",
+      "processing": "hand-built SVG from code (scripts/brand.mjs)",
+      "files": [
+        {
+          "path": "brand/logo-mono-white.svg",
+          "format": "svg",
+          "bytes": 9354
+        }
+      ]
+    },
+    "brand/logo": {
+      "slot": "brand/logo",
+      "alt": "CreatorsHome",
+      "placement": "header/footer lockup — violet/ink surfaces (white text)",
+      "source": "brand-assets/_work/scripts",
+      "processing": "hand-built SVG from code (scripts/brand.mjs)",
+      "files": [
+        {
+          "path": "brand/logo.svg",
+          "format": "svg",
+          "bytes": 9118
+        }
+      ]
+    },
+    "brand/mark-mono-ink": {
+      "slot": "brand/mark-mono-ink",
+      "alt": "CreatorsHome",
+      "placement": "house-heart mark — one-colour on light surfaces; heart knocked out",
+      "source": "brand-assets/_work/scripts",
+      "processing": "hand-built SVG from code (scripts/brand.mjs)",
+      "files": [
+        {
+          "path": "brand/mark-mono-ink.svg",
+          "format": "svg",
+          "bytes": 841
+        }
+      ]
+    },
+    "brand/mark-mono-white": {
+      "slot": "brand/mark-mono-white",
+      "alt": "CreatorsHome",
+      "placement": "house-heart mark — one-colour on violet/ink/photos; heart knocked out",
+      "source": "brand-assets/_work/scripts",
+      "processing": "hand-built SVG from code (scripts/brand.mjs)",
+      "files": [
+        {
+          "path": "brand/mark-mono-white.svg",
+          "format": "svg",
+          "bytes": 841
+        }
+      ]
+    },
+    "brand/mark": {
+      "slot": "brand/mark",
+      "alt": "CreatorsHome",
+      "placement": "house-heart mark — any surface (orange house, ink outline, white heart)",
+      "source": "brand-assets/_work/scripts",
+      "processing": "hand-built SVG from code (scripts/brand.mjs)",
+      "files": [
+        {
+          "path": "brand/mark.svg",
+          "format": "svg",
+          "bytes": 605
+        }
+      ]
+    },
+    "cover/chhedas": {
+      "slot": "cover/chhedas",
+      "alt": "Chheda’s ‘BREAKING’ campaign creative.",
+      "placement": "card cover (home wall + case hero)",
+      "source": "../sources/extracted/chhedas/img/p01_i2.jpg",
+      "processing": "none (kept the \"BREAKING\" overlay)",
+      "objectPosition": "50% 70%",
+      "lqip": "#080808",
+      "files": [
+        {
+          "path": "img/work/chhedas/cover-400.avif",
+          "format": "avif",
+          "width": 400,
+          "height": 500,
+          "bytes": 21492
+        },
+        {
+          "path": "img/work/chhedas/cover-400.webp",
+          "format": "webp",
+          "width": 400,
+          "height": 500,
+          "bytes": 31144
+        },
+        {
+          "path": "img/work/chhedas/cover-800.avif",
+          "format": "avif",
+          "width": 800,
+          "height": 1000,
+          "bytes": 57271
+        },
+        {
+          "path": "img/work/chhedas/cover-800.webp",
+          "format": "webp",
+          "width": 800,
+          "height": 1000,
+          "bytes": 80514
+        },
+        {
+          "path": "img/work/chhedas/cover-1200.avif",
+          "format": "avif",
+          "width": 1200,
+          "height": 1500,
+          "bytes": 100425
+        },
+        {
+          "path": "img/work/chhedas/cover-1200.webp",
+          "format": "webp",
+          "width": 1200,
+          "height": 1500,
+          "bytes": 134146
+        }
+      ]
+    },
+    "cover/dhamaal-4-reddit": {
+      "slot": "cover/dhamaal-4-reddit",
+      "alt": "Dhamaal 4 movie poster from the r/Bollywood_Cave Reddit thread.",
+      "placement": "card cover (home wall + case hero)",
+      "source": "../sources/extracted/creatorshome-deck/media/s09_i3.jpg",
+      "processing": "cropped to the poster region only {left:42,top:297,width:865,height:1154} from source 949x1600 (no tweet/reddit chrome)",
+      "objectPosition": "50% 40%",
+      "lqip": "#080808",
+      "files": [
+        {
+          "path": "img/work/dhamaal-4-reddit/cover-400.avif",
+          "format": "avif",
+          "width": 400,
+          "height": 534,
+          "bytes": 23127
+        },
+        {
+          "path": "img/work/dhamaal-4-reddit/cover-400.webp",
+          "format": "webp",
+          "width": 400,
+          "height": 534,
+          "bytes": 34470
+        },
+        {
+          "path": "img/work/dhamaal-4-reddit/cover-800.avif",
+          "format": "avif",
+          "width": 800,
+          "height": 1067,
+          "bytes": 53351
+        },
+        {
+          "path": "img/work/dhamaal-4-reddit/cover-800.webp",
+          "format": "webp",
+          "width": 800,
+          "height": 1067,
+          "bytes": 76292
+        }
+      ]
+    },
+    "cover/district-batwara-awarapan": {
+      "slot": "cover/district-batwara-awarapan",
+      "alt": "Awarapan 2 movie poster from the District promo tweet.",
+      "placement": "card cover (home wall + case hero)",
+      "source": "../sources/extracted/district-batwara-awarapan/img/p02_i5.jpg",
+      "processing": "cropped to the poster region only {left:22,top:240,width:522,height:768} from source 590x1280 (no tweet/reddit chrome)",
+      "objectPosition": "50% 30%",
+      "lqip": "#080808",
+      "files": [
+        {
+          "path": "img/work/district-batwara-awarapan/cover-400.avif",
+          "format": "avif",
+          "width": 400,
+          "height": 589,
+          "bytes": 23363
+        },
+        {
+          "path": "img/work/district-batwara-awarapan/cover-400.webp",
+          "format": "webp",
+          "width": 400,
+          "height": 589,
+          "bytes": 31238
+        },
+        {
+          "path": "img/work/district-batwara-awarapan/cover-522.avif",
+          "format": "avif",
+          "width": 522,
+          "height": 768,
+          "bytes": 33696
+        },
+        {
+          "path": "img/work/district-batwara-awarapan/cover-522.webp",
+          "format": "webp",
+          "width": 522,
+          "height": 768,
+          "bytes": 44872
+        }
+      ]
+    },
+    "cover/district-odyssey-filter": {
+      "slot": "cover/district-odyssey-filter",
+      "alt": "District ‘Odyssey’ AI filter creative styled as a cracked marble bust of SRK.",
+      "placement": "card cover (home wall + case hero)",
+      "source": "../sources/extracted/creatorshome-deck/media/s07_i1.jpg",
+      "processing": "none",
+      "objectPosition": "65% 40%",
+      "lqip": "#080808",
+      "files": [
+        {
+          "path": "img/work/district-odyssey-filter/cover-400.avif",
+          "format": "avif",
+          "width": 400,
+          "height": 394,
+          "bytes": 13837
+        },
+        {
+          "path": "img/work/district-odyssey-filter/cover-400.webp",
+          "format": "webp",
+          "width": 400,
+          "height": 394,
+          "bytes": 20094
+        },
+        {
+          "path": "img/work/district-odyssey-filter/cover-800.avif",
+          "format": "avif",
+          "width": 800,
+          "height": 789,
+          "bytes": 38576
+        },
+        {
+          "path": "img/work/district-odyssey-filter/cover-800.webp",
+          "format": "webp",
+          "width": 800,
+          "height": 789,
+          "bytes": 53286
+        },
+        {
+          "path": "img/work/district-odyssey-filter/cover-1080.avif",
+          "format": "avif",
+          "width": 1080,
+          "height": 1065,
+          "bytes": 60861
+        },
+        {
+          "path": "img/work/district-odyssey-filter/cover-1080.webp",
+          "format": "webp",
+          "width": 1080,
+          "height": 1065,
+          "bytes": 80486
+        }
+      ]
+    },
+    "cover/fancode-ind-vs-zim": {
+      "slot": "cover/fancode-ind-vs-zim",
+      "alt": "FanCode creative for India vs Zimbabwe T20I.",
+      "placement": "card cover (home wall + case hero)",
+      "source": "../sources/extracted/creatorshome-deck/media/s06_i5.jpg",
+      "processing": "none",
+      "objectPosition": "50% 60%",
+      "lqip": "#f8f8f8",
+      "files": [
+        {
+          "path": "img/work/fancode-ind-vs-zim/cover-400.avif",
+          "format": "avif",
+          "width": 400,
+          "height": 456,
+          "bytes": 15493
+        },
+        {
+          "path": "img/work/fancode-ind-vs-zim/cover-400.webp",
+          "format": "webp",
+          "width": 400,
+          "height": 456,
+          "bytes": 22880
+        },
+        {
+          "path": "img/work/fancode-ind-vs-zim/cover-800.avif",
+          "format": "avif",
+          "width": 800,
+          "height": 911,
+          "bytes": 34296
+        },
+        {
+          "path": "img/work/fancode-ind-vs-zim/cover-800.webp",
+          "format": "webp",
+          "width": 800,
+          "height": 911,
+          "bytes": 45350
+        },
+        {
+          "path": "img/work/fancode-ind-vs-zim/cover-1080.avif",
+          "format": "avif",
+          "width": 1080,
+          "height": 1230,
+          "bytes": 50251
+        },
+        {
+          "path": "img/work/fancode-ind-vs-zim/cover-1080.webp",
+          "format": "webp",
+          "width": 1080,
+          "height": 1230,
+          "bytes": 61790
+        }
+      ]
+    },
+    "cover/samsung-galaxy-z-fold8": {
+      "slot": "cover/samsung-galaxy-z-fold8",
+      "alt": "Samsung Galaxy Z Fold8 pre-order creative.",
+      "placement": "card cover (home wall + case hero)",
+      "source": "../sources/extracted/creatorshome-deck/media/s08_i4.jpg",
+      "processing": "none",
+      "objectPosition": "50% 50%",
+      "lqip": "#081818",
+      "files": [
+        {
+          "path": "img/work/samsung-galaxy-z-fold8/cover-400.avif",
+          "format": "avif",
+          "width": 400,
+          "height": 261,
+          "bytes": 3468
+        },
+        {
+          "path": "img/work/samsung-galaxy-z-fold8/cover-400.webp",
+          "format": "webp",
+          "width": 400,
+          "height": 261,
+          "bytes": 4698
+        },
+        {
+          "path": "img/work/samsung-galaxy-z-fold8/cover-800.avif",
+          "format": "avif",
+          "width": 800,
+          "height": 522,
+          "bytes": 8068
+        },
+        {
+          "path": "img/work/samsung-galaxy-z-fold8/cover-800.webp",
+          "format": "webp",
+          "width": 800,
+          "height": 522,
+          "bytes": 10962
+        },
+        {
+          "path": "img/work/samsung-galaxy-z-fold8/cover-1080.avif",
+          "format": "avif",
+          "width": 1080,
+          "height": 705,
+          "bytes": 12246
+        },
+        {
+          "path": "img/work/samsung-galaxy-z-fold8/cover-1080.webp",
+          "format": "webp",
+          "width": 1080,
+          "height": 705,
+          "bytes": 18624
+        }
+      ]
+    },
+    "icons/apple-touch-icon": {
+      "slot": "icons/apple-touch-icon",
+      "alt": "",
+      "placement": "<link rel=\"apple-touch-icon\"> (public/)",
+      "source": "brand-assets/_work/scripts",
+      "processing": "hand-built SVG from code (scripts/brand.mjs)",
+      "files": [
+        {
+          "path": "icons/apple-touch-icon.png",
+          "format": "png",
+          "bytes": 2827
+        }
+      ]
+    },
+    "icons/favicon": {
+      "slot": "icons/favicon",
+      "alt": "",
+      "placement": "<link rel=\"icon\" href=\"/favicon.svg\" type=\"image/svg+xml\"> + favicon.ico (public/)",
+      "source": "brand-assets/_work/scripts",
+      "processing": "hand-built SVG from code (scripts/brand.mjs)",
+      "files": [
+        {
+          "path": "icons/favicon.svg",
+          "format": "svg",
+          "bytes": 626
+        },
+        {
+          "path": "icons/favicon.ico",
+          "format": "ico",
+          "bytes": 1277
+        }
+      ]
+    },
+    "icons/pwa": {
+      "slot": "icons/pwa",
+      "alt": "",
+      "placement": "site.webmanifest icons (public/); maskable has purpose \"maskable\"",
+      "source": "brand-assets/_work/scripts",
+      "processing": "hand-built SVG from code (scripts/brand.mjs)",
+      "files": [
+        {
+          "path": "icons/icon-192.png",
+          "format": "png",
+          "bytes": 3105
+        },
+        {
+          "path": "icons/icon-512.png",
+          "format": "png",
+          "bytes": 9063
+        },
+        {
+          "path": "icons/icon-512-maskable.png",
+          "format": "png",
+          "bytes": 7905
+        }
+      ]
+    },
+    "og-default": {
+      "slot": "og-default",
+      "alt": "CreatorsHome — Home of India’s next big hit. 9M+ reach.",
+      "placement": "Home og:image / twitter:image (spec §8.3); case pages are generated at build from og-bg.png",
+      "source": "og/og-bg.png + brand/logo.svg + brand/badge.svg",
+      "processing": "composed by scripts/generated.mjs (outlined Unbounded 800 / DM Sans 700)",
+      "files": [
+        {
+          "path": "og/og-default.png",
+          "format": "png",
+          "bytes": 378990,
+          "width": 1200,
+          "height": 630
+        }
+      ]
+    },
+    "wall/chhedas/p03_i5": {
+      "slot": "wall/chhedas/p03_i5",
+      "alt": "On indianminds",
+      "placement": "case-study proof wall + lightbox",
+      "source": "../sources/extracted/chhedas/img/p03_i5.jpg",
+      "processing": "none",
+      "caption": "On indianminds",
+      "lqip": "#685848",
+      "files": [
+        {
+          "path": "img/work/chhedas/p03_i5-360.avif",
+          "format": "avif",
+          "width": 360,
+          "height": 652,
+          "bytes": 20024
+        },
+        {
+          "path": "img/work/chhedas/p03_i5-360.webp",
+          "format": "webp",
+          "width": 360,
+          "height": 652,
+          "bytes": 27254
+        },
+        {
+          "path": "img/work/chhedas/p03_i5-720.avif",
+          "format": "avif",
+          "width": 720,
+          "height": 1305,
+          "bytes": 43083
+        },
+        {
+          "path": "img/work/chhedas/p03_i5-720.webp",
+          "format": "webp",
+          "width": 720,
+          "height": 1305,
+          "bytes": 55686
+        },
+        {
+          "path": "img/work/chhedas/p03_i5-883.avif",
+          "format": "avif",
+          "width": 883,
+          "height": 1600,
+          "bytes": 55888
+        },
+        {
+          "path": "img/work/chhedas/p03_i5-883.webp",
+          "format": "webp",
+          "width": 883,
+          "height": 1600,
+          "bytes": 70350
+        }
+      ]
+    },
+    "wall/chhedas/p04_i10": {
+      "slot": "wall/chhedas/p04_i10",
+      "alt": "Reel insights — Marketing Community: 20,094 views",
+      "placement": "case-study proof wall + lightbox",
+      "source": "../sources/extracted/chhedas/img/p04_i10.jpg",
+      "processing": "none",
+      "caption": "Reel insights — Marketing Community: 20,094 views",
+      "lqip": "#f8f8f8",
+      "files": [
+        {
+          "path": "img/work/chhedas/p04_i10-360.avif",
+          "format": "avif",
+          "width": 360,
+          "height": 674,
+          "bytes": 9782
+        },
+        {
+          "path": "img/work/chhedas/p04_i10-360.webp",
+          "format": "webp",
+          "width": 360,
+          "height": 674,
+          "bytes": 12394
+        },
+        {
+          "path": "img/work/chhedas/p04_i10-720.avif",
+          "format": "avif",
+          "width": 720,
+          "height": 1347,
+          "bytes": 22812
+        },
+        {
+          "path": "img/work/chhedas/p04_i10-720.webp",
+          "format": "webp",
+          "width": 720,
+          "height": 1347,
+          "bytes": 31374
+        },
+        {
+          "path": "img/work/chhedas/p04_i10-855.avif",
+          "format": "avif",
+          "width": 855,
+          "height": 1600,
+          "bytes": 29037
+        },
+        {
+          "path": "img/work/chhedas/p04_i10-855.webp",
+          "format": "webp",
+          "width": 855,
+          "height": 1600,
+          "bytes": 39684
+        }
+      ]
+    },
+    "wall/chhedas/p04_i8": {
+      "slot": "wall/chhedas/p04_i8",
+      "alt": "Post insights — Startup Decoding: 146,046 views",
+      "placement": "case-study proof wall + lightbox; peek mini (use 360w)",
+      "source": "../sources/extracted/chhedas/img/p04_i8.jpg",
+      "processing": "none",
+      "caption": "Post insights — Startup Decoding: 146,046 views",
+      "lqip": "#f8f8f8",
+      "files": [
+        {
+          "path": "img/work/chhedas/p04_i8-360.avif",
+          "format": "avif",
+          "width": 360,
+          "height": 1157,
+          "bytes": 16502
+        },
+        {
+          "path": "img/work/chhedas/p04_i8-360.webp",
+          "format": "webp",
+          "width": 360,
+          "height": 1157,
+          "bytes": 19704
+        },
+        {
+          "path": "img/work/chhedas/p04_i8-498.avif",
+          "format": "avif",
+          "width": 498,
+          "height": 1600,
+          "bytes": 23402
+        },
+        {
+          "path": "img/work/chhedas/p04_i8-498.webp",
+          "format": "webp",
+          "width": 498,
+          "height": 1600,
+          "bytes": 27486
+        }
+      ]
+    },
+    "wall/chhedas/p04_i9": {
+      "slot": "wall/chhedas/p04_i9",
+      "alt": "Reel insights — @MARKETINGMATLAB: 41,464 views",
+      "placement": "case-study proof wall + lightbox",
+      "source": "../sources/extracted/chhedas/img/p04_i9.jpg",
+      "processing": "none",
+      "caption": "Reel insights — @MARKETINGMATLAB: 41,464 views",
+      "lqip": "#080818",
+      "files": [
+        {
+          "path": "img/work/chhedas/p04_i9-360.avif",
+          "format": "avif",
+          "width": 360,
+          "height": 619,
+          "bytes": 9733
+        },
+        {
+          "path": "img/work/chhedas/p04_i9-360.webp",
+          "format": "webp",
+          "width": 360,
+          "height": 619,
+          "bytes": 12176
+        },
+        {
+          "path": "img/work/chhedas/p04_i9-720.avif",
+          "format": "avif",
+          "width": 720,
+          "height": 1239,
+          "bytes": 23681
+        },
+        {
+          "path": "img/work/chhedas/p04_i9-720.webp",
+          "format": "webp",
+          "width": 720,
+          "height": 1239,
+          "bytes": 30296
+        },
+        {
+          "path": "img/work/chhedas/p04_i9-744.avif",
+          "format": "avif",
+          "width": 744,
+          "height": 1280,
+          "bytes": 26097
+        },
+        {
+          "path": "img/work/chhedas/p04_i9-744.webp",
+          "format": "webp",
+          "width": 744,
+          "height": 1280,
+          "bytes": 31966
+        }
+      ]
+    },
+    "wall/chhedas/p05_i11": {
+      "slot": "wall/chhedas/p05_i11",
+      "alt": "Comments on a partner reel",
+      "placement": "case-study proof wall + lightbox",
+      "source": "../sources/extracted/chhedas/img/p05_i11.jpg",
+      "processing": "blurred every commenter's avatar+username column (4 comment rows, 8 boxes), sigma 12; comment text left readable",
+      "caption": "Comments on a partner reel",
+      "lqip": "#282828",
+      "files": [
+        {
+          "path": "img/work/chhedas/p05_i11-360.avif",
+          "format": "avif",
+          "width": 360,
+          "height": 630,
+          "bytes": 14769
+        },
+        {
+          "path": "img/work/chhedas/p05_i11-360.webp",
+          "format": "webp",
+          "width": 360,
+          "height": 630,
+          "bytes": 19110
+        },
+        {
+          "path": "img/work/chhedas/p05_i11-720.avif",
+          "format": "avif",
+          "width": 720,
+          "height": 1260,
+          "bytes": 32574
+        },
+        {
+          "path": "img/work/chhedas/p05_i11-720.webp",
+          "format": "webp",
+          "width": 720,
+          "height": 1260,
+          "bytes": 44932
+        },
+        {
+          "path": "img/work/chhedas/p05_i11-914.avif",
+          "format": "avif",
+          "width": 914,
+          "height": 1600,
+          "bytes": 42592
+        },
+        {
+          "path": "img/work/chhedas/p05_i11-914.webp",
+          "format": "webp",
+          "width": 914,
+          "height": 1600,
+          "bytes": 60404
+        }
+      ]
+    },
+    "wall/dhamaal-4-reddit/s09_i3": {
+      "slot": "wall/dhamaal-4-reddit/s09_i3",
+      "alt": "The thread on r/Bollywood_Cave",
+      "placement": "case-study proof wall + lightbox",
+      "source": "../sources/extracted/creatorshome-deck/media/s09_i3.jpg",
+      "processing": "none",
+      "caption": "The thread on r/Bollywood_Cave",
+      "lqip": "#f8f8f8",
+      "files": [
+        {
+          "path": "img/work/dhamaal-4-reddit/s09_i3-360.avif",
+          "format": "avif",
+          "width": 360,
+          "height": 607,
+          "bytes": 23502
+        },
+        {
+          "path": "img/work/dhamaal-4-reddit/s09_i3-360.webp",
+          "format": "webp",
+          "width": 360,
+          "height": 607,
+          "bytes": 34264
+        },
+        {
+          "path": "img/work/dhamaal-4-reddit/s09_i3-720.avif",
+          "format": "avif",
+          "width": 720,
+          "height": 1214,
+          "bytes": 55319
+        },
+        {
+          "path": "img/work/dhamaal-4-reddit/s09_i3-720.webp",
+          "format": "webp",
+          "width": 720,
+          "height": 1214,
+          "bytes": 81312
+        },
+        {
+          "path": "img/work/dhamaal-4-reddit/s09_i3-949.avif",
+          "format": "avif",
+          "width": 949,
+          "height": 1600,
+          "bytes": 79954
+        },
+        {
+          "path": "img/work/dhamaal-4-reddit/s09_i3-949.webp",
+          "format": "webp",
+          "width": 949,
+          "height": 1600,
+          "bytes": 112886
+        }
+      ]
+    },
+    "wall/district-batwara-awarapan/p01_i2": {
+      "slot": "wall/district-batwara-awarapan/p01_i2",
+      "alt": "Promo-code tweet — 2.4K views",
+      "placement": "case-study proof wall + lightbox; peek mini (use 360w)",
+      "source": "../sources/extracted/district-batwara-awarapan/img/p01_i2.jpg",
+      "processing": "none",
+      "caption": "Promo-code tweet — 2.4K views",
+      "lqip": "#080808",
+      "files": [
+        {
+          "path": "img/work/district-batwara-awarapan/p01_i2-360.avif",
+          "format": "avif",
+          "width": 360,
+          "height": 781,
+          "bytes": 23303
+        },
+        {
+          "path": "img/work/district-batwara-awarapan/p01_i2-360.webp",
+          "format": "webp",
+          "width": 360,
+          "height": 781,
+          "bytes": 32964
+        },
+        {
+          "path": "img/work/district-batwara-awarapan/p01_i2-590.avif",
+          "format": "avif",
+          "width": 590,
+          "height": 1280,
+          "bytes": 44745
+        },
+        {
+          "path": "img/work/district-batwara-awarapan/p01_i2-590.webp",
+          "format": "webp",
+          "width": 590,
+          "height": 1280,
+          "bytes": 58154
+        }
+      ]
+    },
+    "wall/district-batwara-awarapan/p02_i5": {
+      "slot": "wall/district-batwara-awarapan/p02_i5",
+      "alt": "Awarapan 2 — 11.8K views",
+      "placement": "case-study proof wall + lightbox",
+      "source": "../sources/extracted/district-batwara-awarapan/img/p02_i5.jpg",
+      "processing": "blurred reply author's name/handle/avatar (2 boxes), sigma 12; main tweet/author/counts untouched",
+      "caption": "Awarapan 2 — 11.8K views",
+      "lqip": "#080808",
+      "files": [
+        {
+          "path": "img/work/district-batwara-awarapan/p02_i5-360.avif",
+          "format": "avif",
+          "width": 360,
+          "height": 781,
+          "bytes": 24924
+        },
+        {
+          "path": "img/work/district-batwara-awarapan/p02_i5-360.webp",
+          "format": "webp",
+          "width": 360,
+          "height": 781,
+          "bytes": 32556
+        },
+        {
+          "path": "img/work/district-batwara-awarapan/p02_i5-590.avif",
+          "format": "avif",
+          "width": 590,
+          "height": 1280,
+          "bytes": 49020
+        },
+        {
+          "path": "img/work/district-batwara-awarapan/p02_i5-590.webp",
+          "format": "webp",
+          "width": 590,
+          "height": 1280,
+          "bytes": 61162
+        }
+      ]
+    },
+    "wall/district-batwara-awarapan/p07_i8": {
+      "slot": "wall/district-batwara-awarapan/p07_i8",
+      "alt": "@Shujeel on Batwara 1947 — 2.5K views",
+      "placement": "case-study proof wall + lightbox",
+      "source": "../sources/extracted/district-batwara-awarapan/img/p07_i8.jpg",
+      "processing": "blurred reply author's name/handle/avatar (2 boxes), sigma 12; main tweet/author/counts untouched",
+      "caption": "@Shujeel on Batwara 1947 — 2.5K views",
+      "lqip": "#080808",
+      "files": [
+        {
+          "path": "img/work/district-batwara-awarapan/p07_i8-360.avif",
+          "format": "avif",
+          "width": 360,
+          "height": 781,
+          "bytes": 22585
+        },
+        {
+          "path": "img/work/district-batwara-awarapan/p07_i8-360.webp",
+          "format": "webp",
+          "width": 360,
+          "height": 781,
+          "bytes": 31658
+        },
+        {
+          "path": "img/work/district-batwara-awarapan/p07_i8-590.avif",
+          "format": "avif",
+          "width": 590,
+          "height": 1280,
+          "bytes": 44416
+        },
+        {
+          "path": "img/work/district-batwara-awarapan/p07_i8-590.webp",
+          "format": "webp",
+          "width": 590,
+          "height": 1280,
+          "bytes": 58374
+        }
+      ]
+    },
+    "wall/fancode-ind-vs-zim/s06_i4": {
+      "slot": "wall/fancode-ind-vs-zim/s06_i4",
+      "alt": "The pass offer: ‘Ye deal toh mujhe pasand hai’",
+      "placement": "case-study proof wall + lightbox",
+      "source": "../sources/extracted/creatorshome-deck/media/s06_i4.jpg",
+      "processing": "none",
+      "caption": "The pass offer: ‘Ye deal toh mujhe pasand hai’",
+      "lqip": "#080808",
+      "files": [
+        {
+          "path": "img/work/fancode-ind-vs-zim/s06_i4-360.avif",
+          "format": "avif",
+          "width": 360,
+          "height": 446,
+          "bytes": 16554
+        },
+        {
+          "path": "img/work/fancode-ind-vs-zim/s06_i4-360.webp",
+          "format": "webp",
+          "width": 360,
+          "height": 446,
+          "bytes": 27698
+        },
+        {
+          "path": "img/work/fancode-ind-vs-zim/s06_i4-720.avif",
+          "format": "avif",
+          "width": 720,
+          "height": 892,
+          "bytes": 44067
+        },
+        {
+          "path": "img/work/fancode-ind-vs-zim/s06_i4-720.webp",
+          "format": "webp",
+          "width": 720,
+          "height": 892,
+          "bytes": 67700
+        },
+        {
+          "path": "img/work/fancode-ind-vs-zim/s06_i4-1080.avif",
+          "format": "avif",
+          "width": 1080,
+          "height": 1338,
+          "bytes": 86518
+        },
+        {
+          "path": "img/work/fancode-ind-vs-zim/s06_i4-1080.webp",
+          "format": "webp",
+          "width": 1080,
+          "height": 1338,
+          "bytes": 115270
+        }
+      ]
+    },
+    "wall/fancode-ind-vs-zim/s06_i5": {
+      "slot": "wall/fancode-ind-vs-zim/s06_i5",
+      "alt": "Match-day post: India’s win, the morning after",
+      "placement": "case-study proof wall + lightbox; peek mini (use 360w)",
+      "source": "../sources/extracted/creatorshome-deck/media/s06_i5.jpg",
+      "processing": "none",
+      "caption": "Match-day post: India’s win, the morning after",
+      "lqip": "#f8f8f8",
+      "files": [
+        {
+          "path": "img/work/fancode-ind-vs-zim/s06_i5-360.avif",
+          "format": "avif",
+          "width": 360,
+          "height": 410,
+          "bytes": 14313
+        },
+        {
+          "path": "img/work/fancode-ind-vs-zim/s06_i5-360.webp",
+          "format": "webp",
+          "width": 360,
+          "height": 410,
+          "bytes": 20074
+        },
+        {
+          "path": "img/work/fancode-ind-vs-zim/s06_i5-720.avif",
+          "format": "avif",
+          "width": 720,
+          "height": 820,
+          "bytes": 30600
+        },
+        {
+          "path": "img/work/fancode-ind-vs-zim/s06_i5-720.webp",
+          "format": "webp",
+          "width": 720,
+          "height": 820,
+          "bytes": 41982
+        },
+        {
+          "path": "img/work/fancode-ind-vs-zim/s06_i5-1080.avif",
+          "format": "avif",
+          "width": 1080,
+          "height": 1230,
+          "bytes": 50251
+        },
+        {
+          "path": "img/work/fancode-ind-vs-zim/s06_i5-1080.webp",
+          "format": "webp",
+          "width": 1080,
+          "height": 1230,
+          "bytes": 61790
+        }
+      ]
+    }
+  }
+}

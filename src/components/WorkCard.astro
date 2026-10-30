@@ -21,12 +21,6 @@ const CATEGORY_PILL: Record<Filter, { bg: string; fg: string; border?: boolean }
   celebs: { bg: 'var(--c-ink)', fg: 'var(--c-white)' },
   reddit: { bg: 'var(--c-white)', fg: 'var(--c-ink)', border: true },
 };
-const CATEGORY_BG: Record<Filter, string> = {
-  film: 'var(--c-violet)',
-  brands: 'var(--c-orange)',
-  celebs: 'var(--c-ink)',
-  reddit: 'var(--c-white)',
-};
 const FILTER_LABEL: Record<Filter, string> = { film: 'Film & OTT', brands: 'Brands', celebs: 'Celebs', reddit: 'Reddit' };
 
 const cap = (p: string) => p.charAt(0).toUpperCase() + p.slice(1);
@@ -51,7 +45,7 @@ const platformsLabel = `Platforms: ${platforms.map(cap).join(', ')}`;
 				height={peekItem.height}
 				widths={[360]}
 				class="peek-img"
-				fallbackBg="var(--c-muted-violet)"
+				fill
 			/>
 		</div>
 	)}
@@ -67,8 +61,8 @@ const platformsLabel = `Platforms: ${platforms.map(cap).join(', ')}`;
 					widths={[400, 800]}
 					sizes="(min-width: 1200px) 305px, (min-width: 768px) 45vw, 78vw"
 					position={cover.position}
-					fallbackBg={CATEGORY_BG[filters[0]] ?? 'var(--c-muted-violet)'}
 					class="cover-img"
+					fill
 				/>
 			) : (
 				<ArtPanel campaign={campaign} />

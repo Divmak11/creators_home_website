@@ -1,8 +1,1 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
-<!-- TEMP-A1: swap for brand favicon SVG when A1 lands -->
-<rect width="48" height="48" rx="10.56" fill="#6B3BFF"/>
-<g transform="translate(5 5)">
-<path d="M5 17L19 5l14 12v15a2 2 0 01-2 2H7a2 2 0 01-2-2z" fill="#FF6A1F"/>
-<path d="M19 29s-6-3.6-6-8a3.4 3.4 0 016-2.2 3.4 3.4 0 016 2.2c0 4.4-6 8-6 8z" fill="#fff"/>
-</g>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="14.08" fill="#6B3BFF"/><g transform="translate(6.4 6.4) scale(1.2190)"><g transform="translate(2 2)"><path d="M5 19.5Q5 17 6.9 15.37L16.72 6.95Q19 5 21.28 6.95L23.99 9.28Q24.6 9.8 24.6 9L24.6 7.6Q24.6 6.4 25.8 6.4L27.8 6.4Q29 6.4 29 7.6L29 12.77Q29 13.57 29.61 14.09L31.18 15.44Q33 17 33 19.5L33 30Q33 34 29 34L9 34Q5 34 5 30Z" fill="#FF6A1F" stroke="#160A33" stroke-width="3" stroke-linejoin="round"/><path d="M19 29.2s-6.4-3.7-6.4-8.4a3.5 3.5 0 0 1 6.4-2.2 3.5 3.5 0 0 1 6.4 2.2c0 4.7-6.4 8.4-6.4 8.4z" fill="#fff"/></g></g></svg>
