@@ -11,13 +11,14 @@ interface Props {
 }
 
 const { campaign } = Astro.props;
+const wallSizes = campaign.wall.length === 1 ? '(min-width: 768px) 720px, 72vw' : '(min-width: 1200px) 22vw, (min-width: 768px) 40vw, 72vw';
 ---
 
 <section class="proof-wall">
 	<div class="container">
 		<h2>Proof on the wall</h2>
 
-		<div class="wall-grid" data-m="tape">
+		<div class="wall-grid" data-m="tape" style={`--n: ${Math.min(campaign.wall.length, 4)}`}>
 			{campaign.wall.map((item, i) => {
 				const mag = item.kind === 'print' ? 4 : 2;
 				const tilt = i % 2 ? mag : -mag;
@@ -32,7 +33,7 @@ const { campaign } = Astro.props;
 										width={item.width}
 										height={item.height}
 										widths={[360, 720]}
-										sizes="(min-width: 1200px) 22vw, (min-width: 768px) 40vw, 72vw"
+										sizes={wallSizes}
 										fit="cover"
 										position="top"
 										class="wall-img"
@@ -47,7 +48,7 @@ const { campaign } = Astro.props;
 										width={item.width}
 										height={item.height}
 										widths={[360, 720]}
-										sizes="(min-width: 1200px) 22vw, (min-width: 768px) 40vw, 72vw"
+										sizes={wallSizes}
 										fit="cover"
 										position="top"
 										class="wall-img"
@@ -182,6 +183,22 @@ const { campaign } = Astro.props;
 		font-weight: 700;
 	}
 
+	/* prints carry a 16px hard shadow; keep the caption clear of it */
+	.wall-cell:has(.print) .cap {
+		margin-top: 28px;
+	}
+	/* a lone print (Samsung) is the case's one visual: show it large and centred so it reads */
+	@media (min-width: 768px) {
+		.wall-grid:has(> .wall-cell:only-child) {
+			display: flex;
+			justify-content: center;
+		}
+		.wall-grid > .wall-cell:only-child {
+			width: min(720px, 100%);
+			text-align: center;
+		}
+	}
+
 	.wall-note {
 		margin: var(--s-10) 0 0;
 		text-align: center;
@@ -191,7 +208,9 @@ const { campaign } = Astro.props;
 
 	@media (min-width: 1200px) {
 		.wall-grid {
-			grid-template-columns: repeat(4, minmax(0, 1fr));
+			/* short walls (2–3 items) stay centred at card width instead of hugging the left */
+			grid-template-columns: repeat(var(--n, 4), minmax(0, 300px));
+			justify-content: center;
 			gap: 28px;
 		}
 		.wall-cell:nth-child(4n+2) {
