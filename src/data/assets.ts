@@ -1,4 +1,4 @@
-import manifest from './a1-manifest.json';
+import manifest from './a1-manifest.json' with { type: 'json' };
 
 export type CoverSlug =
   | 'chhedas'

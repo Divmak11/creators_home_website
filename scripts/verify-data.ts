@@ -11,7 +11,7 @@ import { campaigns } from '../src/data/campaigns.ts';
 import { siteStats } from '../src/data/site-stats.ts';
 import { pagesWall } from '../src/data/pages-wall.ts';
 import { services } from '../src/data/services.ts';
-import { slots } from '../src/data/assets.ts';
+import { getSlot } from '../src/data/assets.ts';
 // Imported for load-smoke-test purposes (every data module must load without throwing).
 import '../src/data/quotes.ts';
 import '../src/data/brands.ts';
@@ -154,12 +154,11 @@ for (const p of pagesWall) {
   else bad(`pages-wall "${p.name}" campaign "${p.campaign}" — no such campaign slug`);
 }
 
-// --- every wall slot id exists in assets.ts ---
-const slotIds = new Set(Object.keys(slots));
+// --- every wall slot resolves to an A1 manifest entry (getSlot throws when it does not) ---
 for (const c of campaigns) {
   for (const w of c.wall) {
-    if (slotIds.has(w.slot)) ok(`${c.slug} wall slot "${w.slot}" exists in assets.ts`);
-    else bad(`${c.slug} wall slot "${w.slot}" — not in assets.ts slots`);
+    try { getSlot(w.slot); ok(`${c.slug} wall slot "${w.slot}" resolves in the A1 manifest`); }
+    catch (e) { bad(`${c.slug} wall slot "${w.slot}" — ${(e as Error).message}`); }
   }
 }
 
