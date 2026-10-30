@@ -5,6 +5,8 @@ The design contract is `../docs/design/creatorshome_spec.md` (cited `§n`). Foun
 
 ## 1. Stack and commands
 - Astro (latest stable), static output, TypeScript strict, npm. Everything lives in `creatorshome/`.
+- **Node**: Astro 7.4 needs Node ≥ 22.23.4; the machine's nvm default is 22.22.1. Run every npm/node command with
+  `PATH=/opt/homebrew/bin:$PATH` (Homebrew Node 23.11) — e.g. `PATH=/opt/homebrew/bin:$PATH npm run build`.
 - `npm run dev` → `astro dev --port 4331` · `npm run build` · `npm run preview` → `astro preview --port 4331`.
 - Libraries: `gsap` (core + ScrollTrigger + Flip + SplitText + CustomEase), `@astrojs/sitemap`, fontsource packages
   (`@fontsource-variable/unbounded`, `@fontsource-variable/dm-sans`, `@fontsource/noto-sans-{devanagari,tamil,telugu,bengali}` 700),
