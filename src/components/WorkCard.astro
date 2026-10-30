@@ -57,7 +57,7 @@ const platformsLabel = `Platforms: ${platforms.map(cap).join(', ')}`;
 	)}
 
 	<article class={`wcard bg-${look.bg}`} style={`--shc: ${shc};`}>
-		<div class="panel" style={`view-transition-name: cover-${slug};`}>
+		<div class="panel" style={`view-transition-name: cover-${slug}; view-transition-class: cover;`}>
 			{cover.kind === 'photo' ? (
 				<Slot
 					id={cover.slot}

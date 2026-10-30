@@ -292,8 +292,9 @@ const cap = (p: string) => p.charAt(0).toUpperCase() + p.slice(1);
 		.deco {
 			display: block;
 			position: absolute;
-			top: var(--s-10);
-			left: var(--s-8);
+			/* bottom-right corner, under the cover: the left side holds breadcrumb and lead */
+			bottom: var(--s-6);
+			right: var(--s-8);
 			width: 100px;
 			z-index: 1;
 		}
