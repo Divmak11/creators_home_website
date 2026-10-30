@@ -91,6 +91,8 @@ using tokens. Breakpoints: phone `max-width: 767.98px`, tablet `768px–1199.98p
   `scrollWidth === innerWidth` per width. `.qa/` is gitignored.
 - Unit receipts: `docs/units/U<n>.md` (≤ 30 lines: what landed, checks run + results, deviations).
 
+- Preview server: Astro 7 `astro preview` runs as a daemon. Start: `npm run preview`; stop: `npx astro preview stop` (pkill does not stop it). Always stop it at the end of a unit.
+
 ## 9. Commits
 One commit per unit (more if a unit is large), staged by explicit path, message says why, ends with
 `Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>`. Never push.
