@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
+<!-- TEMP-A1: swap for brand favicon SVG when A1 lands -->
+<rect width="48" height="48" rx="10.56" fill="#6B3BFF"/>
+<g transform="translate(5 5)">
+<path d="M5 17L19 5l14 12v15a2 2 0 01-2 2H7a2 2 0 01-2-2z" fill="#FF6A1F"/>
+<path d="M19 29s-6-3.6-6-8a3.4 3.4 0 016-2.2 3.4 3.4 0 016 2.2c0 4.4-6 8-6 8z" fill="#fff"/>
+</g>
+</svg>

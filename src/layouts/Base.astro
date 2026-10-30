@@ -1,0 +1,83 @@
+---
+import '@fontsource-variable/unbounded';
+import '@fontsource-variable/dm-sans';
+import '@fontsource/noto-sans-devanagari/devanagari-700.css';
+import '@fontsource/noto-sans-tamil/tamil-700.css';
+import '@fontsource/noto-sans-telugu/telugu-700.css';
+import '@fontsource/noto-sans-bengali/bengali-700.css';
+import '../styles/tokens.css';
+import '../styles/global.css';
+import unboundedLatinWoff2 from '@fontsource-variable/unbounded/files/unbounded-latin-wght-normal.woff2?url';
+import dmSansLatinWoff2 from '@fontsource-variable/dm-sans/files/dm-sans-latin-wght-normal.woff2?url';
+import { SITE_URL, SITE_NAME } from '../config';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  canonicalPath: string;
+  noindex?: boolean;
+  ogType?: string;
+  headerCompact?: boolean;
+}
+
+const { title, description, canonicalPath, noindex = false, ogType = 'website', headerCompact = false } = Astro.props;
+const canonicalURL = new URL(canonicalPath, SITE_URL);
+---
+
+<!doctype html>
+<html lang="en-IN">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>{title}</title>
+	<meta name="description" content={description} />
+	<link rel="canonical" href={canonicalURL} />
+	<meta name="theme-color" content="#6B3BFF" />
+	<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+	<meta property="og:type" content={ogType} />
+	<meta property="og:site_name" content={SITE_NAME} />
+	{noindex && <meta name="robots" content="noindex" />}
+	<script is:inline>
+	(function(d){var e=d.documentElement,p=false;e.classList.add('js');
+	try{p=localStorage.getItem('ch-motion')==='paused'}catch(_){}
+	if(p)e.dataset.motion='paused';
+	if(!p&&!matchMedia('(prefers-reduced-motion: reduce)').matches){e.classList.add('js-motion');
+	setTimeout(function(){if(!window.__chReady)e.classList.remove('js-motion')},2500)}})(document);
+	</script>
+	<link rel="preload" href={unboundedLatinWoff2} as="font" type="font/woff2" crossorigin />
+	<link rel="preload" href={dmSansLatinWoff2} as="font" type="font/woff2" crossorigin />
+	<slot name="head" />
+</head>
+<body>
+	<a href="#main" class="skip-link">Skip to content</a>
+	<Header compact={headerCompact} />
+	<main id="main">
+		<slot />
+	</main>
+	<Footer />
+</body>
+</html>
+
+<style>
+	.skip-link {
+		position: fixed;
+		top: var(--s-4);
+		left: var(--s-4);
+		z-index: 1000;
+		translate: -200% 0;
+		opacity: 0;
+		background: var(--c-ink);
+		color: var(--c-white);
+		font-weight: 700;
+		padding: var(--s-3) var(--s-5);
+		border-radius: var(--r-pill);
+		text-decoration: none;
+		transition: translate var(--t-s) var(--e-smooth), opacity var(--t-s) var(--e-smooth);
+	}
+	.skip-link:focus-visible {
+		translate: 0 0;
+		opacity: 1;
+	}
+</style>

@@ -1,0 +1,81 @@
+---
+import { Picture } from 'astro:assets';
+import { slots, type SlotId } from '../data/assets';
+
+interface Props {
+  id: SlotId;
+  alt: string;
+  width: number;
+  height: number;
+  widths?: number[];
+  sizes?: string;
+  class?: string;
+  loading?: 'lazy' | 'eager';
+  fit?: 'cover' | 'contain';
+  position?: string;
+  fallbackBg?: string;
+  fallbackFg?: string;
+}
+
+const {
+  id,
+  alt,
+  width,
+  height,
+  widths,
+  sizes,
+  class: className,
+  loading = 'lazy',
+  fit = 'cover',
+  position = 'center',
+  fallbackBg = 'var(--c-muted-violet)',
+  fallbackFg = 'var(--c-ink)',
+} = Astro.props;
+
+const image = slots[id];
+const ratio = `${width} / ${height}`;
+---
+
+{image ? (
+	<Picture
+		src={image}
+		alt={alt}
+		formats={['avif', 'webp']}
+		widths={widths}
+		sizes={sizes}
+		width={width}
+		height={height}
+		loading={loading}
+		class={className}
+		style={`aspect-ratio: ${ratio}; object-fit: ${fit}; object-position: ${position};`}
+	/>
+) : (
+	<div
+		role="img"
+		aria-label={alt}
+		class={`slot-ph ${className ?? ''}`}
+		style={`aspect-ratio: ${ratio}; background: ${fallbackBg}; color: ${fallbackFg};`}
+	>
+		<span class="slot-ph-tag" aria-hidden="true">A1 · {id}</span>
+	</div>
+)}
+
+<style>
+	.slot-ph {
+		position: relative;
+		width: 100%;
+		display: flex;
+		align-items: flex-end;
+		justify-content: flex-start;
+		overflow: hidden;
+	}
+	.slot-ph-tag {
+		margin: var(--s-2);
+		border: 1px dashed currentColor;
+		border-radius: var(--r-field);
+		padding: 2px var(--s-2);
+		font-size: var(--fs-small);
+		font-weight: 700;
+		opacity: 0.7;
+	}
+</style>

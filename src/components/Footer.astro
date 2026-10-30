@@ -1,0 +1,168 @@
+---
+import Logo from './Logo.astro';
+import Ph from './Ph.astro';
+import { INSTAGRAM_URL, LINKEDIN_URL, CONTACT } from '../config';
+---
+
+<footer class="footer">
+	<span class="footer-ghost" aria-hidden="true" data-m="footer-ghost">CreatorsHome</span>
+	<div class="container footer-inner">
+		<div class="footer-cols">
+			<div class="footer-col footer-col-1">
+				<a href="/" class="footer-logo-link"><Logo variant="light" /></a>
+				<p class="footer-tagline">Where creators live and brands go viral.<br />{CONTACT.city ? `${CONTACT.city}, India` : <><Ph text="city" />, India</>}</p>
+			</div>
+			<div class="footer-col footer-col-2">
+				<strong>House</strong>
+				<ul>
+					<li><a href="/#work">Work</a></li>
+					<li><a href="/#services">Services</a></li>
+					<li><a href="/#numbers">Numbers</a></li>
+					<li><a href="/#faq">FAQ</a></li>
+				</ul>
+			</div>
+			<div class="footer-col footer-col-3">
+				<strong>Creators</strong>
+				<ul>
+					<li><a href="/?role=creator#contact" data-role="creator">Join the house</a></li>
+					<!-- NOTE: spec §3.0 literally prints "/#contact?role=creator" (hash before query,
+					     which browsers parse as no real query param). Mirrored here using the header's
+					     corrected query-before-hash order (`/?role=creator#who`) for a working role
+					     preselect; flagged as a deviation in the unit receipt. -->
+					<li><a href="/#faq">Creator FAQ</a></li>
+				</ul>
+			</div>
+			<div class="footer-col footer-col-4">
+				<strong>Say hi</strong>
+				<ul>
+					<li>{CONTACT.email ? <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a> : <Ph text="email" />}</li>
+					<li>{CONTACT.phone ? <a href={`tel:${CONTACT.phone}`}>{CONTACT.phone}</a> : <Ph text="WhatsApp/phone" />}</li>
+					{INSTAGRAM_URL && <li><a href={INSTAGRAM_URL}>Instagram</a></li>}
+					{LINKEDIN_URL && <li><a href={LINKEDIN_URL}>LinkedIn</a></li>}
+				</ul>
+			</div>
+		</div>
+		<div class="footer-bottom">
+			<span>© 2026 CreatorsHome</span>
+			<span class="footer-bottom-links">
+				<a href="/privacy/">Privacy</a>
+				<a href="/terms/">Terms</a>
+				<button type="button" class="js-only pause-toggle" data-pause-toggle aria-pressed="false">Pause the party</button>
+			</span>
+		</div>
+	</div>
+</footer>
+
+<style>
+	.footer {
+		position: relative;
+		overflow: hidden;
+		background: var(--c-ink);
+		padding-block: var(--s-16) var(--s-8);
+	}
+	.footer-ghost {
+		position: absolute;
+		left: 50%;
+		top: var(--s-8);
+		translate: -50% 0;
+		white-space: nowrap;
+		font-family: var(--f-display);
+		font-weight: 800;
+		font-size: clamp(80px, 16vw, 260px);
+		color: transparent;
+		-webkit-text-stroke: 2px var(--c-rule);
+		opacity: 0.08;
+		pointer-events: none;
+		z-index: 0;
+	}
+	.footer-inner {
+		position: relative;
+		z-index: 1;
+	}
+	.footer-cols {
+		display: grid;
+		grid-template-columns: repeat(2, 1fr);
+		gap: var(--s-10);
+	}
+	@media (min-width: 1200px) {
+		.footer-cols {
+			grid-template-columns: repeat(4, 1fr);
+		}
+	}
+	@media (max-width: 767.98px) {
+		.footer-cols {
+			grid-template-columns: repeat(2, 1fr);
+			grid-template-areas: 'c1 c1' 'c2 c3' 'c4 c4';
+		}
+		.footer-col-1 { grid-area: c1; }
+		.footer-col-2 { grid-area: c2; }
+		.footer-col-3 { grid-area: c3; }
+		.footer-col-4 { grid-area: c4; }
+	}
+	.footer-col ul {
+		display: flex;
+		flex-direction: column;
+		gap: var(--s-3);
+		margin-top: var(--s-3);
+	}
+	.footer-col strong {
+		font-family: var(--f-display);
+		font-size: var(--fs-small);
+	}
+	.footer-col a {
+		color: var(--c-muted-ink);
+		text-decoration: none;
+	}
+	@media (hover: hover) and (pointer: fine) {
+		.footer-col a:hover {
+			color: var(--c-white);
+			text-decoration: underline;
+		}
+	}
+	.footer-tagline {
+		margin-top: var(--s-3);
+		color: var(--c-muted-ink);
+		line-height: 1.6;
+	}
+	.footer-bottom {
+		margin-top: var(--s-12);
+		padding-top: var(--s-6);
+		border-top: 1px solid var(--c-rule);
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--s-4);
+		justify-content: space-between;
+		align-items: center;
+		font-size: var(--fs-small);
+		color: var(--c-legal);
+	}
+	.footer-bottom-links {
+		display: flex;
+		align-items: center;
+		flex-wrap: wrap;
+		gap: var(--s-5);
+	}
+	.footer-bottom-links a {
+		color: var(--c-legal);
+		text-decoration: none;
+	}
+	@media (hover: hover) and (pointer: fine) {
+		.footer-bottom-links a:hover {
+			text-decoration: underline;
+		}
+	}
+	.js-only {
+		display: none;
+	}
+	:global(html.js) .js-only {
+		display: inline-flex;
+	}
+	.pause-toggle {
+		border-radius: var(--r-pill);
+		padding: var(--s-2) var(--s-4);
+		background: var(--c-ink-2);
+		color: var(--c-muted-ink);
+		font-weight: 700;
+		font-size: var(--fs-small);
+	}
+</style>

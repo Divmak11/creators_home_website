@@ -1,0 +1,141 @@
+/* Modern reset */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+* {
+  margin: 0;
+}
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+body {
+  min-height: 100svh;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+img, picture, svg, video {
+  display: block;
+  max-width: 100%;
+}
+input, button, textarea, select {
+  font: inherit;
+  color: inherit;
+}
+button {
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+a {
+  color: inherit;
+}
+ul, ol {
+  list-style: none;
+  padding: 0;
+}
+table {
+  border-collapse: collapse;
+}
+
+/* Base */
+body {
+  background: var(--c-violet);
+  color: var(--c-white);
+  font-family: var(--f-body);
+  font-weight: 500;
+  font-size: var(--fs-body);
+  line-height: 1.55;
+}
+
+@media (max-width: 767.98px) {
+  body {
+    font-size: var(--fs-body-phone);
+  }
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--f-display);
+}
+
+.container {
+  max-width: 1320px;
+  margin-inline: auto;
+  padding-inline: 32px;
+}
+
+@media (max-width: 1199.98px) {
+  .container {
+    padding-inline: 24px;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .container {
+    padding-inline: 16px;
+  }
+}
+
+.vh {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Tilt (spec §5.3-2, BUILD §3): tilt lives in `rotate`, never `transform` */
+.tilt {
+  rotate: calc(var(--r, 0deg) * var(--tilt-k, 1));
+}
+
+/* Focus ring (BUILD §3 / spec §7.3) */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+summary:focus-visible,
+[tabindex]:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 6px var(--c-ink);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/* Infinite loops (BUILD §4) */
+@media (prefers-reduced-motion: reduce) {
+  .loop {
+    animation: none !important;
+  }
+}
+html[data-motion='paused'] .loop {
+  animation: none !important;
+}
+.loop.is-off {
+  animation-play-state: paused;
+}
+
+/* View transitions */
+@view-transition {
+  navigation: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  @view-transition {
+    navigation: none;
+  }
+}
+
+::view-transition-group(root) {
+  animation-duration: .35s;
+}
