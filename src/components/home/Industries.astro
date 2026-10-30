@@ -78,7 +78,9 @@ const languageItems = industries.filter(isLanguage);
 	.mq-set {
 		gap: 36px;
 	}
+	/* own white ground: before its entry the bar is opacity 0 and contrast checkers read the violet behind it */
 	.mq-set span {
+		background: var(--c-white);
 		display: inline-flex;
 	}
 	.sep {
@@ -92,7 +94,7 @@ const languageItems = industries.filter(isLanguage);
 	.note {
 		margin-top: var(--s-6);
 		text-align: center;
-		color: var(--c-legal);
+		color: var(--c-muted-violet); /* muted-on-violet token, 4.84:1 (legal grey is for ink bands) */
 		font-size: var(--fs-small);
 	}
 
