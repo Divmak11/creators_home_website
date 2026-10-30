@@ -1,0 +1,153 @@
+---
+// 404 (spec §3.4, BUILD.md U9). Violet page, centred: A-05 sticker slaps in, H1 chars bounce in.
+// Always above the fold — entries run on load, no scroll trigger (CaseHero/Hero pattern).
+import Base from '../layouts/Base.astro';
+import Slot from '../components/Slot.astro';
+---
+
+<Base title="Wrong room · CreatorsHome" canonicalPath="/404/" noindex>
+	<section class="oops">
+		<div class="container">
+			<div class="deco tilt bob loop" data-m="sticker" style="--r: -4deg">
+				<Slot
+					id="sticker:A-05"
+					alt="A party house with its door ajar and balloons on the handle"
+					width={320}
+					height={320}
+					widths={[320, 640]}
+					loading="eager"
+				/>
+			</div>
+
+			<h1 data-h1>Wrong room.</h1>
+			<p class="line">This door doesn't open. The party's this way:</p>
+
+			<div class="ctas">
+				<a href="/" class="cta cta-home">Back home</a>
+				<a href="/#work" class="cta cta-work">See the work</a>
+			</div>
+		</div>
+	</section>
+</Base>
+
+<script>
+	import { gsap, motionOn, SplitText } from '../scripts/motion/core';
+
+	const oops = document.querySelector<HTMLElement>('.oops');
+
+	if (oops) {
+		if (motionOn()) {
+			const h1 = oops.querySelector<HTMLElement>('h1');
+			if (h1) {
+				const split = SplitText.create(h1, { type: 'chars', mask: 'lines', aria: 'auto' });
+				gsap.fromTo(
+					split.chars,
+					{ y: -40, opacity: 0 },
+					{ y: 0, opacity: 1, duration: 0.6, ease: 'back.out(2)', stagger: 0.025, onComplete: () => split.revert() }
+				);
+			}
+		}
+		oops.classList.add('is-in');
+	}
+</script>
+
+<style is:global>
+	@keyframes ch-slap {
+		from {
+			opacity: 0;
+			transform: scale(1.6) rotate(12deg);
+		}
+	}
+	html.js-motion .oops .deco[data-m='sticker'] {
+		animation: ch-slap 0.55s var(--e-spring) both;
+	}
+</style>
+
+<style>
+	.oops {
+		background: var(--c-violet);
+		color: var(--c-white);
+		min-height: 70vh;
+		display: flex;
+		align-items: center;
+		padding: var(--s-20) 0;
+		text-align: center;
+	}
+	.container {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
+	.deco {
+		width: 320px;
+		margin-bottom: var(--s-8);
+	}
+	h1 {
+		font-family: var(--f-display);
+		font-weight: 800;
+		font-size: var(--fs-h1);
+		line-height: 1.02;
+		letter-spacing: -2px;
+	}
+	.line {
+		margin: var(--s-6) 0 0;
+		font-size: var(--fs-body-l);
+		max-width: 480px;
+	}
+	.ctas {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--s-3);
+		justify-content: center;
+		margin-top: var(--s-8);
+	}
+	.cta {
+		text-decoration: none;
+		font-weight: 700;
+		font-size: 18px;
+		padding: var(--s-5) var(--s-8);
+		border-radius: var(--r-pill);
+		color: var(--c-ink);
+		transition: translate var(--t-s) var(--e-spring), scale var(--t-s) var(--e-spring), box-shadow var(--t-s) var(--e-spring);
+	}
+	.cta-home {
+		background: var(--c-orange);
+	}
+	.cta-work {
+		background: var(--c-white);
+	}
+	@media (hover: hover) and (pointer: fine) {
+		.cta:hover {
+			translate: 0 -3px;
+			box-shadow: 0 9px 0 var(--c-ink);
+		}
+		.cta:active {
+			translate: 0 0;
+			box-shadow: 0 2px 0 var(--c-ink);
+		}
+	}
+
+	@media (max-width: 767.98px) {
+		.oops {
+			padding: var(--s-14) 0;
+		}
+		.deco {
+			width: 220px;
+		}
+		.ctas {
+			flex-direction: column;
+			width: 100%;
+			max-width: 320px;
+		}
+		.cta {
+			width: 100%;
+			text-align: center;
+		}
+	}
+
+	/* Hidden-state contract (BUILD §4): written only under html.js-motion, matched to the
+	   on-load `.is-in` swap in this component's module script. */
+	:global(html.js-motion) .oops:not(.is-in) h1 {
+		opacity: 0;
+	}
+</style>

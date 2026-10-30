@@ -1,0 +1,101 @@
+---
+// Legal page layout (spec §3.3, BUILD.md U9). Wraps Base. Lavender page, ink text, max 760,
+// Unbounded headings, DM Sans 18/1.7 body. H1 word rise only (SplitText words, CaseHero
+// pattern) — body is static text and must not animate. `noindex` while `!LEGAL_READY`.
+import Base from './Base.astro';
+import { LEGAL_READY } from '../config.ts';
+
+interface Props {
+  title: string;
+  description: string;
+  canonicalPath: string;
+  h1: string;
+}
+
+const { title, description, canonicalPath, h1 } = Astro.props;
+---
+
+<Base title={title} description={description} canonicalPath={canonicalPath} noindex={!LEGAL_READY}>
+	<section class="legal">
+		<div class="legal-inner">
+			<h1>{h1}</h1>
+			<div class="body">
+				<slot />
+			</div>
+		</div>
+	</section>
+</Base>
+
+<script>
+	import { gsap, motionOn, SplitText } from '../scripts/motion/core';
+
+	const legal = document.querySelector<HTMLElement>('.legal');
+
+	if (legal) {
+		if (motionOn()) {
+			const h1 = legal.querySelector<HTMLElement>('h1');
+			if (h1) {
+				const split = SplitText.create(h1, { type: 'words,lines', mask: 'lines', aria: 'auto' });
+				gsap.fromTo(
+					split.words,
+					{ yPercent: 100 },
+					{ yPercent: 0, duration: 0.7, ease: 'ch-smooth', stagger: 0.05, onComplete: () => split.revert() }
+				);
+			}
+		}
+		legal.classList.add('is-in');
+	}
+</script>
+
+<style>
+	.legal {
+		background: var(--c-lavender);
+		color: var(--c-ink);
+		padding: var(--s-20) 32px var(--s-26);
+	}
+	.legal-inner {
+		max-width: 760px;
+		margin-inline: auto;
+	}
+	h1 {
+		font-family: var(--f-display);
+		font-weight: 800;
+		font-size: var(--fs-h2);
+		letter-spacing: -1.5px;
+		margin: 0 0 var(--s-10);
+	}
+	.body :global(h2) {
+		font-family: var(--f-display);
+		font-weight: 800;
+		font-size: var(--fs-h3);
+		margin: var(--s-14) 0 var(--s-4);
+	}
+	.body :global(h2:first-child) {
+		margin-top: 0;
+	}
+	.body :global(p) {
+		font-family: var(--f-body);
+		font-size: 18px;
+		line-height: 1.7;
+		margin: 0 0 var(--s-4);
+	}
+	.body :global(ul) {
+		margin: 0 0 var(--s-4);
+		padding-left: var(--s-6);
+		list-style: disc;
+		font-size: 18px;
+		line-height: 1.7;
+	}
+
+	@media (max-width: 767.98px) {
+		.legal {
+			padding: var(--s-14) 16px var(--s-14);
+		}
+	}
+
+	/* Hidden-state contract (BUILD §4): written only under html.js-motion, matched to the
+	   on-load `.is-in` swap in this component's module script. */
+	:global(html.js-motion) .legal:not(.is-in) h1 {
+		opacity: 0;
+	}
+</style>

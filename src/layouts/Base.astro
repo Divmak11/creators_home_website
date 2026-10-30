@@ -15,7 +15,7 @@ import Footer from '../components/Footer.astro';
 
 interface Props {
   title: string;
-  description: string;
+  description?: string;
   canonicalPath: string;
   noindex?: boolean;
   ogType?: string;
@@ -32,7 +32,7 @@ const canonicalURL = new URL(canonicalPath, SITE_URL);
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
 	<title>{title}</title>
-	<meta name="description" content={description} />
+	{description && <meta name="description" content={description} />}
 	<link rel="canonical" href={canonicalURL} />
 	<meta name="theme-color" content="#6B3BFF" />
 	<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
