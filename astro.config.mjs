@@ -1,5 +1,6 @@
 import { defineConfig } from 'astro/config';
-import { SITE_URL } from './src/config.ts';
+import sitemap from '@astrojs/sitemap';
+import { SITE_URL, LEGAL_READY } from './src/config.ts';
 
 export default defineConfig({
   site: SITE_URL,
@@ -8,5 +9,13 @@ export default defineConfig({
   build: {
     format: 'directory',
   },
-  integrations: [],
+  integrations: [
+    sitemap({
+      filter: (page) => {
+        if (page.includes('/404')) return false;
+        if (!LEGAL_READY && (page.includes('/privacy') || page.includes('/terms'))) return false;
+        return true;
+      },
+    }),
+  ],
 });

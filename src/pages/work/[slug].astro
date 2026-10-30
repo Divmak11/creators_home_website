@@ -3,6 +3,7 @@
 import Base from '../../layouts/Base.astro';
 import { campaigns } from '../../data/campaigns.ts';
 import { SHOW_OVERHEARD } from '../../config.ts';
+import { abs, creativeWork, breadcrumb } from '../../lib/seo.ts';
 import type { Campaign } from '../../data/types.ts';
 import CaseHero from '../../components/case/CaseHero.astro';
 import CaseNumbers from '../../components/case/CaseNumbers.astro';
@@ -24,9 +25,22 @@ interface Props {
 }
 
 const { campaign: c } = Astro.props;
+
+const figureText = c.figure ? `${c.figure.num.display} ${c.figure.label}` : c.badge ?? '';
+const ogImageAlt = `${c.title} — ${figureText} · CreatorsHome`;
+const jsonLd = [creativeWork(c), breadcrumb(c)];
 ---
 
-<Base title={c.seo.title} description={c.seo.description} canonicalPath={`/work/${c.slug}/`} ogType="article" headerCompact>
+<Base
+	title={c.seo.title}
+	description={c.seo.description}
+	canonicalPath={`/work/${c.slug}/`}
+	ogType="article"
+	headerCompact
+	ogImage={abs(`/og/${c.slug}.png`)}
+	ogImageAlt={ogImageAlt}
+	jsonLd={jsonLd}
+>
 	<CaseHero campaign={c} />
 	{c.stats.length > 0 ? <CaseNumbers campaign={c} /> : <CaseMove campaign={c} />}
 	<CaseBrief campaign={c} />

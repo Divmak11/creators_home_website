@@ -1,0 +1,32 @@
+---
+// Vercel Web Analytics hook (spec §9.6 Q7, BUILD.md U10). Renders nothing unless ANALYTICS_ENABLED;
+// off by default (F1 flips it on at deploy). Cookieless — no banner needed.
+import { ANALYTICS_ENABLED } from '../config.ts';
+---
+
+{ANALYTICS_ENABLED && (
+	<Fragment>
+		<script is:inline>
+			window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+		</script>
+		<script defer src="/_vercel/insights/script.js"></script>
+		<script is:inline>
+			(function () {
+				function track(name, data) {
+					if (window.va) window.va('event', { name: name, data: data });
+				}
+				document.addEventListener('click', function (e) {
+					var roleEl = e.target.closest('[data-role]');
+					if (roleEl) track('cta_click', { role: roleEl.getAttribute('data-role') });
+					var filterBtn = e.target.closest('.filters button');
+					if (filterBtn) track('filter_change', { filter: filterBtn.textContent.trim() });
+					var caseLink = e.target.closest('a[href^="/work/"]');
+					if (caseLink) track('case_open', { href: caseLink.getAttribute('href') });
+				});
+				document.addEventListener('ch:form-success', function () {
+					track('form_submit_success');
+				});
+			})();
+		</script>
+	</Fragment>
+)}

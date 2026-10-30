@@ -1,5 +1,8 @@
 ---
 import Base from '../layouts/Base.astro';
+import { campaigns } from '../data/campaigns.ts';
+import { faq } from '../data/faq.ts';
+import { organization, website, itemList, faqPage } from '../lib/seo.ts';
 import Hero from '../components/home/Hero.astro';
 import Ribbons from '../components/home/Ribbons.astro';
 import Numbers from '../components/home/Numbers.astro';
@@ -13,12 +16,15 @@ import Industries from '../components/home/Industries.astro';
 import Overheard from '../components/home/Overheard.astro';
 import Faq from '../components/home/Faq.astro';
 import Contact from '../components/home/Contact.astro';
+
+const jsonLd = [organization(), website(), itemList(campaigns), faqPage(faq)].filter((d): d is object => d !== null);
 ---
 
 <Base
 	title="CreatorsHome · Influencer, Meme-Page & Reddit Marketing"
 	description="CreatorsHome plans, seeds and tracks creator, meme-page and Reddit campaigns across Instagram, Facebook and X. 9M+ reach across our campaigns."
 	canonicalPath="/"
+	jsonLd={jsonLd}
 >
 	<Hero />
 	<Ribbons />
