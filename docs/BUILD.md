@@ -63,16 +63,13 @@ using tokens. Breakpoints: phone `max-width: 767.98px`, tablet `768px–1199.98p
   HTML always holds the FINAL value; JS sets the start value only when motion is on. `font-variant-numeric: tabular-nums`, `min-width: <len>ch`.
 - Pause toggle: any `[data-pause-toggle]` button (`aria-pressed`). Sets/removes `html[data-motion="paused"]` + `localStorage['ch-motion']` (try/catch).
 
-## 5. Asset slots (A1 dependency — placeholders until A1 lands)
-- Campaign covers, proof-wall images, peek minis, stickers A-01…A-05, OG background A-06, favicon/app icons, final logo files
-  are **A1 outputs**. Until then: never copy anything from `../sources/` into the site. Render placeholders.
-- `src/data/assets.ts` is the single slot map: `export const slots: Record<SlotId, ImageMetadata | null>`. Every value is `null`
-  now. Slot ids: `cover:<slug>`, `wall:<slug>:<n>` (1-based, §4.5 order), `sticker:A-01`…`A-05`, `og-bg`.
-- `components/Slot.astro` (`id`, `alt`, `widths`, `sizes`, `class`, `fallback` colour/look): if the slot has an image → astro:assets
-  `<Picture formats={['avif','webp']} widths={…}>` with width/height + alt + lazy/async; if null → a solid panel in the given colour
-  with a small dashed tag `A1 · <slot id>` (aria-hidden) and the alt text kept as `role="img" aria-label`. Same box size either way (no CLS).
-- U11 swap = copy A1 files to `src/assets/a1/…` + set each slot in `assets.ts` from A1's manifest. Nothing else changes.
-- `public/favicon.svg`, icons, `og-default.png`: TEMP files generated from the design's L57 house-heart mark, marked `TEMP-A1` in `docs/ASSET_SLOTS.md`.
+## 5. Asset slots (A1 landed — U11)
+- `src/data/assets.ts` maps every `SlotId` to a key in `src/data/a1-manifest.json` (a copy of A1's
+  `brand-assets/creatorshome/manifest.json`); `getSlot(id)` resolves that key to the manifest's AVIF/WebP
+  files, width/height, `lqip`, `objectPosition` and `alt`, and throws at build time if a key is missing.
+- `components/Slot.astro` renders a hand-written `<picture>` (avif + webp `<source>`, sized `<img>`) straight
+  from `getSlot(id)` — no `astro:assets` re-encode. A missing slot is a build error, not a placeholder.
+- Full slot → manifest-key table, file counts and the samsung cover/wall override: `docs/ASSET_SLOTS.md`.
 
 ## 6. Placeholders
 `components/Ph.astro` renders `[PLACEHOLDER: text]` visibly (dashed outline, `data-placeholder`). JSON-LD/meta never contain placeholders

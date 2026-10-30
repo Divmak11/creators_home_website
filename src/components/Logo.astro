@@ -1,43 +1,32 @@
 ---
+// A1's lockup (brand/logo.svg, brand/logo-ink.svg — hand-built SVG, viewBox 0 0 1153.58
+// 176.73). `alt` defaults to the full wordmark; pass alt="" when the wrapping link already
+// carries its own accessible name (e.g. an aria-label on the <a>).
 interface Props {
   variant: 'light' | 'ink';
   size?: number;
+  alt?: string;
 }
 
-const { variant, size = 38 } = Astro.props;
+const VIEWBOX_W = 1153.58;
+const VIEWBOX_H = 176.73;
+
+const { variant, size = 38, alt = 'CreatorsHome' } = Astro.props;
+const src = variant === 'ink' ? '/brand/logo-ink.svg' : '/brand/logo.svg';
+const width = Math.round((size * VIEWBOX_W) / VIEWBOX_H);
 ---
 
-<!-- TEMP-A1: swap for brand logo SVG when A1 lands -->
-<span class:list={['logo', variant === 'ink' && 'logo--ink']}>
-	<svg width={size} height={size} viewBox="0 0 38 38" aria-hidden="true" class="logo-mark">
-		<path d="M5 17L19 5l14 12v15a2 2 0 01-2 2H7a2 2 0 01-2-2z" fill="#FF6A1F" stroke="#160A33" stroke-width="3" stroke-linejoin="round"></path>
-		<path d="M19 29s-6-3.6-6-8a3.4 3.4 0 016-2.2 3.4 3.4 0 016 2.2c0 4.4-6 8-6 8z" fill="#fff"></path>
-	</svg>
-	<span class="logo-word">CreatorsHome</span>
-</span>
+<img src={src} width={width} height={size} alt={alt} class="logo-img" />
 
 <style>
-	.logo {
-		display: inline-flex;
-		align-items: center;
-		gap: var(--s-2);
-	}
-	.logo-mark {
-		flex-shrink: 0;
-	}
-	.logo-word {
-		font-family: var(--f-display);
-		font-weight: 800;
-		letter-spacing: -0.5px;
-		font-size: 22px;
-		color: var(--c-white);
-	}
-	.logo--ink .logo-word {
-		color: var(--c-ink);
+	.logo-img {
+		display: block;
+		height: 38px;
+		width: auto;
 	}
 	@media (max-width: 767.98px) {
-		.logo-word {
-			font-size: 18px;
+		.logo-img {
+			height: 32px;
 		}
 	}
 </style>

@@ -1,26 +1,40 @@
-# Asset slots (U1)
+# Asset slots (U11 — A1 landed)
 
-`src/data/assets.ts` is the single slot map (BUILD.md §5). Every value is `null` until A1 lands (U11 swap).
+`src/data/assets.ts` is the single slot map (BUILD.md §5). Every `SlotId` maps to a key in
+`src/data/a1-manifest.json` (copy of A1's `brand-assets/creatorshome/manifest.json`); `getSlot(id)`
+resolves that key to AVIF/WebP file lists under `public/img/...` and throws at build time if the
+manifest is missing the key. A missing slot is a build error now, not a placeholder.
 
-| slot id | spec ref | size / widths | current state |
+| slot id | manifest key | files | state |
 |---|---|---|---|
-| `cover:chhedas` | §8.2 Cover · chhedas | 1200×1500 src; 400, 800, 1200 | placeholder |
-| `cover:district-batwara-awarapan` | §8.2 Cover · district-batwara-awarapan | 590×1280 src, ≈4:5 crop; 400, 590 | placeholder |
-| `cover:fancode-ind-vs-zim` | §8.2 Cover · fancode | 1080×1230 src; 400, 800, 1080 | placeholder |
-| `cover:district-odyssey-filter` | §8.2 Cover · odyssey | 1080×1065 src; 400, 800, 1080 | placeholder |
-| `cover:dhamaal-4-reddit` | §8.2 Cover · dhamaal | 949×1600 src, ≈4:5 crop; 400, 800 | placeholder |
-| `wall:chhedas:1` … `wall:chhedas:5` | §4.5 proof wall — chhedas (5 items) | 360, 720 (phones); full ≤1600 for lightbox | placeholder |
-| `wall:district-batwara-awarapan:1` … `:3` | §4.5 proof wall — district × Batwara/Awarapan (3 items) | 360, 720; full ≤1600 | placeholder |
-| `wall:fancode-ind-vs-zim:1` … `:2` | §4.5 proof wall — FanCode IND vs ZIM (2 items) | 360, 720; full ≤1600 | placeholder |
-| `wall:dhamaal-4-reddit:1` | §4.5 proof wall — Dhamaal 4 (1 item) | 360, 720; full ≤1600 | placeholder |
-| `wall:samsung-galaxy-z-fold8:1` | U5 ruling — Samsung creative shown large on its case page proof wall, not as card cover — A1 note | 1080×705 src; 360 (peek/wall), 720 | placeholder |
-| `sticker:A-01` | §8 asset list — disco ball house | 1:1, 800 master; 160, 320 | placeholder |
-| `sticker:A-02` | §8 asset list — party popper | 1:1; 160, 320 | placeholder |
-| `sticker:A-03` | §8 asset list — speech bubble + heart | 1:1; 160, 320 | placeholder |
-| `sticker:A-04` | §8 asset list — doormat "welcome" | 3:2, 1200 master; 240, 480 | placeholder |
-| `sticker:A-05` | §8 asset list — 404 illustration (door ajar) | 1:1, 1200 master; 320, 640, 960 | placeholder |
-| `og-bg` | §8 asset list A-06 / §9.3 OG generator | 1200×630 exact | placeholder |
+| `cover:chhedas` | `cover/chhedas` | 6 (400, 800, 1200 × avif/webp) | A1 — served as-is |
+| `cover:district-batwara-awarapan` | `cover/district-batwara-awarapan` | 4 (400, 522 × avif/webp) | A1 — served as-is |
+| `cover:fancode-ind-vs-zim` | `cover/fancode-ind-vs-zim` | 6 (400, 800, 1080 × avif/webp) | A1 — served as-is |
+| `cover:district-odyssey-filter` | `cover/district-odyssey-filter` | 6 (400, 800, 1080 × avif/webp) | A1 — served as-is |
+| `cover:dhamaal-4-reddit` | `cover/dhamaal-4-reddit` | 4 (400, 800 × avif/webp) | A1 — served as-is |
+| `wall:chhedas:1` | `wall/chhedas/p04_i8` | 4 (360, 498 × avif/webp) | A1 — served as-is |
+| `wall:chhedas:2` | `wall/chhedas/p04_i9` | 6 (360, 720, 744 × avif/webp) | A1 — served as-is |
+| `wall:chhedas:3` | `wall/chhedas/p04_i10` | 6 (360, 720, 855 × avif/webp) | A1 — served as-is |
+| `wall:chhedas:4` | `wall/chhedas/p03_i5` | 6 (360, 720, 883 × avif/webp) | A1 — served as-is |
+| `wall:chhedas:5` | `wall/chhedas/p05_i11` | 6 (360, 720, 914 × avif/webp) | A1 — served as-is |
+| `wall:district-batwara-awarapan:1` | `wall/district-batwara-awarapan/p01_i2` | 4 (360, 590 × avif/webp) | A1 — served as-is |
+| `wall:district-batwara-awarapan:2` | `wall/district-batwara-awarapan/p02_i5` | 4 (360, 590 × avif/webp) | A1 — served as-is |
+| `wall:district-batwara-awarapan:3` | `wall/district-batwara-awarapan/p07_i8` | 4 (360, 590 × avif/webp) | A1 — served as-is |
+| `wall:fancode-ind-vs-zim:1` | `wall/fancode-ind-vs-zim/s06_i4` | 6 (360, 720, 1080 × avif/webp) | A1 — served as-is |
+| `wall:fancode-ind-vs-zim:2` | `wall/fancode-ind-vs-zim/s06_i5` | 6 (360, 720, 1080 × avif/webp) | A1 — served as-is |
+| `wall:dhamaal-4-reddit:1` | `wall/dhamaal-4-reddit/s09_i3` | 6 (360, 720, 949 × avif/webp) | A1 — served as-is |
+| `wall:samsung-galaxy-z-fold8:1` | `cover/samsung-galaxy-z-fold8` (shown large as a print, not a small card cover — parent ruling) | 6 (400, 800, 1080 × avif/webp) | A1 — served as-is |
+| `sticker:A-01` | `A-01` | 4 (160, 320 × avif/webp) | A1 — served as-is |
+| `sticker:A-02` | `A-02` | 4 (160, 320 × avif/webp) | A1 — served as-is |
+| `sticker:A-03` | `A-03` | 4 (160, 320 × avif/webp) | A1 — served as-is |
+| `sticker:A-04` | `A-04` | 4 (240, 480 × avif/webp) | A1 — served as-is |
+| `sticker:A-05` | `A-05` | 6 (320, 640, 960 × avif/webp) | A1 — served as-is |
+| `og-bg` | `A-06` | 1 (png, 1200×630) | A1 — served as-is |
+
+Logo/mark/badge SVGs (`public/brand/*.svg`) and icons (`public/favicon.svg`, `favicon.ico`,
+`apple-touch-icon.png`, `icon-192.png`, `icon-512.png`, `icon-512-maskable.png`) are A1 output
+too, copied byte-identical from `brand-assets/creatorshome/{brand,icons}/` — not part of the
+`SlotId` map, referenced directly by `Logo.astro`/`Base.astro`.
 
 ## TEMP files (marked `TEMP-A1`, swap when A1 lands)
-- `public/favicon.svg` — L57 house-heart mark on a `#6B3BFF` rounded square (rx 22%).
-- `src/components/Logo.astro` — inline SVG mark (house + heart paths from L57, 3px ink stroke on the house).
+None.
