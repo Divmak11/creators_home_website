@@ -1,4 +1,5 @@
 ---
+const breakName = (n: string) => n.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/\./g, '.<wbr>').replace(/([a-z])([A-Z])/g, '$1<wbr>$2');
 // Who's at the party (home §3.1-5, spec §2.4 + §7.4). Six partner pages that carried our
 // campaigns, repurposing design L98–109. M-08 card deal (desktop/tablet stack-and-deal, phone
 // rail slide-in) runs in the component <script> below.
@@ -39,7 +40,7 @@ function dotColor(bg: 'orange' | 'white' | 'ink'): string {
 					style={`--r: ${tilts[i]}deg; --dot: ${dotColor(card.bg)}`}
 					aria-label={`${card.name} — ${card.num.spoken} ${card.label} — see the ${title} campaign`}
 				>
-					<strong class="name">{card.name}</strong>
+					<strong class="name" set:html={breakName(card.name)} />
 					<span class="platform">{platformLabel(card.platform)}</span>
 					<span class="cu-wrap" aria-hidden="true">
 						<span class="cu" data-to={card.num.value} data-dec={card.num.decimals}>
@@ -253,6 +254,15 @@ function dotColor(bg: 'orange' | 'white' | 'ink'): string {
 		}
 	}
 
+	@media (min-width: 1200px) {
+		.name {
+			font-size: 16px;
+			overflow-wrap: normal;
+		}
+		.cu-wrap {
+			font-size: 26px;
+		}
+	}
 	@media (max-width: 1199.98px) {
 		.grid {
 			grid-template-columns: repeat(3, minmax(0, 1fr));

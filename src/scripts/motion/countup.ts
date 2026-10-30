@@ -13,9 +13,11 @@ export function prepCountUps(root: ParentNode = document): void {
     const rect = el.getBoundingClientRect();
     if (rect.top > window.innerHeight) {
       const dec = Number(el.dataset.dec ?? '0');
-      const final = el.textContent ?? '';
+      const final = (el.textContent ?? '').trim();
       el.dataset.final = final;
-      el.style.minWidth = `${final.length}ch`;
+      el.style.display = 'inline-block';
+      el.style.textAlign = 'right';
+      el.style.minWidth = `${rect.width}px`;
       el.textContent = formatNum(0, dec);
     }
   }
