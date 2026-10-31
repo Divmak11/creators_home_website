@@ -5,9 +5,8 @@
 // JSON, per-field custom messages, role/service preselect (role.ts) and M-19 confetti on
 // success. Creator fieldset renders visible+enabled for no-JS (with a note); JS hides/disables
 // it on init and reveals it only for role = creator/meme.
-import Ph from '../Ph.astro';
 import Slot from '../Slot.astro';
-import { FORM_ENDPOINT, WEB3FORMS_ACCESS_KEY, SITE_URL, CONTACT } from '../../config';
+import { FORM_ENDPOINT, WEB3FORMS_ACCESS_KEY, REPLY_TIME, SITE_URL, CONTACT } from '../../config';
 
 const warnIcon =
 	'<svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 2 1 21h22L12 2Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><line x1="12" y1="9" x2="12" y2="14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="17.3" r="1" fill="currentColor"/></svg>';
@@ -18,14 +17,14 @@ const warnIcon =
 		<div class="inner">
 			<div class="head">
 				<h2>Come on in.</h2>
-				<p class="line">Brands &amp; creators — we reply within <Ph text="one working day — confirm" />.</p>
+				{REPLY_TIME && <p class="line">Brands &amp; creators — we reply within {REPLY_TIME}.</p>}
 				<div class="sticker tilt" aria-hidden="true" style="--r: -4deg">
 					<Slot id="sticker:A-04" alt="" width={240} height={199} widths={[240, 480]} />
 				</div>
 			</div>
 
 			<form id="contact-form" method="POST" action={FORM_ENDPOINT}>
-				<input type="hidden" name="access_key" value={WEB3FORMS_ACCESS_KEY} />
+				{WEB3FORMS_ACCESS_KEY && <input type="hidden" name="access_key" value={WEB3FORMS_ACCESS_KEY} />}
 				<input type="hidden" name="subject" value="New enquiry — CreatorsHome website" />
 				<input type="hidden" name="from_name" value="CreatorsHome website" />
 				<input type="hidden" name="redirect" value={`${SITE_URL}/?sent=1#contact`} />
@@ -144,11 +143,7 @@ const warnIcon =
 
 				<template data-banner-tpl>
 					<p class="banner" role="alert">
-						That didn't go through. Try again, or email us at {CONTACT.email ? (
-							<a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>
-						) : (
-							<Ph text="email" />
-						)}.
+						That didn't go through. Try again{CONTACT.email && <>, or email us at <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a></>}.
 					</p>
 				</template>
 			</form>
@@ -317,6 +312,11 @@ const warnIcon =
 			}
 		}
 
+		function fail(): void {
+			setLoading(false);
+			showBanner();
+		}
+
 		function showSuccessCard({ confetti, focus }: { confetti: boolean; focus: boolean }): void {
 			setLoading(false);
 			hideBanner();
@@ -355,18 +355,20 @@ const warnIcon =
 			}
 
 			setLoading(true);
+			if (!form!.querySelector('input[name="access_key"]')) {
+				fail();
+				return;
+			}
 			try {
 				const res = await fetch(FORM_ENDPOINT, { method: 'POST', headers: { Accept: 'application/json' }, body: new FormData(form!) });
 				const json = await res.json().catch(() => null);
 				if (res.ok && json && json.success) {
 					showSuccessCard({ confetti: true, focus: true });
 				} else {
-					setLoading(false);
-					showBanner();
+					fail();
 				}
 			} catch {
-				setLoading(false);
-				showBanner();
+				fail();
 			}
 		});
 
@@ -593,10 +595,6 @@ const warnIcon =
 		font-weight: 700;
 		font-size: var(--fs-small);
 	}
-	.banner :global(.ph) {
-		color: var(--c-white);
-	}
-
 	.submit {
 		display: inline-flex;
 		align-items: center;
@@ -686,9 +684,8 @@ const warnIcon =
 			font-size: 16px;
 			min-height: 52px;
 		}
-		.consent-label input {
-			width: 46px;
-			height: 46px;
+		.consent-label {
+			min-height: 44px;
 		}
 	}
 

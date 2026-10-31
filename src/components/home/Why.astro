@@ -68,19 +68,19 @@ const iconPaths: Record<(typeof why)[number]['icon'], IconPath[]> = {
 				gsap.fromTo(
 					band,
 					{ clipPath: 'circle(0% at 50% 30%)' },
-					{ clipPath: 'circle(150% at 50% 30%)', duration: 1.1, ease: 'ch-smooth', clearProps: 'clipPath' }
+					{ clipPath: 'circle(150% at 50% 30%)', duration: 0.9, ease: 'ch-smooth', clearProps: 'clipPath' }
 				);
 
 				cards.forEach((card, i) => {
 					const paths = Array.from(card.querySelectorAll<SVGGeometryElement>('.ico-path'));
 					const text = card.querySelector<HTMLElement>('.card-text');
-					const delay = i * 0.12;
-					gsap.fromTo(paths, { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 0.8, delay, clearProps: 'strokeDashoffset' });
+					const delay = i * 0.08;
+					gsap.fromTo(paths, { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 0.6, delay, clearProps: 'strokeDashoffset' });
 					if (text) {
 						gsap.fromTo(
 							text,
 							{ y: 16, opacity: 0 },
-							{ y: 0, opacity: 1, duration: 0.5, delay: delay + 0.8, clearProps: 'transform,opacity' }
+							{ y: 0, opacity: 1, duration: 0.4, delay: delay + 0.45, clearProps: 'transform,opacity' }
 						);
 					}
 				});

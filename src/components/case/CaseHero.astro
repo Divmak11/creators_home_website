@@ -49,7 +49,7 @@ const cap = (p: string) => p.charAt(0).toUpperCase() + p.slice(1);
 				{platforms.map((p) => (
 					<span class="chip">
 						<Icon name={p} size={16} />
-						{cap(p)}
+						{p === 'x' ? <span class="vh">{cap(p)}</span> : cap(p)}
 					</span>
 				))}
 			</div>

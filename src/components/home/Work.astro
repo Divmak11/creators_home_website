@@ -220,7 +220,7 @@ import { campaigns, FILTERS, filterCount } from '../../data/campaigns.ts';
 				const phone = isPhoneRail();
 				const insetStart = phone ? 'inset(8% 6% 8% 6% round 32px)' : 'inset(8% 6% 8% 6% round 56px)';
 				const insetEnd = phone ? 'inset(0% 0% 0% 0% round 32px)' : 'inset(0% 0% 0% 0% round 56px)';
-				gsap.fromTo(band, { clipPath: insetStart }, { clipPath: insetEnd, duration: 1.0, ease: 'ch-smooth', clearProps: 'clipPath' });
+				gsap.fromTo(band, { clipPath: insetStart }, { clipPath: insetEnd, duration: 0.8, ease: 'ch-smooth', clearProps: 'clipPath' });
 
 				const cells = Array.from(grid.querySelectorAll<HTMLElement>(':scope > .wcell')).filter((c) => !c.hidden);
 
@@ -228,7 +228,7 @@ import { campaigns, FILTERS, filterCount } from '../../data/campaigns.ts';
 					const card = cell.querySelector<HTMLElement>('.wcard');
 					if (card) gsap.fromTo(card, { '--sh-y': '0px' }, { '--sh-y': '16px', duration: 0.2, delay, clearProps: '--sh-y' });
 					const cu = cell.querySelector<HTMLElement>('.cu');
-					if (cu) countUp(cu, { duration: 1.2, delay });
+					if (cu) countUp(cu, { duration: 0.8, delay });
 					const badge = cell.querySelector<HTMLElement>('.badge');
 					if (badge)
 						gsap.fromTo(
@@ -248,7 +248,7 @@ import { campaigns, FILTERS, filterCount } from '../../data/campaigns.ts';
 					cells.forEach((cell) => land(cell, 0));
 				} else {
 					cells.forEach((cell, i) => {
-						const delay = 0.35 + i * 0.08;
+						const delay = 0.2 + i * 0.04;
 						const rotation = i % 2 ? 10 : -10;
 						gsap.fromTo(
 							cell,
@@ -257,7 +257,7 @@ import { campaigns, FILTERS, filterCount } from '../../data/campaigns.ts';
 								y: 0,
 								rotation: 0,
 								opacity: 1,
-								duration: 0.75,
+								duration: 0.55,
 								ease: 'back.out(1.6)',
 								delay,
 								clearProps: 'transform,opacity',
@@ -356,6 +356,11 @@ import { campaigns, FILTERS, filterCount } from '../../data/campaigns.ts';
 		display: grid;
 		grid-template-columns: repeat(2, minmax(0, 1fr));
 		gap: 24px;
+	}
+
+	/* Filtered (≤3 cards): tilted neighbours need room or their corners cross (Q1 CH-06). */
+	.wgrid[data-count] {
+		column-gap: 72px;
 	}
 
 	.tape-track {

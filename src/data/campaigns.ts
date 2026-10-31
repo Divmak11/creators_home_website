@@ -267,7 +267,7 @@ export const campaigns: Campaign[] = [
     move: [
       { title: 'Same-day', text: 'Coordinated, same-day publishing across our Instagram page network.' },
       { title: 'Live moments', text: "Shreyas Iyer's first win as captain, posted the morning after." },
-      { title: 'One clear offer', text: "The ₹35 pass, front and centre: 'Ye deal toh mujhe pasand hai.'" },
+      { title: 'One clear offer', text: "The ₹35 pass, front and centre: 'Ye deal toh mujhe pasand hai'." },
     ],
     dates: null,
     peek: true,

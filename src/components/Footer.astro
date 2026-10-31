@@ -1,6 +1,5 @@
 ---
 import Logo from './Logo.astro';
-import Ph from './Ph.astro';
 import { INSTAGRAM_URL, LINKEDIN_URL, CONTACT } from '../config';
 ---
 
@@ -10,7 +9,7 @@ import { INSTAGRAM_URL, LINKEDIN_URL, CONTACT } from '../config';
 		<div class="footer-cols">
 			<div class="footer-col footer-col-1">
 				<a href="/" class="footer-logo-link"><Logo variant="light" /></a>
-				<p class="footer-tagline">Where creators live and brands go viral.<br />{CONTACT.city ? `${CONTACT.city}, India` : <><Ph text="city" />, India</>}</p>
+				<p class="footer-tagline">Where creators live and brands go viral.{CONTACT.city && <><br />{`${CONTACT.city}, India`}</>}</p>
 			</div>
 			<div class="footer-col footer-col-2">
 				<strong>House</strong>
@@ -35,8 +34,8 @@ import { INSTAGRAM_URL, LINKEDIN_URL, CONTACT } from '../config';
 			<div class="footer-col footer-col-4">
 				<strong>Say hi</strong>
 				<ul>
-					<li>{CONTACT.email ? <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a> : <Ph text="email" />}</li>
-					<li>{CONTACT.phone ? <a href={`tel:${CONTACT.phone}`}>{CONTACT.phone}</a> : <Ph text="WhatsApp/phone" />}</li>
+					{CONTACT.email && <li><a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a></li>}
+					{CONTACT.phone && <li><a href={`tel:${CONTACT.phone}`}>{CONTACT.phone}</a></li>}
 					{INSTAGRAM_URL && <li><a href={INSTAGRAM_URL}>Instagram</a></li>}
 					{LINKEDIN_URL && <li><a href={LINKEDIN_URL}>LinkedIn</a></li>}
 				</ul>
@@ -98,6 +97,15 @@ import { INSTAGRAM_URL, LINKEDIN_URL, CONTACT } from '../config';
 		.footer-col-2 { grid-area: c2; }
 		.footer-col-3 { grid-area: c3; }
 		.footer-col-4 { grid-area: c4; }
+		.footer-col a {
+			display: inline-flex;
+			align-items: center;
+			min-height: 44px;
+		}
+		.pause-toggle {
+			min-height: 44px;
+			align-items: center;
+		}
 	}
 	.footer-col ul {
 		display: flex;
