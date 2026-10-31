@@ -1,6 +1,6 @@
 ---
 // Pages that carried it (case page, spec §3.2-6 + §5.4 M-20). Horizontal bar race: bar width =
-// value / max stored in `--w`, drawn with the native `scale` property so it matches the
+// raw value / raw max stored in `--w` (display values mix units: 4.6 M vs 534 K), drawn with the native `scale` property so it matches the
 // codebase's "tilt/scale/rotate live in those CSS properties" convention (BUILD §3).
 import { formatNum } from '../../data/format.ts';
 import type { Campaign } from '../../data/types.ts';
@@ -10,7 +10,9 @@ interface Props {
 }
 
 const { campaign } = Astro.props;
-const max = Math.max(...campaign.leaderboard.map((r) => r.num.value));
+const UNIT: Record<string, number> = { K: 1e3, M: 1e6, B: 1e9 };
+const raw = (n: Campaign['leaderboard'][number]['num']) => n.value * (UNIT[n.suffix.trim().charAt(0).toUpperCase()] ?? 1);
+const max = Math.max(...campaign.leaderboard.map((r) => raw(r.num)));
 ---
 
 <section class="leaderboard">
@@ -19,7 +21,7 @@ const max = Math.max(...campaign.leaderboard.map((r) => r.num.value));
 
 		<div class="rows" data-m="race">
 			{campaign.leaderboard.map((row) => (
-				<div class="row" style={`--w: ${row.num.value / max}`}>
+				<div class="row" style={`--w: ${raw(row.num) / max}`}>
 					<span class="name">{row.name}</span>
 					<span class="bar">
 						<span class="bar-fill"></span>
@@ -48,9 +50,9 @@ const max = Math.max(...campaign.leaderboard.map((r) => r.num.value));
 			const fills = items.map((row) => row.querySelector<HTMLElement>('.bar-fill')!);
 			fills.forEach((fill, i) => {
 				const w = Number(items[i].style.getPropertyValue('--w')) || 0;
-				gsap.fromTo(fill, { scaleX: 0 }, { scaleX: w, duration: 1.2, ease: 'ch-smooth', delay: i * 0.08, clearProps: 'scale' });
+				gsap.fromTo(fill, { scaleX: 0 }, { scaleX: w, duration: 0.9, ease: 'ch-smooth', delay: i * 0.06, clearProps: 'scale' });
 				const cu = items[i].querySelector<HTMLElement>('.cu');
-				if (cu) countUp(cu, { duration: 1.2, delay: i * 0.08 });
+				if (cu) countUp(cu, { duration: 0.9, delay: i * 0.06 });
 			});
 		});
 	}
