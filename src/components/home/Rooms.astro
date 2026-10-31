@@ -334,6 +334,12 @@ const roomsData = services.map((s) => ({ id: s.id, name: s.name, text: s.text, s
 		.room-inner {
 			padding: var(--s-6);
 		}
+		.seen-pills :global(.seen-pill),
+		.nojs-only .seen :global(a) {
+			display: inline-flex;
+			align-items: center;
+			min-height: 44px;
+		}
 	}
 
 	/* Hidden-state contract (BUILD §4): written only under html.js-motion, matched to the
