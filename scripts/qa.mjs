@@ -17,7 +17,7 @@ if (!unit) {
 const noJs = flagArgs.includes('--nojs');
 const reduced = flagArgs.includes('--reduced');
 const paths = pathArgs.length ? pathArgs : ['/'];
-const base = 'http://localhost:4331';
+const base = process.env.QA_BASE ?? 'http://localhost:4331';
 const widths = [
 	{ w: 390, h: 844 },
 	{ w: 768, h: 1024 },

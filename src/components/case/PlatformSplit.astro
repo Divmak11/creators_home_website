@@ -76,13 +76,13 @@ const tilts = [-2, 2, -2];
 	if (cards && cardEls.length) {
 		onEnter(cards, () => {
 			cardEls.forEach((card, i) => {
-				const delay = i * 0.07;
+				const delay = i * 0.05;
 				gsap.fromTo(
 					card,
 					{ scale: 0.6, rotation: -6, opacity: 0 },
 					{ scale: 1, rotation: 0, opacity: 1, duration: 0.7, ease: 'ch-spring', delay, clearProps: 'transform,opacity' }
 				);
-				card.querySelectorAll<HTMLElement>('.cu').forEach((cu) => countUp(cu, { duration: 1.6, delay: delay + 0.15 }));
+				card.querySelectorAll<HTMLElement>('.cu').forEach((cu) => countUp(cu, { duration: 1.0, delay: delay + 0.1 }));
 			});
 		});
 	}

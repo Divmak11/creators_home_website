@@ -88,20 +88,20 @@ function dotColor(bg: 'orange' | 'white' | 'ink'): string {
 						const dx = gcx - cx;
 						const dy = gcy - cy;
 
-						const tl = gsap.timeline({ delay: i * 0.08 });
+						const tl = gsap.timeline({ delay: i * 0.06 });
 						tl.set(card, { x: dx, y: dy, rotation: rotations[i], opacity: i === 5 ? 1 : 0 });
 						tl.to(card, { x: 0, y: 0, rotation: 0, duration: 0.6, ease: 'back.out(1.4)', clearProps: 'transform,opacity' }, 0);
 						tl.set(card, { opacity: 1 }, 0);
 
 						const cu = card.querySelector<HTMLElement>('.cu');
-						if (cu) countUp(cu, { duration: 1.2, delay: i * 0.08 + 0.4 });
+						if (cu) countUp(cu, { duration: 0.9, delay: i * 0.06 + 0.3 });
 					});
 					return;
 				}
 
 				cards.forEach((card, i) => {
 					const cu = card.querySelector<HTMLElement>('.cu');
-					if (cu) countUp(cu, { duration: 1.2, delay: i * 0.08 + 0.4 });
+					if (cu) countUp(cu, { duration: 0.9, delay: i * 0.06 + 0.3 });
 				});
 			},
 			'top 80%'

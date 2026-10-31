@@ -139,6 +139,11 @@ const tilts = [-3, 2, -2, 3];
 				return;
 			}
 
+			// The line's tip rides the 88% viewport line: it starts when disc 1 reaches it and ends
+			// when the last disc does (at least 22% of a viewport of scroll when the discs share a
+			// row), so each card pops as it comes into view, never after the section has gone by.
+			const firstY = points[0].y;
+			const lastY = Math.max(points[points.length - 1].y, firstY + window.innerHeight * 0.22);
 			const tween = gsap.fromTo(
 				maskPath!,
 				{ strokeDashoffset: L },
@@ -146,10 +151,10 @@ const tilts = [-3, 2, -2, 3];
 					strokeDashoffset: 0,
 					ease: 'none',
 					scrollTrigger: {
-						trigger: section,
-						start: 'top 75%',
-						end: 'bottom 60%',
-						scrub: 0.6,
+						trigger: track,
+						start: `top+=${Math.round(firstY)} 88%`,
+						end: `top+=${Math.round(lastY)} 88%`,
+						scrub: 0.3,
 						onUpdate: (self) => popUpTo(self.progress),
 					},
 				}

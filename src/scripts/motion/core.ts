@@ -69,6 +69,20 @@ document.addEventListener('visibilitychange', () => {
 
 document.fonts.ready.then(() => ScrollTrigger.refresh());
 
+// Trigger positions are measured once; any later change in page height above a trigger (the
+// rooms panel opening at load, a work filter, the brand/creator panel swap, an FAQ answer, a
+// late image) leaves every trigger below it stale, so entrances fire too early or only after
+// the section has scrolled past. Re-measure whenever the document height settles at a new value.
+let lastH = 0;
+let refreshTimer: ReturnType<typeof setTimeout> | undefined;
+new ResizeObserver(() => {
+  const h = document.documentElement.scrollHeight;
+  if (h === lastH) return;
+  lastH = h;
+  clearTimeout(refreshTimer);
+  refreshTimer = setTimeout(() => ScrollTrigger.refresh(), 120);
+}).observe(document.documentElement);
+
 // If the safety timer (Base.astro head script) already stripped `js-motion` before this module
 // ran, `motionOn()` correctly reports false and nothing animates. Never re-add the class here.
 ready();

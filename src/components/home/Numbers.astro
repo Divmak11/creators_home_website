@@ -54,7 +54,7 @@ const tilts = [-2, 2, -1, 1, 2, -2];
 			grid,
 			() => {
 				cards.forEach((card, i) => {
-					const delay = i * 0.07;
+					const delay = i * 0.05;
 					const tl = gsap.timeline({ delay });
 					tl.fromTo(card, { opacity: 0 }, { opacity: 1, duration: 0.6, ease: 'power1.out', clearProps: 'opacity' }, 0);
 					tl.fromTo(
@@ -64,7 +64,7 @@ const tilts = [-2, 2, -1, 1, 2, -2];
 						0
 					);
 					const cu = card.querySelector<HTMLElement>('.cu');
-					if (cu) countUp(cu, { duration: 1.6, delay: delay + 0.15 });
+					if (cu) countUp(cu, { duration: 1.0, delay: delay + 0.1 });
 				});
 			},
 			'top 85%'
