@@ -313,7 +313,7 @@ const { compact = false } = Astro.props;
 			});
 		}
 
-		menuBtn.focus();
+		menuBtn.focus({ preventScroll: true });
 	}
 
 	function closeMenu() {
@@ -322,7 +322,7 @@ const { compact = false } = Astro.props;
 		menuBtn.setAttribute('aria-expanded', 'false');
 		menuBtnLabel.textContent = 'Open menu';
 		document.documentElement.classList.remove('menu-open');
-		menuBtn.focus();
+		menuBtn.focus({ preventScroll: true });
 	}
 
 	menuBtn.addEventListener('click', () => {

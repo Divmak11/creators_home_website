@@ -87,7 +87,7 @@ const canonicalURL = new URL(canonicalPath, SITE_URL);
 <body>
 	<a href="#main" class="skip-link">Skip to content</a>
 	<Header compact={headerCompact} />
-	<main id="main">
+	<main id="main" tabindex="-1">
 		<slot />
 	</main>
 	<Footer />

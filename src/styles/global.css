@@ -76,6 +76,14 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
+html.menu-open, html.menu-open body {
+  overflow: hidden;
+}
+
+[id] {
+  scroll-margin-top: calc(80px + 16px);
+}
+
 .vh {
   position: absolute;
   width: 1px;
@@ -104,6 +112,11 @@ summary:focus-visible,
   outline: 3px solid #fff;
   outline-offset: 2px;
   box-shadow: 0 0 0 6px var(--c-ink);
+}
+
+main[tabindex='-1']:focus {
+  outline: none;
+  box-shadow: none;
 }
 
 @media (prefers-reduced-motion: no-preference) {
