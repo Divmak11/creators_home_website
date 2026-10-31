@@ -2,8 +2,8 @@
 // Industries & languages ribbon (home §3.1-11, spec F-22/F-28; data industries.ts). Marquee
 // markup mirrors Ribbons.astro (4 sets, no scroll coupling). Indic items carry `lang` + the
 // Indic font stack. The languages line is flagged until confirmed (spec §11.1).
-import Ph from '../Ph.astro';
 import { industries } from '../../data/industries';
+import { LANGUAGES_NOTE } from '../../config';
 
 const SETS = 4;
 const languageTexts = new Set(['English']);
@@ -33,7 +33,7 @@ const languageItems = industries.filter(isLanguage);
 		</div>
 	</div>
 
-	<p class="note"><Ph text="confirm languages served" /></p>
+	{LANGUAGES_NOTE && <p class="note">{LANGUAGES_NOTE}</p>}
 </section>
 
 <script>

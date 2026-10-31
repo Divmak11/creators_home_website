@@ -3,36 +3,31 @@
 // accordion, item 1 open. Height animates via `::details-content` + `interpolate-size` where
 // supported (CSS only, per founder instruction — no JS height fallback); "+" disc rotates 45deg
 // when open. M-17 slide-stack entry runs in the component <script>.
-import Ph from '../Ph.astro';
 import { faq } from '../../data/faq';
+
+const renderedItems = faq
+	.map((item) => {
+		if (!item.hasPlaceholder) return { q: item.q, a: item.a };
+		const sentences = item.a.split(/(?<=[.!?])\s+/).filter((s) => !s.includes('{ph}'));
+		if (sentences.length === 0) return null;
+		return { q: item.q, a: sentences.join(' ') };
+	})
+	.filter((item): item is { q: string; a: string } => item !== null);
 ---
 
 <section id="faq" class="faq">
 	<h2>House rules</h2>
 
 	<div class="list" data-m="stack">
-		{faq.map((item, i) => {
-			const parts = item.hasPlaceholder ? item.a.split('{ph}') : [item.a];
-			return (
-				<details name="faq" class="fq-item" open={i === 0}>
-					<summary>
-						<span class="q">{item.q}</span>
-						<span class="plus" aria-hidden="true">+</span>
-					</summary>
-					<p>
-						{item.hasPlaceholder ? (
-							<>
-								{parts[0]}
-								<Ph text={item.placeholder ?? ''} />
-								{parts[1]}
-							</>
-						) : (
-							item.a
-						)}
-					</p>
-				</details>
-			);
-		})}
+		{renderedItems.map((item, i) => (
+			<details name="faq" class="fq-item" open={i === 0}>
+				<summary>
+					<span class="q">{item.q}</span>
+					<span class="plus" aria-hidden="true">+</span>
+				</summary>
+				<p>{item.a}</p>
+			</details>
+		))}
 	</div>
 </section>
 
