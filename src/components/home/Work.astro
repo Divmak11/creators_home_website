@@ -358,6 +358,11 @@ import { campaigns, FILTERS, filterCount } from '../../data/campaigns.ts';
 		gap: 24px;
 	}
 
+	/* Filtered (≤3 cards): tilted neighbours need room or their corners cross (Q1 CH-06). */
+	.wgrid[data-count] {
+		column-gap: 72px;
+	}
+
 	.tape-track {
 		display: none;
 	}
